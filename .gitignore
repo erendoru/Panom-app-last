@@ -1,0 +1,16 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Next.js
+.next/
+out/
+
+# Cache ve build artifact'ları
+*.pa
+*.pac
+*.log
+.DS_Store
+.env.local
+.env

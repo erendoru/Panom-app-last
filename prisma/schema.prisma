@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+enum PanelType {
+  BILLBOARD
+  BILLBOARD_PLUS
+  GIANTBOARD
+  MEGALIGHT
+  CLP
+  MEGABOARD
+  KULEBOARD
+  ALINLIK
+  LIGHTBOX
+  MAXIBOARD
+  YOL_PANOSU
+}
+
+enum TrafficLevel {
+  LOW
+  MEDIUM
+  HIGH
+  VERY_HIGH
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  role          String
+  name          String
+  phone         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  screenOwnerProfile ScreenOwner?
+  advertiserProfile  Advertiser?
+  transactions       Transaction[]
+}
+
+model ScreenOwner {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  companyName  String
+  taxId        String?
+  address      String?
+  approved     Boolean  @default(false)
+  
+  screens      Screen[]
+  payouts      Payout[]
+  balance      OwnerBalance?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Advertiser {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id])
+  companyName  String?
+  billingInfo  String?    // Address, Tax info etc.
+  
+  campaigns    Campaign[]
+  staticRentals StaticRental[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Screen {
+  id               String            @id @default(uuid())
+  ownerId          String
+  owner            ScreenOwner       @relation(fields: [ownerId], references: [id])
+  name             String
+  city             String
+  district         String
+  address          String
+  latitude         Float
+  longitude        Float
+  resolutionWidth  Int
+  resolutionHeight Int
+  orientation      String
+  loopDurationSec  Int               @default(60)
+  slotDurationSec  Int               @default(10)
+  maxPlaysPerHour  Int               // Calculated capacity
+  basePricePerPlay Decimal
+  currency         String            @default("TRY")
+  active           Boolean           @default(false) // Admin must approve or Owner can toggle
+  previewImageUrl  String?
+
+  campaignScreens  CampaignScreen[]
+  scheduledPlays   ScheduledPlay[]
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Template {
+  id               String   @id @default(uuid())
+  name             String
+  category         String
+  screenRatio      String   // e.g. "16:9", "9:16"
+  configString       String     // Structure for the builder
+  previewUrl       String?
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+}
+
+model Campaign {
+  id              String         @id @default(uuid())
+  advertiserId    String
+  advertiser      Advertiser     @relation(fields: [advertiserId], references: [id])
+  name            String
+  brandName       String
+  status          String @default("DRAFT")
+  startDate       DateTime
+  endDate         DateTime
+  daysOfWeek      String         // e.g. "1,2,3,4,5,6,7" or bitmask
+  timeWindows     String           // Array of {start: "08:00", end: "12:00"}
+  totalBudget     Decimal
+  currency        String         @default("TRY")
+  
+  creatives       Creative[]
+  campaignScreens CampaignScreen[]
+  scheduledPlays  ScheduledPlay[]
+  transactions    Transaction[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model CampaignScreen {
+  id             String   @id @default(uuid())
+  campaignId     String
+  campaign       Campaign @relation(fields: [campaignId], references: [id])
+  screenId       String
+  screen         Screen   @relation(fields: [screenId], references: [id])
+  allocatedPlays Int
+  pricePerPlay   Decimal // Snapshot of price at booking time
+
+  @@unique([campaignId, screenId])
+}
+
+model Creative {
+  id              String       @id @default(uuid())
+  campaignId      String
+  campaign        Campaign     @relation(fields: [campaignId], references: [id])
+  type            String
+  fileUrl         String
+  width           Int
+  height          Int
+  status          String       @default("PENDING") // PENDING, APPROVED, REJECTED
+  rejectionReason String?
+
+  createdAt       DateTime     @default(now())
+}
+
+model ScheduledPlay {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  screenId   String
+  screen     Screen   @relation(fields: [screenId], references: [id])
+  playTime   DateTime
+  status     String   @default("SCHEDULED") // SCHEDULED, PLAYED, FAILED
+
+  createdAt  DateTime @default(now())
+  
+  @@index([screenId, playTime])
+}
+
+model Transaction {
+  id                String            @id @default(uuid())
+  userId            String
+  user              User              @relation(fields: [userId], references: [id])
+  campaignId        String?
+  campaign          Campaign?         @relation(fields: [campaignId], references: [id])
+  amount            Decimal
+  currency          String            @default("TRY")
+  status            String
+  provider          String            // e.g. "STRIPE", "IYZICO", "MOCK"
+  providerPaymentId String?
+  
+  createdAt         DateTime          @default(now())
+}
+
+model OwnerBalance {
+  id             String      @id @default(uuid())
+  screenOwnerId  String      @unique
+  screenOwner    ScreenOwner @relation(fields: [screenOwnerId], references: [id])
+  amount         Decimal     @default(0)
+  updatedAt      DateTime    @updatedAt
+}
+
+model Payout {
+  id            String      @id @default(uuid())
+  screenOwnerId String
+  screenOwner   ScreenOwner @relation(fields: [screenOwnerId], references: [id])
+  amount        Decimal
+  status        String      // REQUESTED, PAID
+  createdAt     DateTime    @default(now())
+}
+
+// Enhanced Static Billboards with 11 Types
+enum LocationType {
+  AVM
+  HIGHWAY
+  MAIN_ROAD
+  CITY_CENTER
+  SQUARE
+  STREET
+  OPEN_AREA
+  OTHER
+}
+
+enum SocialGrade {
+  A_PLUS
+  A
+  B
+  C
+  D
+}
+
+model StaticPanel {
+  id                         String         @id @default(uuid())
+  name                       String
+  type                       PanelType
+  subType                    String?
+  city                       String
+  district                   String
+  address                    String
+  latitude                   Float
+  longitude                  Float
+  width                      Float
+  height                     Float
+  priceWeekly                Float
+  priceDaily                 Float?
+  minRentalDays              Int            @default(7)  // Minimum rental period in days
+  
+  // Location & Analytics
+  locationType               LocationType   @default(OPEN_AREA)
+  socialGrade                SocialGrade    @default(B)
+  
+  isAVM                      Boolean        @default(false)
+  avmName                    String?
+  active                     Boolean        @default(true)
+  imageUrl                   String?
+  estimatedDailyImpressions  Int            @default(0)
+  trafficLevel               TrafficLevel   @default(MEDIUM)
+  blockedDates               Json?          // Array of {startDate, endDate} objects
+  createdAt                  DateTime       @default(now())
+  updatedAt                  DateTime       @updatedAt
+  rentals                    StaticRental[]
+
+  @@map("static_panels")
+}
+
+model StaticRental {
+  id            String      @id @default(uuid())
+  advertiserId  String
+  advertiser    Advertiser  @relation(fields: [advertiserId], references: [id])
+  panelId       String
+  panel         StaticPanel @relation(fields: [panelId], references: [id])
+  startDate     DateTime
+  endDate       DateTime
+  totalPrice    Decimal
+  currency      String      @default("TRY")
+  status        String      @default("PENDING_PAYMENT") // PENDING_PAYMENT, ACTIVE, COMPLETED, CANCELLED
+  creativeUrl   String?
+  designRequested Boolean @default(false)
+  
+  // Analytics fields
+  totalDays           Int      @default(0)
+  estimatedImpressions Int     @default(0)
+  actualImpressions   Int?     // Optional actual data
+  impressionsByDate   Json?    // {"2024-01-01": 1500, "2024-01-02": 1600}
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
