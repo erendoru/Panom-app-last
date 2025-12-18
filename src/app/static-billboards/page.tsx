@@ -2,13 +2,27 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import prisma from "@/lib/prisma";
 import StaticBillboardsClient from "./client-page";
+import { Suspense } from "react";
 
 import { Metadata } from "next";
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
     title: "Klasik Panolar | Panobu",
     description: "İstanbul, Ankara, İzmir ve tüm Türkiye'deki kiralık billboard ve raketleri inceleyin. Harita üzerinden konum seçin ve hemen kiralayın.",
 };
+
+function LoadingFallback() {
+    return (
+        <div className="flex-1 flex items-center justify-center bg-slate-100">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-slate-600">Yükleniyor...</p>
+            </div>
+        </div>
+    );
+}
 
 export default async function StaticBillboardsPage() {
     const panels = await prisma.staticPanel.findMany({
@@ -29,7 +43,9 @@ export default async function StaticBillboardsPage() {
                 </div>
             </header>
 
-            <StaticBillboardsClient panels={panels} />
+            <Suspense fallback={<LoadingFallback />}>
+                <StaticBillboardsClient panels={panels} />
+            </Suspense>
         </div>
     );
 }

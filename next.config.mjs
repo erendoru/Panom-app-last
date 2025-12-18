@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['localhost', 'placehold.co'],
+        remotePatterns: [
+            { protocol: 'https', hostname: '**.supabase.co' },
+            { protocol: 'https', hostname: 'placehold.co' },
+        ],
     },
     experimental: {
         serverComponentsExternalPackages: ['iyzipay'], // Fix for Iyzipay ENOENT resource error
