@@ -28,10 +28,9 @@ interface DashboardProps {
     };
     chartData: any[]; // Impression data over time
     recentCampaigns: any[];
-    showDemoNotification?: boolean;
 }
 
-export default function AdvertiserDashboardClient({ userName, kpi, chartData, recentCampaigns, showDemoNotification }: DashboardProps) {
+export default function AdvertiserDashboardClient({ userName, kpi, chartData, recentCampaigns }: DashboardProps) {
     const hasData = kpi.totalCampaigns > 0;
 
     return (
@@ -196,7 +195,6 @@ export default function AdvertiserDashboardClient({ userName, kpi, chartData, re
                     </div>
                 </div>
             )}
-            {showDemoNotification && <DemoNotification />}
         </div>
     );
 }
@@ -246,29 +244,5 @@ function Badge({ status }: { status: string }) {
         <span className={`px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${styles[status] || styles.DRAFT}`}>
             {labels[status] || status}
         </span>
-    );
-}
-
-function DemoNotification() {
-    return (
-        <div className="fixed bottom-8 right-8 z-50 animate-in slide-in-from-right-10 duration-700">
-            <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-4 max-w-sm flex gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-full flex items-center justify-center animate-pulse">
-                    <span className="text-xl">🔥</span>
-                </div>
-                <div>
-                    <h4 className="font-bold text-slate-800 text-sm mb-1">Fırsat Alarmı!</h4>
-                    <p className="text-xs text-slate-600 leading-relaxed mb-2">
-                        Kartal'da kiraladığınız <span className="font-bold text-slate-900">Yol Kenarı3 Panosu</span> 12-24 Aralık tarihleri arasında boş ve fiyatı normalden <span className="font-bold text-green-600">10.000 TL</span> daha uygun!
-                    </p>
-                    <button className="text-xs font-bold text-blue-600 hover:text-blue-700 hover:underline">
-                        Hemen Kirala &rarr;
-                    </button>
-                    <button className="absolute top-2 right-2 text-slate-300 hover:text-slate-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
     );
 }

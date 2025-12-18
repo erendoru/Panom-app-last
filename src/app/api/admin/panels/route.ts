@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-// import { getServerSession } from 'next-auth';
 
-// GET: Fetch all panels with optional filtering
+export const dynamic = 'force-dynamic'; // Fix for Vercel build error
+
+import prisma from '@/lib/prisma';
+import { getSession } from '@/lib/auth';
+
+// GET: Fetch all panels with optional filtering (Admin only)
 export async function GET(req: NextRequest) {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     try {
         const { searchParams } = new URL(req.url);
         const city = searchParams.get('city');
@@ -45,13 +52,11 @@ export async function GET(req: NextRequest) {
 
 // POST: Create a new panel (Admin only)
 export async function POST(req: NextRequest) {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     try {
-        // TODO: Add admin authentication check
-        // const session = await getServerSession();
-        // if (!session || session.user.role !== 'ADMIN') {
-        //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
-
         const body = await req.json();
         const {
             name,

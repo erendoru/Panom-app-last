@@ -95,42 +95,20 @@ export default async function AdvertiserDashboard() {
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, 5);
 
-    // --- DEMO MODE OVERRIDE START ---
-    let finalKpi = {
+    const kpi = {
         activeCampaigns: activeDigital + activeStatic,
         totalCampaigns: campaigns.length + rentals.length,
         totalSpend: totalSpend,
         totalImpressions: totalImpressions,
         avgCPM: avgCPM
     };
-    let finalRecentCampaigns: any[] = recentActivities;
-    let showDemoNotification = false;
-
-    if (session.user.email === 'ecedoru@hotmail.com') {
-        showDemoNotification = true;
-        finalKpi = {
-            activeCampaigns: 4,
-            totalCampaigns: 9,
-            totalSpend: 15400,
-            totalImpressions: 45200,
-            avgCPM: 340
-        };
-        finalRecentCampaigns = [
-            { id: 'demo1', name: 'İzmit Yaz', brandName: 'Tanıtım 1', status: 'ACTIVE', totalBudget: 5000, type: 'DIGITAL' },
-            { id: 'demo2', name: 'Kış İndirimi', brandName: 'Kampanya 2', status: 'PENDING', totalBudget: 3500, type: 'DIGITAL' },
-            { id: 'demo3', name: 'Billboard: Kartal', brandName: 'İstanbul', status: 'ACTIVE', totalBudget: 4200, type: 'STATIC' },
-            { id: 'demo4', name: 'Yaz Festivali', brandName: 'Etkinlik', status: 'COMPLETED', totalBudget: 2700, type: 'DIGITAL' }
-        ];
-    }
-    // --- DEMO MODE OVERRIDE END ---
 
     return (
         <AdvertiserDashboardClient
             userName={session.user.user_metadata?.name || session.user.email}
-            kpi={finalKpi}
+            kpi={kpi}
             chartData={chartData}
-            recentCampaigns={finalRecentCampaigns as any}
-            showDemoNotification={showDemoNotification}
+            recentCampaigns={recentActivities as any}
         />
     );
 }

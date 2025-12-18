@@ -10,6 +10,7 @@ import FilterSidebar, { FilterState } from "@/components/static/FilterSidebar";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import PanelDetailSidebar from "@/components/static/PanelDetailSidebar";
+import { useSearchParams } from "next/navigation";
 
 // Dynamically import Map to avoid SSR issues
 const Map = dynamic(() => import("@/components/domain/Map"), {
@@ -19,6 +20,7 @@ const Map = dynamic(() => import("@/components/domain/Map"), {
 
 export default function StaticBillboardsClient({ panels: initialPanels }: { panels: any[] }) {
     // Client component for static billboards page
+    const searchParams = useSearchParams();
     const [selectedCity, setSelectedCity] = useState("Tümü");
     const [selectedPanel, setSelectedPanel] = useState<any | null>(null);
     const [isRentalWizardOpen, setIsRentalWizardOpen] = useState(false);
@@ -109,6 +111,31 @@ export default function StaticBillboardsClient({ panels: initialPanels }: { pane
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    // Check for resumeRental parameter and restore rental flow
+    useEffect(() => {
+        const resumeRental = searchParams.get('resumeRental');
+        if (resumeRental === 'true') {
+            const pendingRentalStr = localStorage.getItem('pendingRental');
+            if (pendingRentalStr) {
+                try {
+                    const pendingRental = JSON.parse(pendingRentalStr);
+                    // Find the panel by ID
+                    const panel = initialPanels.find(p => p.id === pendingRental.panelId);
+                    if (panel) {
+                        setSelectedPanel(panel);
+                        setIsRentalWizardOpen(true);
+                        // Remove resumeRental from URL without reload
+                        const url = new URL(window.location.href);
+                        url.searchParams.delete('resumeRental');
+                        window.history.replaceState({}, '', url.toString());
+                    }
+                } catch (error) {
+                    console.error("Failed to restore rental:", error);
+                }
+            }
+        }
+    }, [searchParams, initialPanels]);
 
     const handlePanelSelect = (panel: any) => {
         setSelectedPanel(panel);

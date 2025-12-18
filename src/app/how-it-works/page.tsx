@@ -50,7 +50,7 @@ export default function HowItWorksPage() {
                                 Panobu <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Nasıl Çalışır?</span>
                             </h1>
                             <p className="text-xl text-slate-400 mb-8">
-                                Outdoor reklam vermek artık bu kadar kolay olmamıştı.
+                                Outdoor reklam vermek hiç bu kadar kolay olmamıştı.
                                 4 basit adımda markanızı şehrin en görünür noktalarına taşıyın.
                             </p>
                         </motion.div>
@@ -78,7 +78,7 @@ export default function HowItWorksPage() {
                                     step: "2",
                                     icon: Calendar,
                                     title: "Tarih ve Bütçe Belirle",
-                                    description: "Kampanyanızın başlangıç ve bitiş tarihlerini seçin. Bütçenizi belirleyin - küçük veya büyük, her bütçe kabul edilir.",
+                                    description: "Kampanyanızın başlangıç ve bitiş tarihlerini seçin. Bütçenizi belirleyin. ",
                                     details: [
                                         "Boş tarih aralıkları anında görünür",
                                         "Esnek tarihlendirme seçenekleri",
@@ -102,10 +102,10 @@ export default function HowItWorksPage() {
                                     step: "4",
                                     icon: CheckCircle,
                                     title: "Onay ve Yayın",
-                                    description: "Reklamınızı hızlıca inceliyoruz. Onay sonrası ödeme yapın ve kampanyanız belirlediğiniz tarihlerde yayınlanıyor!",
+                                    description: "Reklamınızı hızlıca inceliyoruz. Onay sonrası kampanyanız belirlediğiniz tarihlerde yayınlanıyor!",
                                     details: [
                                         "Hızlı onay süreci (genelde 24 saat)",
-                                        "Güvenli ödeme seçenekleri",
+                                        "Pano görsellerini sizlere iletiyoruz.",
                                         "Anlık bildirimler ve raporlama"
                                     ],
                                     color: "yellow"

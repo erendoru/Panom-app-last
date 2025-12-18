@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function RegisterPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect');
+    const resumeRental = searchParams.get('resumeRental');
+
     const [role, setRole] = useState<"ADVERTISER" | "SCREEN_OWNER">("ADVERTISER");
     const [formData, setFormData] = useState({
         name: "",
@@ -20,6 +24,14 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const supabase = createClientComponentClient();
+
+    // If coming from rental flow, show a message
+    const [showRentalMessage, setShowRentalMessage] = useState(false);
+    useEffect(() => {
+        if (resumeRental) {
+            setShowRentalMessage(true);
+        }
+    }, [resumeRental]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +78,20 @@ export default function RegisterPage() {
                 console.error("Profile sync failed");
             }
 
-            router.push("/app/advertiser/dashboard");
+            // Check if there's a pending rental in localStorage
+            const pendingRental = localStorage.getItem('pendingRental');
+            
+            // Redirect to original page or dashboard
+            if (redirectTo && resumeRental && pendingRental) {
+                // If coming from rental flow, redirect to static-billboards with resumeRental param
+                window.location.href = redirectTo + '?resumeRental=true';
+            } else if (redirectTo) {
+                window.location.href = redirectTo;
+            } else if (role === "ADVERTISER") {
+                router.push("/app/advertiser/dashboard");
+            } else {
+                router.push("/app/owner/dashboard");
+            }
             router.refresh();
 
         } catch (err) {
@@ -78,6 +103,13 @@ export default function RegisterPage() {
 
     return (
         <div className="space-y-6">
+            {showRentalMessage && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
+                    <p className="text-sm text-green-800">
+                        ✨ Kayıt olduktan sonra pano kiralama işleminize devam edebilirsiniz!
+                    </p>
+                </div>
+            )}
             <div className="space-y-2 text-center">
                 <h1 className="text-3xl font-bold">Kayıt Ol</h1>
                 <p className="text-gray-500">Panobu platformuna katılın</p>
