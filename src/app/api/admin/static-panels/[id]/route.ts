@@ -34,7 +34,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         const {
             name, type, city, district, address, latitude, longitude,
             width, height, priceWeekly, imageUrl, active,
-            locationType, socialGrade, avmName, isAVM, trafficLevel
+            locationType, socialGrade, avmName, isAVM, trafficLevel,
+            priceDaily, minRentalDays
         } = body;
 
         const panel = await prisma.staticPanel.update({
@@ -50,6 +51,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
                 width: Number(width),
                 height: Number(height),
                 priceWeekly: Number(priceWeekly),
+                priceDaily: priceDaily ? Number(priceDaily) : null,
+                minRentalDays: minRentalDays ? Number(minRentalDays) : 7,
                 imageUrl,
                 active,
                 locationType,

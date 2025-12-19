@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { formatCurrency } from "@/lib/utils";
-import { Loader2, Upload, Calendar as CalendarIcon, CheckCircle2, LogIn, UserPlus } from "lucide-react";
+import { Loader2, Upload, CheckCircle2, LogIn, UserPlus, Mail } from "lucide-react";
 import Image from "next/image";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 import { addDays, isWithinInterval, parseISO, startOfDay } from "date-fns";
-import { tr } from "date-fns/locale";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 interface RentalWizardProps {
@@ -33,6 +31,10 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
     const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const [checkoutFormContent, setCheckoutFormContent] = useState<string | null>(null);
 
+    // New states for Issue 4
+    const [willSendLater, setWillSendLater] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+
     const supabase = createClientComponentClient();
     const blockedDates = panel.blockedDates || [];
 
@@ -49,7 +51,8 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
         });
 
         return () => subscription.unsubscribe();
-    }, [supabase.auth]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Restore state from localStorage if exists
     useEffect(() => {
@@ -71,6 +74,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                     }
                     if (data.creativeUrl) setUploadedFileUrl(data.creativeUrl);
                     if (data.designRequested) setDesignRequested(data.designRequested);
+                    if (data.willSendLater) setWillSendLater(data.willSendLater);
 
                     // If we have data and user is logged in, jump to step 3
                     if (isLoggedIn === true) {
@@ -128,7 +132,8 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
     const calculateTotal = () => {
         const totalDays = calculateTotalDays();
         if (totalDays === 0) return 0;
-        const dailyPrice = Number(panel.priceWeekly) / 7;
+        // Use daily price if available, otherwise weekly/7
+        const dailyPrice = panel.priceDaily ? Number(panel.priceDaily) : (Number(panel.priceWeekly) / 7);
         let total = dailyPrice * totalDays;
         if (designRequested) {
             total += 2500;
@@ -138,16 +143,28 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
     const isValidRentalPeriod = () => {
         const totalDays = calculateTotalDays();
-        const minDays = panel.minRentalDays || 7;
+        // Use panel specific min days or default to 1 if daily price exists, else 7
+        const minDays = panel.minRentalDays || (panel.priceDaily ? 1 : 7);
         return totalDays >= minDays;
     };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const selectedFile = e.target.files[0];
+
+            // Validate size (10MB)
+            if (selectedFile.size > 10 * 1024 * 1024) {
+                setUploadError("Dosya boyutu 10MB'dan büyük olamaz.");
+                return;
+            }
+
             setFile(selectedFile);
+            setUploadError(null);
+
+            // Create preview
             const objectUrl = URL.createObjectURL(selectedFile);
             setPreviewUrl(objectUrl);
+
             setIsUploading(true);
             const formData = new FormData();
             formData.append("file", selectedFile);
@@ -157,12 +174,19 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                     method: "POST",
                     body: formData,
                 });
+
+                if (!res.ok) throw new Error("Yükleme başarısız");
+
                 const data = await res.json();
                 if (data.url) {
                     setUploadedFileUrl(data.url);
+                } else {
+                    throw new Error("URL alınamadı");
                 }
             } catch (error) {
                 console.error("Upload failed", error);
+                setUploadError("Görsel yüklenirken bir hata oluştu. Lütfen tekrar deneyin.");
+                setUploadedFileUrl(null);
             } finally {
                 setIsUploading(false);
             }
@@ -178,6 +202,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
             totalPrice: calculateTotal(),
             creativeUrl: uploadedFileUrl,
             designRequested,
+            willSendLater,
             timestamp: Date.now()
         };
         localStorage.setItem('pendingRental', JSON.stringify(rentalData));
@@ -209,6 +234,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                     totalPrice: calculateTotal(),
                     creativeUrl: uploadedFileUrl,
                     designRequested,
+                    willSendLater, // Pass this new field to backend if supported, otherwise it's just frontend logic
                 }),
             });
 
@@ -280,6 +306,8 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
         setPreviewUrl(null);
         setUploadedFileUrl(null);
         setDesignRequested(false);
+        setWillSendLater(false);
+        setUploadError(null);
         setShowLoginPrompt(false);
         setCheckoutFormContent(null);
         onClose();
@@ -392,7 +420,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
                                     <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg w-full">
                                         <p className="text-sm text-amber-800">
-                                            ℹ️ <strong>Minimum kiralama süresi:</strong> {panel.minRentalDays || 7} gün
+                                            ℹ️ <strong>Minimum kiralama süresi:</strong> {panel.minRentalDays || (panel.priceDaily ? 1 : 7)} gün
                                         </p>
                                     </div>
 
@@ -401,7 +429,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                                             {!isValidRentalPeriod() && (
                                                 <div className="bg-red-50 border border-red-200 p-4 rounded-lg w-full">
                                                     <p className="text-sm text-red-800 font-medium">
-                                                        ⚠️ Bu pano minimum {panel.minRentalDays || 7} gün kiralanabilir.
+                                                        ⚠️ Bu pano minimum {panel.minRentalDays || (panel.priceDaily ? 1 : 7)} gün kiralanabilir.
                                                     </p>
                                                     <p className="text-xs text-red-600 mt-1">
                                                         Şu an seçili: {calculateTotalDays()} gün
@@ -431,6 +459,18 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
                             {step === 2 && (
                                 <div className="space-y-6">
+                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+                                        <div className="bg-blue-100 p-2 rounded-full text-blue-600 mt-1">
+                                            <Mail className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-blue-900 text-sm">Tasarım Konusunda Yardıma mı İhtiyacınız Var?</h4>
+                                            <p className="text-sm text-blue-700 mt-1">
+                                                Tasarım dosyanız hazır değilse endişelenmeyin. Görseli daha sonra <a href="mailto:destek@panobu.com" className="font-bold underline hover:text-blue-900">destek@panobu.com</a> adresine iletebilirsiniz.
+                                            </p>
+                                        </div>
+                                    </div>
+
                                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                                         <h4 className="font-bold text-sm text-slate-700 mb-2">Gerekli Görsel Özellikleri</h4>
                                         <div className="grid grid-cols-2 gap-4 text-sm">
@@ -440,17 +480,28 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                                             </div>
                                             <div>
                                                 <span className="text-slate-500 block">Format</span>
-                                                <span className="font-mono font-bold">JPG, PNG, PDF</span>
+                                                <span className="font-mono font-bold">JPG, PNG, PDF (Max 10MB)</span>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-2 border p-4 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => setDesignRequested(!designRequested)}>
+                                    <div className="flex items-center space-x-2 border p-4 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => {
+                                        if (!designRequested) {
+                                            setWillSendLater(false);
+                                            setFile(null);
+                                            setUploadedFileUrl(null);
+                                            setPreviewUrl(null);
+                                        }
+                                        setDesignRequested(!designRequested);
+                                    }}>
                                         <input
                                             type="checkbox"
                                             id="designSupport"
                                             checked={designRequested}
-                                            onChange={(e) => setDesignRequested(e.target.checked)}
+                                            onChange={(e) => {
+                                                if (e.target.checked) setWillSendLater(false);
+                                                setDesignRequested(e.target.checked);
+                                            }}
                                             className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                         />
                                         <label htmlFor="designSupport" className="text-sm font-medium leading-none cursor-pointer flex-1">
@@ -460,27 +511,64 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                                     </div>
 
                                     {!designRequested && (
-                                        <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:bg-slate-50 transition-colors relative">
-                                            <Input
-                                                type="file"
-                                                accept="image/*"
-                                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                                onChange={handleFileChange}
-                                            />
-                                            {previewUrl ? (
-                                                <div className="relative aspect-video w-full rounded-lg overflow-hidden">
-                                                    <Image src={previewUrl} alt="Preview" fill className="object-cover" />
-                                                    {isUploading && (
-                                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white">
-                                                            <Loader2 className="w-8 h-8 animate-spin" />
+                                        <div className="space-y-4">
+                                            <div className="flex items-center space-x-2 border p-4 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer" onClick={() => {
+                                                if (!willSendLater) {
+                                                    setFile(null);
+                                                    setUploadedFileUrl(null);
+                                                    setPreviewUrl(null);
+                                                }
+                                                setWillSendLater(!willSendLater);
+                                            }}>
+                                                <input
+                                                    type="checkbox"
+                                                    id="willSendLater"
+                                                    checked={willSendLater}
+                                                    onChange={(e) => setWillSendLater(e.target.checked)}
+                                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                />
+                                                <label htmlFor="willSendLater" className="text-sm font-medium leading-none cursor-pointer flex-1">
+                                                    <span className="block font-bold text-slate-900">Görseli daha sonra ileteceğim</span>
+                                                    <span className="block text-slate-500 font-normal mt-1">Siparişi tamamladıktan sonra destek@panobu.com adresine göndereceğim.</span>
+                                                </label>
+                                            </div>
+
+                                            {!willSendLater && (
+                                                <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors relative ${uploadError ? 'border-red-300 bg-red-50' : 'border-slate-200 hover:bg-slate-50'}`}>
+                                                    <Input
+                                                        type="file"
+                                                        accept="image/*,application/pdf"
+                                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                                        onChange={handleFileChange}
+                                                    />
+                                                    {previewUrl ? (
+                                                        <div className="relative aspect-video w-full rounded-lg overflow-hidden">
+                                                            <Image src={previewUrl} alt="Preview" fill className="object-cover" />
+                                                            {isUploading && (
+                                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white">
+                                                                    <Loader2 className="w-8 h-8 animate-spin" />
+                                                                </div>
+                                                            )}
+                                                            <div className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                                                                Değiştirmek için tıklayın
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex flex-col items-center gap-2 text-slate-500">
+                                                            <Upload className={`w-10 h-10 ${uploadError ? 'text-red-400' : ''}`} />
+                                                            {uploadError ? (
+                                                                <div className="text-red-500 font-medium">
+                                                                    <p>{uploadError}</p>
+                                                                    <p className="text-xs mt-1">Tekrar denemek için tıklayın</p>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <p>Görseli buraya sürükleyin veya tıklayın</p>
+                                                                    <p className="text-xs">PNG, JPG, PDF (Max 10MB)</p>
+                                                                </>
+                                                            )}
                                                         </div>
                                                     )}
-                                                </div>
-                                            ) : (
-                                                <div className="flex flex-col items-center gap-2 text-slate-500">
-                                                    <Upload className="w-10 h-10" />
-                                                    <p>Görseli buraya sürükleyin veya tıklayın</p>
-                                                    <p className="text-xs">PNG, JPG (Max 10MB)</p>
                                                 </div>
                                             )}
                                         </div>
@@ -504,7 +592,11 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                                         <div className="flex justify-between text-sm">
                                             <span className="text-slate-500">Görsel / Tasarım</span>
                                             <span className="font-medium text-green-600">
-                                                {designRequested ? "Tasarım Desteği İstendi" : file?.name}
+                                                {designRequested
+                                                    ? "Tasarım Desteği İstendi"
+                                                    : willSendLater
+                                                        ? "E-posta ile gönderilecek"
+                                                        : file?.name}
                                             </span>
                                         </div>
                                         <div className="pt-4 border-t flex justify-between items-center">
@@ -529,10 +621,9 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                                     <div>
                                         <h3 className="font-bold text-xl">Rezervasyon Başarılı!</h3>
                                         <p className="text-slate-500">
-                                            {(designRequested || checkoutFormContent)
-                                                ? "Tasarım ekibimiz en kısa sürede sizinle iletişime geçecektir."
+                                            {(designRequested || willSendLater || checkoutFormContent)
+                                                ? "Tasarım detayları ve süreç için ekibimiz sizinle iletişime geçecektir."
                                                 : "Reklamınız yönetici onayından sonra yayına alınacaktır."}
-                                            {/* Note: checkoutFormContent logic here is tricky, basically success means payment done */}
                                         </p>
                                     </div>
                                 </div>
@@ -554,7 +645,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                         {step === 2 && (
                             <div className="flex gap-2 w-full justify-end">
                                 <Button variant="outline" onClick={() => setStep(1)}>Geri</Button>
-                                <Button onClick={handleProceedToPayment} disabled={(!uploadedFileUrl && !designRequested) || isUploading}>
+                                <Button onClick={handleProceedToPayment} disabled={(!uploadedFileUrl && !designRequested && !willSendLater) || isUploading}>
                                     Devam Et
                                 </Button>
                             </div>

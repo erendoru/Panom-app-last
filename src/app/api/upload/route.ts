@@ -11,13 +11,24 @@ export async function POST(request: NextRequest) {
         const supabase = createRouteHandlerClient({ cookies });
 
         // Check if user is authenticated
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError) {
+            console.error("Auth error:", authError);
             return NextResponse.json(
-                { error: "Unauthorized" },
+                { error: "Authentication error: " + authError.message },
                 { status: 401 }
             );
         }
+
+        if (!user) {
+            return NextResponse.json(
+                { error: "Unauthorized - please log in" },
+                { status: 401 }
+            );
+        }
+
+        console.log("Upload request from user:", user.id);
 
         const formData = await request.formData();
         const file = formData.get("file") as File;
@@ -28,6 +39,8 @@ export async function POST(request: NextRequest) {
                 { status: 400 }
             );
         }
+
+        console.log("File info:", { name: file.name, type: file.type, size: file.size });
 
         // Validate file type
         const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "video/mp4"];
@@ -51,6 +64,8 @@ export async function POST(request: NextRequest) {
         const filename = `${uuidv4()}-${file.name.replace(/\s/g, "-")}`;
         const filePath = `uploads/${user.id}/${filename}`;
 
+        console.log("Uploading to path:", filePath);
+
         // Upload to Supabase Storage
         const { data, error } = await supabase.storage
             .from(BUCKET_NAME)
@@ -62,11 +77,17 @@ export async function POST(request: NextRequest) {
 
         if (error) {
             console.error("Supabase upload error:", error);
+            console.error("Error details:", JSON.stringify(error, null, 2));
             return NextResponse.json(
-                { error: "Upload failed: " + error.message },
+                {
+                    error: "Upload failed: " + error.message,
+                    details: error
+                },
                 { status: 500 }
             );
         }
+
+        console.log("Upload successful:", data);
 
         // Get public URL
         const { data: publicUrlData } = supabase.storage
@@ -77,11 +98,16 @@ export async function POST(request: NextRequest) {
             url: publicUrlData.publicUrl,
             path: filePath
         });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Upload error:", error);
+        console.error("Error stack:", error?.stack);
         return NextResponse.json(
-            { error: "Upload failed" },
+            {
+                error: "Upload failed: " + (error?.message || "Unknown error"),
+                details: String(error)
+            },
             { status: 500 }
         );
     }
 }
+

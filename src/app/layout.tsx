@@ -8,6 +8,10 @@ export const metadata: Metadata = {
     title: "Panobu - Türkiye'nin Online Reklam Platformu",
     description: "Dijital ve statik outdoor reklamlarınızı kolayca yönetin. Billboard, raket ve dijital ekran kiralama platformu.",
     keywords: "billboard kiralama, outdoor reklam, açık hava reklamcılığı, dijital ekran, panobu",
+    icons: {
+        icon: "/favicon.png",
+        apple: "/favicon.png",
+    },
     openGraph: {
         title: "Panobu - Türkiye'nin Online Reklam Platformu",
         description: "Dijital ve statik outdoor reklamlarınızı kolayca yönetin.",

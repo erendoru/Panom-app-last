@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -21,6 +22,7 @@ const MapPicker = dynamic(() => import('@/components/MapPicker'), {
 export default function NewPanelPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         type: 'BILLBOARD',
@@ -56,6 +58,33 @@ export default function NewPanelPage() {
             if (name === 'city') {
                 setFormData(prev => ({ ...prev, district: '' }));
             }
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !e.target.files[0]) return;
+
+        const file = e.target.files[0];
+        setUploading(true);
+
+        const data = new FormData();
+        data.append("file", file);
+
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: data
+            });
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            const json = await res.json();
+            setFormData(prev => ({ ...prev, imageUrl: json.url }));
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("Görsel yüklenirken bir hata oluştu.");
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -423,35 +452,62 @@ export default function NewPanelPage() {
                         </div>
                     </div>
 
+                    {/* Görsel Yükleme */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Pano Görseli</h2>
+                        <div className="space-y-4">
+                            {formData.imageUrl ? (
+                                <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
+                                    <Image src={formData.imageUrl} alt="Panel" fill className="object-cover" />
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={uploading}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                    />
+                                    <div className="flex flex-col items-center gap-2 text-slate-500">
+                                        {uploading ? (
+                                            <>
+                                                <Loader2 className="w-8 h-8 animate-spin" />
+                                                <p>Yükleniyor...</p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Upload className="w-8 h-8" />
+                                                <p>Görsel yüklemek için tıklayın veya sürükleyin</p>
+                                                <p className="text-xs text-slate-400">PNG, JPG (Max 10MB)</p>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                     {/* Diğer */}
                     <div>
-                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Diğer Bilgiler</h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Görsel URL (Opsiyonel)
-                                </label>
-                                <input
-                                    type="url"
-                                    name="imageUrl"
-                                    value={formData.imageUrl}
-                                    onChange={handleChange}
-                                    placeholder="https://..."
-                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                />
-                            </div>
-
-                            <label className="flex items-center space-x-2">
-                                <input
-                                    type="checkbox"
-                                    name="active"
-                                    checked={formData.active}
-                                    onChange={handleChange}
-                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
-                                />
-                                <span className="text-sm text-slate-700">Panoyu aktif olarak yayınla</span>
-                            </label>
-                        </div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Diğer Ayarlar</h2>
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                name="active"
+                                checked={formData.active}
+                                onChange={handleChange}
+                                className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-slate-700">Panoyu aktif olarak yayınla</span>
+                        </label>
                     </div>
 
                     {/* Submit */}

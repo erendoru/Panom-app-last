@@ -5,15 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, Upload, X } from "lucide-react";
 import Link from "next/link";
+import { TURKEY_DISTRICTS } from "@/lib/turkey-data";
+import Image from "next/image";
 
 export default function NewStaticPanelPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    // Form Data
     const [formData, setFormData] = useState({
         name: "",
-        type: "Billboard", // Default
+        type: "BILLBOARD", // Default adjusted to match value
         city: "İstanbul",
         district: "",
         address: "",
@@ -22,25 +27,80 @@ export default function NewStaticPanelPage() {
         width: "",
         height: "",
         priceWeekly: "",
+        priceDaily: "",
+        isDailyRentable: false,
         imageUrl: "",
         // New Fields
         locationType: "OPEN_AREA",
-        socialGrade: "B", // Default
+        socialGrade: "B",
         avmName: "",
         trafficLevel: "MEDIUM"
     });
 
+    const [availableDistricts, setAvailableDistricts] = useState<string[]>(TURKEY_DISTRICTS["İstanbul"] || []);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === "city") {
+            setFormData(prev => ({
+                ...prev,
+                city: value,
+                district: "" // Reset district when city changes 
+            }));
+            setAvailableDistricts(TURKEY_DISTRICTS[value] || []);
+        } else if (name === "isDailyRentable") {
+            setFormData(prev => ({
+                ...prev,
+                isDailyRentable: (e.target as HTMLInputElement).checked
+            }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
+    };
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || !e.target.files[0]) return;
+
+        const file = e.target.files[0];
+        setUploading(true);
+
+        const data = new FormData();
+        data.append("file", file);
+
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: data
+            });
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            const json = await res.json();
+            setFormData(prev => ({ ...prev, imageUrl: json.url }));
+        } catch (error) {
+            console.error("Upload error:", error);
+            alert("Görsel yüklenirken bir hata oluştu.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        // Prepare payload - handle isAVM logic based on locationType
+        // Prepare payload
         const payload = {
             ...formData,
+            // Convert types correctly
+            width: parseFloat(formData.width),
+            height: parseFloat(formData.height),
+            latitude: parseFloat(formData.latitude),
+            longitude: parseFloat(formData.longitude),
+            priceWeekly: parseFloat(formData.priceWeekly),
+            priceDaily: formData.isDailyRentable && formData.priceDaily ? parseFloat(formData.priceDaily) : null,
+            minRentalDays: formData.isDailyRentable ? 1 : 7,
             isAVM: formData.locationType === 'AVM',
             avmName: formData.locationType === 'AVM' ? formData.avmName : null
         };
@@ -56,10 +116,12 @@ export default function NewStaticPanelPage() {
                 router.push("/app/admin/static-panels");
                 router.refresh();
             } else {
-                alert("Hata oluştu");
+                const error = await res.json();
+                alert(error.error || "Hata oluştu");
             }
         } catch (error) {
             console.error(error);
+            alert("Bir bağlantı hatası oluştu");
         } finally {
             setLoading(false);
         }
@@ -79,7 +141,7 @@ export default function NewStaticPanelPage() {
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label>Pano Adı</Label>
-                            <Input name="name" required placeholder="Örn: Kadıköy Meydan Dev Billboard" onChange={handleChange} />
+                            <Input name="name" required placeholder="Örn: Kadıköy Meydan Dev Billboard" onChange={handleChange} value={formData.name} />
                         </div>
                         <div className="space-y-2">
                             <Label>Pano Türü</Label>
@@ -144,24 +206,44 @@ export default function NewStaticPanelPage() {
                     {formData.locationType === 'AVM' && (
                         <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
                             <Label>AVM Adı</Label>
-                            <Input name="avmName" required placeholder="Örn: Akasya AVM" onChange={handleChange} />
+                            <Input name="avmName" required placeholder="Örn: Akasya AVM" onChange={handleChange} value={formData.avmName} />
                         </div>
                     )}
 
                     <div className="grid grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label>Şehir</Label>
-                            <Input name="city" required defaultValue="İstanbul" onChange={handleChange} />
+                            <select
+                                name="city"
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-ring"
+                                onChange={handleChange}
+                                value={formData.city}
+                            >
+                                {Object.keys(TURKEY_DISTRICTS).sort().map(city => (
+                                    <option key={city} value={city}>{city}</option>
+                                ))}
+                            </select>
                         </div>
                         <div className="space-y-2">
                             <Label>İlçe</Label>
-                            <Input name="district" required placeholder="Örn: Kadıköy" onChange={handleChange} />
+                            <select
+                                name="district"
+                                required
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-ring"
+                                onChange={handleChange}
+                                value={formData.district}
+                            >
+                                <option value="">İlçe Seçin</option>
+                                {availableDistricts.sort().map(dist => (
+                                    <option key={dist} value={dist}>{dist}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
                     <div className="space-y-2">
                         <Label>Açık Adres</Label>
-                        <Input name="address" required placeholder="Tam adres..." onChange={handleChange} />
+                        <Input name="address" required placeholder="Tam adres..." onChange={handleChange} value={formData.address} />
                     </div>
 
                     <div className="grid grid-cols-2 gap-6 relative">
@@ -216,11 +298,11 @@ export default function NewStaticPanelPage() {
                     <div className="grid grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <Label>Genişlik (m)</Label>
-                            <Input name="width" type="number" step="0.1" required placeholder="10" onChange={handleChange} />
+                            <Input name="width" type="number" step="0.1" required placeholder="10" onChange={handleChange} value={formData.width} />
                         </div>
                         <div className="space-y-2">
                             <Label>Yükseklik (m)</Label>
-                            <Input name="height" type="number" step="0.1" required placeholder="5" onChange={handleChange} />
+                            <Input name="height" type="number" step="0.1" required placeholder="5" onChange={handleChange} value={formData.height} />
                         </div>
                         <div className="space-y-2">
                             <Label>Trafik Yoğunluğu</Label>
@@ -238,19 +320,96 @@ export default function NewStaticPanelPage() {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>Haftalık Fiyat (TL)</Label>
-                        <Input name="priceWeekly" type="number" required placeholder="15000" onChange={handleChange} />
+                    {/* Pricing Section - Updated for Daily Rental */}
+                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
+                        <h3 className="font-semibold text-sm text-slate-700">Fiyatlandırma & Kiralama Tipi</h3>
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label>Haftalık Fiyat (TL)</Label>
+                                <Input
+                                    name="priceWeekly"
+                                    type="number"
+                                    required
+                                    placeholder="15000"
+                                    onChange={handleChange}
+                                    value={formData.priceWeekly}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        name="isDailyRentable"
+                                        checked={formData.isDailyRentable}
+                                        onChange={handleChange}
+                                        className="w-4 h-4 text-blue-600 rounded"
+                                    />
+                                    Günlük Kiralanabilir
+                                </Label>
+                                {formData.isDailyRentable ? (
+                                    <Input
+                                        name="priceDaily"
+                                        type="number"
+                                        required
+                                        placeholder="2500"
+                                        onChange={handleChange}
+                                        value={formData.priceDaily}
+                                    />
+                                ) : (
+                                    <div className="text-xs text-slate-500 pt-2">
+                                        Bu pano sadece haftalık kiralanabilir (Min 7 gün).
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Görsel URL</Label>
-                        <Input name="imageUrl" placeholder="https://..." onChange={handleChange} />
-                        <p className="text-xs text-slate-500">Şimdilik harici bir URL girin.</p>
+                        <Label>Pano Görseli</Label>
+
+                        {formData.imageUrl ? (
+                            <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
+                                <Image src={formData.imageUrl} alt="Panel" fill className="object-cover" />
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
+                                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={uploading}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                <div className="flex flex-col items-center gap-2 text-slate-500">
+                                    {uploading ? (
+                                        <>
+                                            <Loader2 className="w-8 h-8 animate-spin" />
+                                            <p>Yükleniyor...</p>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload className="w-8 h-8" />
+                                            <p>Görsel yüklemek için tıklayın veya sürükleyin</p>
+                                            <p className="text-xs text-slate-400">PNG, JPG (Max 10MB)</p>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                        <input type="hidden" name="imageUrl" value={formData.imageUrl} required />
                     </div>
 
                     <div className="pt-4">
-                        <Button type="submit" className="w-full" disabled={loading}>
+                        <Button type="submit" className="w-full" disabled={loading || uploading}>
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                             Panoyu Oluştur
                         </Button>
