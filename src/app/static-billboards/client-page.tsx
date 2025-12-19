@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
+import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import RentalWizard from "@/components/static/RentalWizard";
@@ -21,7 +21,9 @@ const Map = dynamic(() => import("@/components/domain/Map"), {
 export default function StaticBillboardsClient({ panels: initialPanels }: { panels: any[] }) {
     // Client component for static billboards page
     const searchParams = useSearchParams();
-    const [selectedCity, setSelectedCity] = useState("Tümü");
+    const [selectedCity, setSelectedCity] = useState("Kocaeli"); // Default to Kocaeli
+    const [panels, setPanels] = useState<any[]>(initialPanels);
+    const [isLoadingPanels, setIsLoadingPanels] = useState(false);
     const [selectedPanel, setSelectedPanel] = useState<any | null>(null);
     const [isRentalWizardOpen, setIsRentalWizardOpen] = useState(false);
     const [showFiltersOverlay, setShowFiltersOverlay] = useState(false);
@@ -39,7 +41,7 @@ export default function StaticBillboardsClient({ panels: initialPanels }: { pane
     });
 
     // Top cities for quick access
-    const topCities = ["Tümü", "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya", "Kocaeli"];
+    const topCities = ["Tümü", "Kocaeli", "Sakarya", "İstanbul", "Ankara", "İzmir", "Bursa", "Antalya"];
 
     // City coordinates for map zoom
     const cityCoordinates: Record<string, [number, number]> = {
@@ -49,25 +51,45 @@ export default function StaticBillboardsClient({ panels: initialPanels }: { pane
         "Bursa": [40.1826, 29.0665],
         "Antalya": [36.8969, 30.7133],
         "Kocaeli": [40.7654, 29.9404],
+        "Sakarya": [40.7569, 30.3781],
     };
 
     const handleCityClick = (city: string) => {
         setSelectedCity(city);
     };
 
+    // Fetch panels when city changes
+    useEffect(() => {
+        const fetchPanels = async () => {
+            setIsLoadingPanels(true);
+            try {
+                const res = await fetch(`/api/panels/by-city?city=${encodeURIComponent(selectedCity)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setPanels(data.panels);
+                }
+            } catch (error) {
+                console.error("Error fetching panels:", error);
+            } finally {
+                setIsLoadingPanels(false);
+            }
+        };
+
+        fetchPanels();
+    }, [selectedCity]);
+
     // Get center and zoom based on selected city
     const getMapConfig = () => {
         if (selectedCity !== "Tümü" && cityCoordinates[selectedCity]) {
             return { center: cityCoordinates[selectedCity], zoom: 12 };
         }
-        return { center: [41.0082, 28.9784] as [number, number], zoom: 6 };
+        return { center: [40.7654, 29.9404] as [number, number], zoom: 10 }; // Default to Kocaeli
     };
 
     const mapConfig = getMapConfig();
 
-    // Apply filters
-    const filteredPanels = initialPanels.filter(panel => {
-        if (selectedCity !== "Tümü" && panel.city !== selectedCity) return false;
+    // Apply filters (now using panels state instead of initialPanels)
+    const filteredPanels = panels.filter(panel => {
         const price = Number(panel.priceWeekly);
         if (price < filters.priceRange[0] || price > filters.priceRange[1]) return false;
         const area = Number(panel.width) * Number(panel.height);
@@ -340,6 +362,14 @@ export default function StaticBillboardsClient({ panels: initialPanels }: { pane
 
                 {/* Map */}
                 <div className="flex-1 relative z-10">
+                    {isLoadingPanels && (
+                        <div className="absolute inset-0 bg-white/70 z-20 flex items-center justify-center">
+                            <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
+                                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                                <span className="text-slate-600 font-medium">Panolar yükleniyor...</span>
+                            </div>
+                        </div>
+                    )}
                     <Map
                         panels={filteredPanels}
                         selectedPanel={selectedPanel}
