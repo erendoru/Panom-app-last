@@ -25,8 +25,13 @@ function LoadingFallback() {
 }
 
 export default async function StaticBillboardsPage() {
+    // Initial load: Kocaeli only for faster page load
+    // Other cities loaded on-demand via API
     const panels = await prisma.staticPanel.findMany({
-        where: { active: true },
+        where: {
+            active: true,
+            city: "Kocaeli"
+        },
         orderBy: { createdAt: "desc" },
     });
 
