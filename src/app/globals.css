@@ -92,3 +92,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Leaflet custom marker reset - fixes icon centering */
+.custom-panel-marker {
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.leaflet-marker-icon.custom-panel-marker {
+  margin: 0 !important;
+}
