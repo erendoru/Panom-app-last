@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { KeyRound, CheckCircle, Eye, EyeOff } from "lucide-react";
+import { translateAuthError } from "@/lib/auth-translations";
 
 export default function ResetPasswordPage() {
     const router = useRouter();
@@ -42,7 +43,7 @@ export default function ResetPasswordPage() {
             });
 
             if (error) {
-                setError("Şifre güncellenemedi: " + error.message);
+                setError("Şifre güncellenemedi: " + translateAuthError(error.message));
             } else {
                 setSuccess(true);
                 setTimeout(() => {

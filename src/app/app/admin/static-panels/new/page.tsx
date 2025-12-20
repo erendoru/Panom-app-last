@@ -5,15 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, Upload, X } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { TURKEY_DISTRICTS } from "@/lib/turkey-data";
-import Image from "next/image";
+import ImageUploader from "@/components/ImageUploader";
 
 export default function NewStaticPanelPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [uploading, setUploading] = useState(false);
 
     // Form Data
     const [formData, setFormData] = useState({
@@ -59,33 +58,6 @@ export default function NewStaticPanelPage() {
         }
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || !e.target.files[0]) return;
-
-        const file = e.target.files[0];
-        setUploading(true);
-
-        const data = new FormData();
-        data.append("file", file);
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: data
-            });
-
-            if (!res.ok) throw new Error("Upload failed");
-
-            const json = await res.json();
-            setFormData(prev => ({ ...prev, imageUrl: json.url }));
-        } catch (error) {
-            console.error("Upload error:", error);
-            alert("Görsel yüklenirken bir hata oluştu.");
-        } finally {
-            setUploading(false);
-        }
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -128,17 +100,17 @@ export default function NewStaticPanelPage() {
     };
 
     return (
-        <div className="p-8 max-w-3xl mx-auto">
+        <div className="p-4 md:p-8 max-w-3xl mx-auto">
             <Link href="/app/admin/static-panels" className="text-slate-500 hover:text-slate-900 flex items-center gap-2 mb-6">
                 <ArrowLeft className="w-4 h-4" />
                 Listeye Dön
             </Link>
 
-            <div className="bg-white p-8 rounded-xl border shadow-sm">
+            <div className="bg-white p-4 md:p-8 rounded-xl border shadow-sm">
                 <h1 className="text-2xl font-bold mb-6">Yeni Pano Ekle</h1>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-2">
                             <Label>Pano Adı</Label>
                             <Input name="name" required placeholder="Örn: Kadıköy Meydan Dev Billboard" onChange={handleChange} value={formData.name} />
@@ -167,7 +139,7 @@ export default function NewStaticPanelPage() {
                     </div>
 
                     {/* New Location & Grade Config */}
-                    <div className="grid grid-cols-2 gap-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
                         <div className="space-y-2">
                             <Label>Konum Tipi</Label>
                             <select
@@ -210,7 +182,7 @@ export default function NewStaticPanelPage() {
                         </div>
                     )}
 
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div className="space-y-2">
                             <Label>Şehir</Label>
                             <select
@@ -246,7 +218,7 @@ export default function NewStaticPanelPage() {
                         <Input name="address" required placeholder="Tam adres..." onChange={handleChange} value={formData.address} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-6 relative">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 relative">
                         <div className="space-y-2">
                             <Label>Enlem (Latitude)</Label>
                             <Input
@@ -295,7 +267,7 @@ export default function NewStaticPanelPage() {
                         </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
                         <div className="space-y-2">
                             <Label>Genişlik (m)</Label>
                             <Input name="width" type="number" step="0.1" required placeholder="10" onChange={handleChange} value={formData.width} />
@@ -324,7 +296,7 @@ export default function NewStaticPanelPage() {
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-4">
                         <h3 className="font-semibold text-sm text-slate-700">Fiyatlandırma & Kiralama Tipi</h3>
 
-                        <div className="grid grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                             <div className="space-y-2">
                                 <Label>Haftalık Fiyat (TL)</Label>
                                 <Input
@@ -368,48 +340,15 @@ export default function NewStaticPanelPage() {
 
                     <div className="space-y-2">
                         <Label>Pano Görseli</Label>
-
-                        {formData.imageUrl ? (
-                            <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
-                                <Image src={formData.imageUrl} alt="Panel" fill className="object-cover" />
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
-                                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    disabled={uploading}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                />
-                                <div className="flex flex-col items-center gap-2 text-slate-500">
-                                    {uploading ? (
-                                        <>
-                                            <Loader2 className="w-8 h-8 animate-spin" />
-                                            <p>Yükleniyor...</p>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Upload className="w-8 h-8" />
-                                            <p>Görsel yüklemek için tıklayın veya sürükleyin</p>
-                                            <p className="text-xs text-slate-400">PNG, JPG (Max 10MB)</p>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                        <input type="hidden" name="imageUrl" value={formData.imageUrl} required />
+                        <ImageUploader
+                            imageUrl={formData.imageUrl}
+                            onImageChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                            disabled={loading}
+                        />
                     </div>
 
                     <div className="pt-4">
-                        <Button type="submit" className="w-full" disabled={loading || uploading}>
+                        <Button type="submit" className="w-full" disabled={loading}>
                             {loading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                             Panoyu Oluştur
                         </Button>

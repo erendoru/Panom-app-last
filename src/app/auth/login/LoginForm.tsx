@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { translateAuthError } from "@/lib/auth-translations";
 
 export default function LoginForm() {
     const router = useRouter();

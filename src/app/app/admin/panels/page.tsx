@@ -107,15 +107,15 @@ export default function AdminPanelsPage() {
     const districts = selectedCity ? TURKEY_DISTRICTS[selectedCity] || [] : [];
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
+        <div className="min-h-screen bg-slate-50">
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 md:mb-8">
                     <div>
-                        <h1 className="text-3xl font-bold text-slate-900">Pano Yönetimi</h1>
-                        <p className="text-slate-600 mt-1">Tüm klasik panoları görüntüleyin ve yönetin</p>
+                        <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Pano Yönetimi</h1>
+                        <p className="text-slate-600 mt-1 text-sm md:text-base">Tüm klasik panoları görüntüleyin ve yönetin</p>
                     </div>
-                    <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Button asChild className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto">
                         <Link href="/app/admin/panels/new">
                             <Plus className="w-4 h-4 mr-2" />
                             Yeni Pano Ekle
@@ -124,13 +124,13 @@ export default function AdminPanelsPage() {
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-6 mb-6">
                     <div className="flex items-center gap-2 mb-4">
                         <Filter className="w-5 h-5 text-slate-600" />
                         <h2 className="text-lg font-semibold text-slate-900">Filtreler</h2>
                     </div>
 
-                    <div className="grid md:grid-cols-4 gap-4 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">İl</label>
                             <select
@@ -202,7 +202,7 @@ export default function AdminPanelsPage() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid md:grid-cols-4 gap-4 mb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
                     <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
                         <p className="text-sm text-slate-600">Toplam Pano</p>
                         <p className="text-2xl font-bold text-slate-900">{panels.length}</p>
@@ -238,104 +238,170 @@ export default function AdminPanelsPage() {
                             <p className="text-slate-600">Pano bulunamadı</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full">
-                                <thead className="bg-slate-50 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Pano Adı
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Tür
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Lokasyon
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Ölçü
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Fiyat/Hafta
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Trafik
-                                        </th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            Durum
-                                        </th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
-                                            İşlemler
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-slate-200">
-                                    {panels.map((panel) => (
-                                        <tr key={panel.id} className="hover:bg-slate-50">
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="flex items-center">
-                                                    <div>
-                                                        <div className="text-sm font-medium text-slate-900">{panel.name}</div>
-                                                        {panel.isAVM && (
-                                                            <div className="text-xs text-purple-600">🏬 {panel.avmName}</div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
-                                                    {PANEL_TYPE_LABELS[panel.type]}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="text-sm text-slate-900">{panel.city}, {panel.district}</div>
-                                                <div className="text-xs text-slate-500 flex items-center gap-1">
-                                                    <MapPin className="w-3 h-3" />
-                                                    {panel.address.substring(0, 30)}...
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
-                                                {panel.width}m × {panel.height}m
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
-                                                ₺{Number(panel.priceWeekly).toLocaleString('tr-TR')}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 py-1 text-xs font-medium rounded ${TRAFFIC_LEVEL_COLORS[panel.trafficLevel]}`}>
-                                                    {TRAFFIC_LEVEL_LABELS[panel.trafficLevel]}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                {panel.active ? (
-                                                    <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
-                                                        Aktif
-                                                    </span>
-                                                ) : (
-                                                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
-                                                        Pasif
-                                                    </span>
-                                                )}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <div className="flex items-center justify-end gap-2">
-                                                    <Link
-                                                        href={`/app/admin/panels/${panel.id}/edit`}
-                                                        className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-blue-600 hover:text-blue-700 transition-colors"
-                                                    >
-                                                        <Pencil className="w-4 h-4" />
-                                                    </Link>
-                                                    <button
-                                                        onClick={() => handleDelete(panel.id)}
-                                                        className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-red-600 hover:text-red-700 transition-colors"
-                                                    >
-                                                        <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
+                        <>
+                            {/* Desktop Table */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <table className="w-full">
+                                    <thead className="bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Pano Adı
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Tür
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Lokasyon
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Ölçü
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Fiyat/Hafta
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Trafik
+                                            </th>
+                                            <th className="px-6 py-3 text-left text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                Durum
+                                            </th>
+                                            <th className="px-6 py-3 text-right text-xs font-medium text-slate-700 uppercase tracking-wider">
+                                                İşlemler
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-slate-200">
+                                        {panels.map((panel) => (
+                                            <tr key={panel.id} className="hover:bg-slate-50">
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <div className="flex items-center">
+                                                        <div>
+                                                            <div className="text-sm font-medium text-slate-900">{panel.name}</div>
+                                                            {panel.isAVM && (
+                                                                <div className="text-xs text-purple-600">🏬 {panel.avmName}</div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                                                        {PANEL_TYPE_LABELS[panel.type]}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="text-sm text-slate-900">{panel.city}, {panel.district}</div>
+                                                    <div className="text-xs text-slate-500 flex items-center gap-1">
+                                                        <MapPin className="w-3 h-3" />
+                                                        {panel.address.substring(0, 30)}...
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
+                                                    {panel.width}m × {panel.height}m
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">
+                                                    ₺{Number(panel.priceWeekly).toLocaleString('tr-TR')}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    <span className={`px-2 py-1 text-xs font-medium rounded ${TRAFFIC_LEVEL_COLORS[panel.trafficLevel]}`}>
+                                                        {TRAFFIC_LEVEL_LABELS[panel.trafficLevel]}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                    {panel.active ? (
+                                                        <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
+                                                            Aktif
+                                                        </span>
+                                                    ) : (
+                                                        <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
+                                                            Pasif
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        <Link
+                                                            href={`/app/admin/panels/${panel.id}/edit`}
+                                                            className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-blue-600 hover:text-blue-700 transition-colors"
+                                                        >
+                                                            <Pencil className="w-4 h-4" />
+                                                        </Link>
+                                                        <button
+                                                            onClick={() => handleDelete(panel.id)}
+                                                            className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-red-600 hover:text-red-700 transition-colors"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Mobile Cards */}
+                            <div className="md:hidden divide-y divide-slate-200">
+                                {panels.map((panel) => (
+                                    <div key={panel.id} className="p-4 space-y-3">
+                                        <div className="flex items-start justify-between">
+                                            <div>
+                                                <h3 className="font-medium text-slate-900">{panel.name}</h3>
+                                                {panel.isAVM && (
+                                                    <p className="text-xs text-purple-600">🏬 {panel.avmName}</p>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Link
+                                                    href={`/app/admin/panels/${panel.id}/edit`}
+                                                    className="p-2 rounded-md border border-slate-300 bg-white text-blue-600"
+                                                >
+                                                    <Pencil className="w-4 h-4" />
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDelete(panel.id)}
+                                                    className="p-2 rounded-md border border-slate-300 bg-white text-red-600"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-2">
+                                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+                                                {PANEL_TYPE_LABELS[panel.type]}
+                                            </span>
+                                            <span className={`px-2 py-1 text-xs font-medium rounded ${TRAFFIC_LEVEL_COLORS[panel.trafficLevel]}`}>
+                                                {TRAFFIC_LEVEL_LABELS[panel.trafficLevel]}
+                                            </span>
+                                            {panel.active ? (
+                                                <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
+                                                    Aktif
+                                                </span>
+                                            ) : (
+                                                <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
+                                                    Pasif
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-2 text-sm">
+                                            <div>
+                                                <p className="text-slate-500">Lokasyon</p>
+                                                <p className="text-slate-900">{panel.city}, {panel.district}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-500">Ölçü</p>
+                                                <p className="text-slate-900">{panel.width}m × {panel.height}m</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-500">Fiyat/Hafta</p>
+                                                <p className="font-medium text-slate-900">₺{Number(panel.priceWeekly).toLocaleString('tr-TR')}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </>
                     )}
                 </div>
             </div>

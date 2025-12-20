@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { translateAuthError } from "@/lib/auth-translations";
 
 export default function RegisterForm() {
     const router = useRouter();
@@ -23,6 +24,7 @@ export default function RegisterForm() {
     });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [registrationSuccess, setRegistrationSuccess] = useState(false);
     const supabase = createClientComponentClient();
 
     // If coming from rental flow, show a message
@@ -56,7 +58,7 @@ export default function RegisterForm() {
             });
 
             if (authError) {
-                setError(authError.message);
+                setError(translateAuthError(authError.message));
                 setLoading(false);
                 return;
             }
@@ -78,21 +80,25 @@ export default function RegisterForm() {
                 console.error("Profile sync failed");
             }
 
+            // Show success message
+            setRegistrationSuccess(true);
+
             // Check if there's a pending rental in localStorage
             const pendingRental = localStorage.getItem('pendingRental');
 
-            // Redirect to original page or dashboard
-            if (redirectTo && resumeRental && pendingRental) {
-                // If coming from rental flow, redirect to static-billboards with resumeRental param
-                window.location.href = redirectTo + '?resumeRental=true';
-            } else if (redirectTo) {
-                window.location.href = redirectTo;
-            } else if (role === "ADVERTISER") {
-                router.push("/app/advertiser/dashboard");
-            } else {
-                router.push("/app/owner/dashboard");
-            }
-            router.refresh();
+            // Wait 3 seconds then redirect
+            setTimeout(() => {
+                if (redirectTo && resumeRental && pendingRental) {
+                    window.location.href = redirectTo + '?resumeRental=true';
+                } else if (redirectTo) {
+                    window.location.href = redirectTo;
+                } else if (role === "ADVERTISER") {
+                    router.push("/app/advertiser/dashboard");
+                } else {
+                    router.push("/app/owner/dashboard");
+                }
+                router.refresh();
+            }, 3000);
 
         } catch (err) {
             setError("Bir hata oluştu.");
@@ -100,6 +106,33 @@ export default function RegisterForm() {
             setLoading(false);
         }
     };
+
+    // Success message screen
+    if (registrationSuccess) {
+        return (
+            <div className="space-y-6 text-center py-8">
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <div>
+                    <h2 className="text-2xl font-bold text-slate-900">Tebrikler! 🎉</h2>
+                    <p className="text-slate-600 mt-2">Hesabınız başarıyla oluşturuldu.</p>
+                </div>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                        <strong>{formData.email}</strong> adresine bir onay maili gönderdik.
+                        <br />
+                        Lütfen mail kutunuzu kontrol edin ve hesabınızı doğrulayın.
+                    </p>
+                </div>
+                <p className="text-sm text-slate-500">
+                    Birkaç saniye içinde yönlendirileceksiniz...
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">

@@ -21,16 +21,16 @@ export default function AdminStaticPanelsPage() {
             .finally(() => setLoading(false));
     }, []);
 
-    if (loading) return <div className="p-8">Yükleniyor...</div>;
+    if (loading) return <div className="p-4 md:p-8">Yükleniyor...</div>;
 
     return (
-        <div className="p-8">
-            <div className="flex justify-between items-center mb-8">
+        <div>
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-6 md:mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900">Klasik Panolar</h1>
-                    <p className="text-slate-500">Platformdaki tüm statik billboardları yönetin.</p>
+                    <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Klasik Panolar</h1>
+                    <p className="text-slate-500 text-sm md:text-base">Platformdaki tüm statik billboardları yönetin.</p>
                 </div>
-                <Button asChild>
+                <Button asChild className="w-full sm:w-auto">
                     <Link href="/app/admin/static-panels/new">
                         <Plus className="w-4 h-4 mr-2" />
                         Yeni Pano Ekle
@@ -39,7 +39,8 @@ export default function AdminStaticPanelsPage() {
             </div>
 
             <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
-                <table className="w-full text-left text-sm">
+                {/* Desktop Table */}
+                <table className="hidden md:table w-full text-left text-sm">
                     <thead className="bg-slate-50 border-b">
                         <tr>
                             <th className="p-4 font-medium text-slate-500">Görsel</th>
@@ -108,6 +109,56 @@ export default function AdminStaticPanelsPage() {
                         )}
                     </tbody>
                 </table>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden divide-y">
+                    {panels.length === 0 ? (
+                        <div className="p-8 text-center text-slate-500">
+                            Henüz hiç pano eklenmemiş.
+                        </div>
+                    ) : (
+                        panels.map((panel) => (
+                            <Link
+                                key={panel.id}
+                                href={`/app/admin/static-panels/${panel.id}`}
+                                className="block p-4 hover:bg-slate-50 transition-colors"
+                            >
+                                <div className="flex gap-4">
+                                    <div className="w-20 h-14 rounded bg-slate-200 overflow-hidden flex-shrink-0">
+                                        {panel.imageUrl && (
+                                            <img src={panel.imageUrl} alt="" className="w-full h-full object-cover" />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium text-slate-900 truncate">{panel.name}</h3>
+                                        <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
+                                            <MapPin className="w-3 h-3" />
+                                            {panel.district}, {panel.city}
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-2 mt-2">
+                                            <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-semibold border border-blue-100">
+                                                {panel.type}
+                                            </span>
+                                            {panel.active ? (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                    Aktif
+                                                </span>
+                                            ) : (
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
+                                                    Pasif
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="text-right flex-shrink-0">
+                                        <p className="font-semibold text-slate-900">{formatCurrency(Number(panel.priceWeekly))}</p>
+                                        <p className="text-xs text-slate-500">/ hafta</p>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

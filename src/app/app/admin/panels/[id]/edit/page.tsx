@@ -5,8 +5,8 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, Upload, X, Loader2 } from 'lucide-react';
-import Image from 'next/image';
+import { ArrowLeft, Save } from 'lucide-react';
+import ImageUploader from '@/components/ImageUploader';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -31,7 +31,6 @@ export default function EditPanelPage() {
     const params = useParams();
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
-    const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         type: 'BILLBOARD',
@@ -111,33 +110,6 @@ export default function EditPanelPage() {
 
     const [error, setError] = useState('');
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || !e.target.files[0]) return;
-
-        const file = e.target.files[0];
-        setUploading(true);
-
-        const data = new FormData();
-        data.append("file", file);
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: data
-            });
-
-            if (!res.ok) throw new Error("Upload failed");
-
-            const json = await res.json();
-            setFormData(prev => ({ ...prev, imageUrl: json.url }));
-        } catch (error) {
-            console.error("Upload error:", error);
-            alert("Görsel yüklenirken bir hata oluştu.");
-        } finally {
-            setUploading(false);
-        }
-    };
-
     // ... (existing code)
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -174,14 +146,14 @@ export default function EditPanelPage() {
 
     if (fetching) {
         return (
-            <div className="min-h-screen bg-slate-50 p-8 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-50 p-4 md:p-8 flex items-center justify-center">
                 <p className="text-slate-600">Yükleniyor...</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8">
+        <div className="min-h-screen bg-slate-50 p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
                     <Button asChild variant="outline" className="mb-4">
@@ -200,11 +172,11 @@ export default function EditPanelPage() {
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 space-y-8">
+                <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-8 space-y-6 md:space-y-8">
                     {/* Same form fields as create page */}
                     <div>
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">Temel Bilgiler</h2>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
                                     Pano Adı <span className="text-red-500">*</span>
@@ -414,44 +386,11 @@ export default function EditPanelPage() {
                     {/* Pano Görseli */}
                     <div>
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">Pano Görseli</h2>
-                        <div className="space-y-4">
-                            {formData.imageUrl ? (
-                                <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
-                                    <Image src={formData.imageUrl} alt="Panel" fill className="object-cover" />
-                                    <button
-                                        type="button"
-                                        onClick={() => setFormData(prev => ({ ...prev, imageUrl: "" }))}
-                                        className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-md hover:bg-red-600"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:bg-slate-50 transition-colors relative">
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        disabled={uploading}
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                    />
-                                    <div className="flex flex-col items-center gap-2 text-slate-500">
-                                        {uploading ? (
-                                            <>
-                                                <Loader2 className="w-8 h-8 animate-spin" />
-                                                <p>Yükleniyor...</p>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Upload className="w-8 h-8" />
-                                                <p>Görsel yüklemek için tıklayın veya sürükleyin</p>
-                                                <p className="text-xs text-slate-400">PNG, JPG (Max 10MB)</p>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <ImageUploader
+                            imageUrl={formData.imageUrl}
+                            onImageChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                            disabled={loading}
+                        />
                     </div>
 
                     {/* Availability Calendar */}
@@ -463,7 +402,7 @@ export default function EditPanelPage() {
                         />
                     </div>
 
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <Button
                             type="submit"
                             disabled={loading}
