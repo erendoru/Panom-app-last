@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 
@@ -21,14 +22,18 @@ const staggerContainer = {
 };
 
 export default function LandingPage() {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
         <div className="min-h-screen flex flex-col bg-black text-white selection:bg-blue-500 selection:text-white overflow-x-hidden">
             {/* Navigation */}
             <header className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-lg border-b border-white/10">
-                <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+                <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
                     <Link href="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                         Panobu
                     </Link>
+
+                    {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-8">
                         <Link href="/static-billboards" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                             Klasik Panolar
@@ -40,15 +45,70 @@ export default function LandingPage() {
                             Nasıl Çalışır?
                         </Link>
                     </nav>
-                    <div className="flex items-center gap-4">
-                        <Link href="/auth/login" className="text-sm font-medium text-white hover:text-blue-400 transition-colors">
+
+                    <div className="flex items-center gap-3 md:gap-4">
+                        <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-white hover:text-blue-400 transition-colors">
                             Giriş Yap
                         </Link>
-                        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6">
+                        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 md:px-6 text-sm">
                             <Link href="/auth/register">Hemen Başla</Link>
                         </Button>
+
+                        {/* Mobile Menu Button */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                            aria-label="Toggle menu"
+                        >
+                            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
                     </div>
                 </div>
+
+                {/* Mobile Menu Dropdown */}
+                <AnimatePresence>
+                    {isMobileMenuOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="md:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
+                        >
+                            <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+                                <Link
+                                    href="/static-billboards"
+                                    className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Klasik Panolar
+                                </Link>
+                                <Link
+                                    href="/screens"
+                                    className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Dijital Billboard
+                                </Link>
+                                <Link
+                                    href="/how-it-works"
+                                    className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Nasıl Çalışır?
+                                </Link>
+                                <div className="border-t border-white/10 mt-2 pt-4">
+                                    <Link
+                                        href="/auth/login"
+                                        className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors block"
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        Giriş Yap
+                                    </Link>
+                                </div>
+                            </nav>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </header>
 
             <main className="flex-1">
