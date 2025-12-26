@@ -8,11 +8,20 @@ import { Button } from "@/components/ui/button";
 
 interface PublicLayoutProps {
     children: React.ReactNode;
-    activeLink?: "klasik" | "dijital" | "nasil";
+    activeLink?: "anasayfa" | "klasik" | "dijital" | "nasil" | "blog" | "yenilikler";
 }
 
 export default function PublicLayout({ children, activeLink }: PublicLayoutProps) {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    const navLinks = [
+        { href: "/", label: "Anasayfa", key: "anasayfa" },
+        { href: "/static-billboards", label: "Klasik Panolar", key: "klasik" },
+        { href: "/screens", label: "Dijital Billboard", key: "dijital" },
+        { href: "/how-it-works", label: "Nasıl Çalışır?", key: "nasil" },
+        { href: "/blog", label: "Blog", key: "blog" },
+        { href: "/updates", label: "Yenilikler", key: "yenilikler" },
+    ];
 
     return (
         <div className="min-h-screen flex flex-col bg-black text-white">
@@ -24,25 +33,16 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-8">
-                        <Link
-                            href="/static-billboards"
-                            className={`text-sm font-medium transition-colors ${activeLink === "klasik" ? "text-white" : "text-slate-300 hover:text-white"}`}
-                        >
-                            Klasik Panolar
-                        </Link>
-                        <Link
-                            href="/screens"
-                            className={`text-sm font-medium transition-colors ${activeLink === "dijital" ? "text-white" : "text-slate-300 hover:text-white"}`}
-                        >
-                            Dijital Billboard
-                        </Link>
-                        <Link
-                            href="/how-it-works"
-                            className={`text-sm font-medium transition-colors ${activeLink === "nasil" ? "text-white" : "text-slate-300 hover:text-white"}`}
-                        >
-                            Nasıl Çalışır?
-                        </Link>
+                    <nav className="hidden lg:flex items-center gap-6">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.key}
+                                href={link.href}
+                                className={`text-sm font-medium transition-colors ${activeLink === link.key ? "text-white" : "text-slate-300 hover:text-white"}`}
+                            >
+                                {link.label}
+                            </Link>
+                        ))}
                     </nav>
 
                     <div className="flex items-center gap-3 md:gap-4">
@@ -56,7 +56,7 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                         {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="md:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
                             aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -71,30 +71,19 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="md:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
+                            className="lg:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
                         >
                             <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
-                                <Link
-                                    href="/static-billboards"
-                                    className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${activeLink === "klasik" ? "text-white bg-white/10" : "text-slate-300 hover:text-white hover:bg-white/10"}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Klasik Panolar
-                                </Link>
-                                <Link
-                                    href="/screens"
-                                    className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${activeLink === "dijital" ? "text-white bg-white/10" : "text-slate-300 hover:text-white hover:bg-white/10"}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Dijital Billboard
-                                </Link>
-                                <Link
-                                    href="/how-it-works"
-                                    className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${activeLink === "nasil" ? "text-white bg-white/10" : "text-slate-300 hover:text-white hover:bg-white/10"}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                    Nasıl Çalışır?
-                                </Link>
+                                {navLinks.map((link) => (
+                                    <Link
+                                        key={link.key}
+                                        href={link.href}
+                                        className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${activeLink === link.key ? "text-white bg-white/10" : "text-slate-300 hover:text-white hover:bg-white/10"}`}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                ))}
                                 <div className="border-t border-white/10 mt-2 pt-4">
                                     <Link
                                         href="/auth/login"
@@ -158,9 +147,8 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                             <ul className="space-y-4 text-slate-400">
                                 <li><Link href="/company/about" className="hover:text-white transition-colors">Hakkımızda</Link></li>
                                 <li><Link href="/company/careers" className="hover:text-white transition-colors">Kariyer</Link></li>
-                                <li><Link href="/company/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                                <li><Link href="/company/programmatic" className="hover:text-white transition-colors">Programatik Reklamcılık Merkezi</Link></li>
-                                <li><Link href="/company/outdoor-center" className="hover:text-white transition-colors">Açık Hava Reklam Merkezi</Link></li>
+                                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+                                <li><Link href="/updates" className="hover:text-white transition-colors">Yenilikler</Link></li>
                                 <li><Link href="/company/help" className="hover:text-white transition-colors">Yardım Merkezi</Link></li>
                                 <li><Link href="/company/privacy" className="hover:text-white transition-colors">Gizlilik Politikası</Link></li>
                             </ul>

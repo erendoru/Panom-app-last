@@ -271,34 +271,34 @@ export default function NewPanelPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Genişlik (m) <span className="text-red-500">*</span>
+                                    Genişlik <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     name="width"
                                     value={formData.width}
                                     onChange={handleChange}
                                     required
-                                    placeholder="Örn: 5"
+                                    placeholder="Örn: 5m veya 150cm"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                                <p className="text-xs text-slate-500 mt-1">metre (m) veya santimetre (cm) olarak girebilirsiniz</p>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Yükseklik (m) <span className="text-red-500">*</span>
+                                    Yükseklik <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     name="height"
                                     value={formData.height}
                                     onChange={handleChange}
                                     required
-                                    placeholder="Örn: 3"
+                                    placeholder="Örn: 3m veya 200cm"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                                <p className="text-xs text-slate-500 mt-1">metre (m) veya santimetre (cm) olarak girebilirsiniz</p>
                             </div>
 
                             <div>

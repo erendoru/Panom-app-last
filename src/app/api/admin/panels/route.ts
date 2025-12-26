@@ -5,6 +5,27 @@ export const dynamic = 'force-dynamic'; // Fix for Vercel build error
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
+// Helper function to parse dimension string to meters
+function parseDimension(value: string | number): number {
+    if (typeof value === 'number') return value;
+
+    const str = String(value).toLowerCase().trim();
+
+    // Check for cm suffix
+    if (str.endsWith('cm')) {
+        const num = parseFloat(str.replace('cm', '').trim());
+        return num / 100; // Convert cm to m
+    }
+
+    // Check for m suffix
+    if (str.endsWith('m')) {
+        return parseFloat(str.replace('m', '').trim());
+    }
+
+    // No suffix, assume meters
+    return parseFloat(str);
+}
+
 // GET: Fetch all panels with optional filtering (Admin only)
 export async function GET(req: NextRequest) {
     const session = await getSession();
@@ -76,44 +97,48 @@ export async function POST(req: NextRequest) {
             estimatedDailyImpressions,
             trafficLevel,
             imageUrl,
-            active
+            active,
+            isDraft // For quick add feature
         } = body;
 
-        // Validation
-        if (!name || !type || !city || !district || !address || !latitude || !longitude || !width || !height || !priceWeekly) {
-            return NextResponse.json(
-                { error: 'Missing required fields' },
-                { status: 400 }
-            );
-        }
+        // Skip validation for draft panels (quick add)
+        if (!isDraft) {
+            // Validation
+            if (!name || !type || !city || !district || !address || !latitude || !longitude || !width || !height || !priceWeekly) {
+                return NextResponse.json(
+                    { error: 'Missing required fields' },
+                    { status: 400 }
+                );
+            }
 
-        if (isAVM && !avmName) {
-            return NextResponse.json(
-                { error: 'AVM name is required when isAVM is true' },
-                { status: 400 }
-            );
+            if (isAVM && !avmName) {
+                return NextResponse.json(
+                    { error: 'AVM name is required when isAVM is true' },
+                    { status: 400 }
+                );
+            }
         }
 
         const panel = await prisma.staticPanel.create({
             data: {
-                name,
-                type,
+                name: name || 'Taslak Pano',
+                type: type || 'BILLBOARD',
                 subType: subType || null,
-                city,
-                district,
-                address,
-                latitude: parseFloat(String(latitude)),
-                longitude: parseFloat(String(longitude)),
-                width: parseFloat(String(width)),
-                height: parseFloat(String(height)),
-                priceWeekly: parseFloat(String(priceWeekly)),
+                city: city || '',
+                district: district || '',
+                address: address || '',
+                latitude: latitude ? parseFloat(String(latitude)) : 0,
+                longitude: longitude ? parseFloat(String(longitude)) : 0,
+                width: width ? parseDimension(width) : 0,
+                height: height ? parseDimension(height) : 0,
+                priceWeekly: priceWeekly ? parseFloat(String(priceWeekly)) : 0,
                 priceDaily: priceDaily ? parseFloat(String(priceDaily)) : null,
                 isAVM: Boolean(isAVM),
                 avmName: avmName || null,
                 estimatedDailyImpressions: estimatedDailyImpressions ? parseInt(String(estimatedDailyImpressions)) : 0,
                 trafficLevel: trafficLevel || 'MEDIUM',
                 imageUrl: imageUrl || null,
-                active: active !== undefined ? Boolean(active) : true,
+                active: isDraft ? false : (active !== undefined ? Boolean(active) : true),
                 blockedDates: [] // Initialize empty blocked dates array
             }
         });

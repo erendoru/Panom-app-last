@@ -34,7 +34,10 @@ export default function LandingPage() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center gap-8">
+                    <nav className="hidden lg:flex items-center gap-6">
+                        <Link href="/" className="text-sm font-medium text-white transition-colors">
+                            Anasayfa
+                        </Link>
                         <Link href="/static-billboards" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                             Klasik Panolar
                         </Link>
@@ -43,6 +46,12 @@ export default function LandingPage() {
                         </Link>
                         <Link href="/how-it-works" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                             Nasıl Çalışır?
+                        </Link>
+                        <Link href="/blog" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                            Blog
+                        </Link>
+                        <Link href="/updates" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                            Yenilikler
                         </Link>
                     </nav>
 
@@ -72,9 +81,16 @@ export default function LandingPage() {
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="md:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
+                            className="lg:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
                         >
                             <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
+                                <Link
+                                    href="/"
+                                    className="text-base font-medium text-white py-3 px-4 rounded-lg bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Anasayfa
+                                </Link>
                                 <Link
                                     href="/static-billboards"
                                     className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
@@ -95,6 +111,20 @@ export default function LandingPage() {
                                     onClick={() => setIsMobileMenuOpen(false)}
                                 >
                                     Nasıl Çalışır?
+                                </Link>
+                                <Link
+                                    href="/blog"
+                                    className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Blog
+                                </Link>
+                                <Link
+                                    href="/updates"
+                                    className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                    Yenilikler
                                 </Link>
                                 <div className="border-t border-white/10 mt-2 pt-4">
                                     <Link

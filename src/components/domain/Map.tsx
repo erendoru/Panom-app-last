@@ -8,16 +8,28 @@ import { formatCurrency } from "@/lib/utils";
 import { renderToStaticMarkup } from "react-dom/server";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 // Component to handle map view updates
 function MapController({ center, zoom }: { center: [number, number], zoom: number }) {
     const map = useMap();
+    const prevCenterRef = useRef<[number, number] | null>(null);
+
     useEffect(() => {
-        map.flyTo(center, zoom, {
-            duration: 1.5
-        });
+        // Only fly if center coordinates have actually changed (city change)
+        const prevCenter = prevCenterRef.current;
+        const centerChanged = !prevCenter ||
+            prevCenter[0] !== center[0] ||
+            prevCenter[1] !== center[1];
+
+        if (centerChanged) {
+            map.flyTo(center, zoom, {
+                duration: 1.5
+            });
+            prevCenterRef.current = center;
+        }
     }, [center, zoom, map]);
+
     return null;
 }
 

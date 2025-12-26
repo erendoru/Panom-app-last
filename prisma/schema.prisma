@@ -288,3 +288,28 @@ model StaticRental {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
+
+// Blog Posts
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?
+  imageUrl    String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Site Updates / Changelog
+model Update {
+  id          String   @id @default(uuid())
+  title       String
+  content     String   @db.Text
+  category    String   // "Kampanya Başlatma", "Erişilebilirlik", "Raporlama ve Analiz", "Genel"
+  imageUrl    String?
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

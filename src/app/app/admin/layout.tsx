@@ -11,7 +11,9 @@ import {
     LayoutGrid,
     CalendarDays,
     Menu,
-    X
+    X,
+    FileText,
+    Sparkles
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -40,6 +42,8 @@ export default function AdminLayout({
         { href: "/app/admin/availability", label: "Müsaitlik", icon: CalendarDays },
         { href: "/app/admin/users", label: "Kullanıcılar", icon: Users },
         { href: "/app/admin/screens", label: "Tüm Ekranlar", icon: Monitor },
+        { href: "/app/admin/blog", label: "Blog", icon: FileText },
+        { href: "/app/admin/updates", label: "Yenilikler", icon: Sparkles },
     ];
 
     return (
