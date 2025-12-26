@@ -30,11 +30,11 @@ export default function LandingPage() {
                         Panobu
                     </Link>
                     <nav className="hidden md:flex items-center gap-8">
-                        <Link href="/screens" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-                            Ekranlar
-                        </Link>
                         <Link href="/static-billboards" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                             Klasik Panolar
+                        </Link>
+                        <Link href="/screens" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
+                            Dijital Billboard
                         </Link>
                         <Link href="/how-it-works" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                             Nasıl Çalışır?
