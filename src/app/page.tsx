@@ -67,11 +67,11 @@ export default function LandingPage() {
                                 className="w-full h-full object-cover rounded-2xl"
                             />
 
-                            {/* Floating Elements (Badge) */}
+                            {/* Floating Elements (Badge) - Hidden on mobile */}
                             <motion.div
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                className="absolute -right-6 md:-right-20 top-10 md:top-1/4 bg-slate-800/90 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl z-20"
+                                className="hidden md:flex absolute -right-20 top-1/4 bg-slate-800/90 backdrop-blur-md p-4 rounded-xl border border-white/10 shadow-2xl z-20"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
@@ -88,7 +88,7 @@ export default function LandingPage() {
                 </section>
 
                 {/* Stats Section */}
-                <section className="py-20 border-y border-white/5 bg-white/5 backdrop-blur-sm">
+                <section className="pt-10 md:pt-20 pb-20 border-y border-white/5 bg-white/5 backdrop-blur-sm relative z-10">
                     <div className="container mx-auto px-4">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                             {[
@@ -320,24 +320,24 @@ export default function LandingPage() {
                                 <motion.div
                                     animate={{ y: [0, -8, 0] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                                    className="absolute bottom-12 left-8 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full shadow-xl flex items-center gap-2 z-10"
+                                    className="absolute bottom-4 md:bottom-12 left-4 md:left-8 bg-white/90 backdrop-blur-md px-3 md:px-5 py-2 md:py-3 rounded-full shadow-xl flex items-center gap-2 z-10"
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
-                                        <Zap className="w-4 h-4 text-blue-600" />
+                                    <div className="w-5 md:w-6 h-5 md:h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                                        <Zap className="w-3 md:w-4 h-3 md:h-4 text-blue-600" />
                                     </div>
-                                    <span className="font-bold text-slate-800">Kolay & Hızlı</span>
+                                    <span className="font-bold text-slate-800 text-sm md:text-base">Kolay & Hızlı</span>
                                 </motion.div>
 
-                                {/* Badge 3: Center Right - Trusted Price */}
+                                {/* Badge 3: Bottom Right - Trusted Price */}
                                 <motion.div
                                     animate={{ y: [0, -12, 0] }}
                                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                                    className="absolute bottom-24 right-8 bg-white/90 backdrop-blur-md px-5 py-3 rounded-full shadow-xl flex items-center gap-2 z-10"
+                                    className="absolute bottom-16 md:bottom-24 right-4 md:right-8 bg-white/90 backdrop-blur-md px-3 md:px-5 py-2 md:py-3 rounded-full shadow-xl flex items-center gap-2 z-10"
                                 >
-                                    <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
-                                        <ShieldCheck className="w-4 h-4 text-purple-600" />
+                                    <div className="w-5 md:w-6 h-5 md:h-6 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <ShieldCheck className="w-3 md:w-4 h-3 md:h-4 text-purple-600" />
                                     </div>
-                                    <span className="font-bold text-slate-800">Güvenilir & Şeffaf</span>
+                                    <span className="font-bold text-slate-800 text-sm md:text-base">Güvenilir & Şeffaf</span>
                                 </motion.div>
                             </motion.div>
                         </div>
