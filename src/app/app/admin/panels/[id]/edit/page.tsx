@@ -173,7 +173,37 @@ export default function EditPanelPage() {
                 )}
 
                 <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-8 space-y-6 md:space-y-8">
-                    {/* Same form fields as create page */}
+
+                    {/* Durum - En üstte ve belirgin */}
+                    <div className={`p-4 rounded-xl border-2 ${formData.active ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-300'}`}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-lg font-bold text-slate-900">Pano Durumu</h2>
+                                <p className={`text-sm ${formData.active ? 'text-green-700' : 'text-yellow-700'}`}>
+                                    {formData.active ? '✓ Pano sitede görünür durumda' : '⚠ Pano taslak/pasif durumda'}
+                                </p>
+                            </div>
+                            <label className="flex items-center gap-3 cursor-pointer">
+                                <span className={`text-sm font-medium ${formData.active ? 'text-green-700' : 'text-slate-500'}`}>
+                                    {formData.active ? 'Aktif' : 'Pasif'}
+                                </span>
+                                <div className="relative">
+                                    <input
+                                        type="checkbox"
+                                        name="active"
+                                        checked={formData.active}
+                                        onChange={handleChange}
+                                        className="sr-only"
+                                    />
+                                    <div className={`w-14 h-8 rounded-full transition-colors ${formData.active ? 'bg-green-500' : 'bg-slate-300'}`}>
+                                        <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${formData.active ? 'translate-x-7' : 'translate-x-1'}`} />
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Temel Bilgiler */}
                     <div>
                         <h2 className="text-lg font-semibold text-slate-900 mb-4">Temel Bilgiler</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -210,6 +240,26 @@ export default function EditPanelPage() {
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Alt Tür (Opsiyonel)
+                                </label>
+                                <input
+                                    type="text"
+                                    name="subType"
+                                    value={formData.subType}
+                                    onChange={handleChange}
+                                    placeholder="Örn: İçmekan, Dışmekan, Işıklı"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Lokasyon */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Lokasyon Bilgileri</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
                                     İl <span className="text-red-500">*</span>
                                 </label>
                                 <select
@@ -226,7 +276,7 @@ export default function EditPanelPage() {
                                 </select>
                             </div>
 
-                            <div className="md:col-span-2">
+                            <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
                                     İlçe <span className="text-red-500">*</span>
                                 </label>
@@ -305,35 +355,43 @@ export default function EditPanelPage() {
                                     height="400px"
                                 />
                             </div>
+                        </div>
+                    </div>
 
+                    {/* Ölçüler ve Fiyat */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Ölçüler ve Fiyatlandırma</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Genişlik (m) <span className="text-red-500">*</span>
+                                    Genişlik <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     name="width"
                                     value={formData.width}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Örn: 5m veya 150cm"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                                <p className="text-xs text-slate-500 mt-1">metre (m) veya santimetre (cm) olarak girebilirsiniz</p>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Yükseklik (m) <span className="text-red-500">*</span>
+                                    Yükseklik <span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    type="number"
-                                    step="0.1"
+                                    type="text"
                                     name="height"
                                     value={formData.height}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Örn: 3m veya 200cm"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                                <p className="text-xs text-slate-500 mt-1">metre (m) veya santimetre (cm) olarak girebilirsiniz</p>
                             </div>
 
                             <div>
@@ -347,6 +405,60 @@ export default function EditPanelPage() {
                                     value={formData.priceWeekly}
                                     onChange={handleChange}
                                     required
+                                    placeholder="Örn: 15000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Günlük Fiyat (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="priceDaily"
+                                    value={formData.priceDaily}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 2500"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Minimum Kiralama Süresi <span className="text-red-500">*</span>
+                                </label>
+                                <select
+                                    name="minRentalDays"
+                                    value={formData.minRentalDays}
+                                    onChange={handleChange}
+                                    required
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="1">Günlük (1 gün)</option>
+                                    <option value="7">Haftalık (7 gün)</option>
+                                    <option value="14">2 Haftalık (14 gün)</option>
+                                    <option value="30">Aylık (30 gün)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Analytics */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">Analytics ve Trafik</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Tahmini Günlük Gösterim
+                                </label>
+                                <input
+                                    type="number"
+                                    name="estimatedDailyImpressions"
+                                    value={formData.estimatedDailyImpressions}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 50000"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
@@ -367,19 +479,40 @@ export default function EditPanelPage() {
                                     <option value="VERY_HIGH">Çok Yüksek Trafik</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="md:col-span-2">
-                                <label className="flex items-center space-x-2">
+                    {/* AVM */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-4">AVM Bilgileri</h2>
+                        <div className="space-y-4">
+                            <label className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    name="isAVM"
+                                    checked={formData.isAVM}
+                                    onChange={handleChange}
+                                    className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                                />
+                                <span className="text-sm text-slate-700">Bu pano bir AVM'de bulunuyor</span>
+                            </label>
+
+                            {formData.isAVM && (
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        AVM Adı <span className="text-red-500">*</span>
+                                    </label>
                                     <input
-                                        type="checkbox"
-                                        name="active"
-                                        checked={formData.active}
+                                        type="text"
+                                        name="avmName"
+                                        value={formData.avmName}
                                         onChange={handleChange}
-                                        className="w-4 h-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
+                                        required={formData.isAVM}
+                                        placeholder="Örn: Gebze Center AVM"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                     />
-                                    <span className="text-sm text-slate-700">Pano aktif</span>
-                                </label>
-                            </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

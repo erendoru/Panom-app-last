@@ -3,6 +3,27 @@ export const dynamic = 'force-dynamic';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
+// Helper function to parse dimension string to meters
+function parseDimension(value: string | number): number {
+    if (typeof value === 'number') return value;
+
+    const str = String(value).toLowerCase().trim();
+
+    // Check for cm suffix
+    if (str.endsWith('cm')) {
+        const num = parseFloat(str.replace('cm', '').trim());
+        return num / 100; // Convert cm to m
+    }
+
+    // Check for m suffix
+    if (str.endsWith('m')) {
+        return parseFloat(str.replace('m', '').trim());
+    }
+
+    // No suffix, assume meters
+    return parseFloat(str);
+}
+
 // GET: Fetch single panel (Admin only)
 export async function GET(
     req: NextRequest,
@@ -75,6 +96,7 @@ export async function PUT(
             height,
             priceWeekly,
             priceDaily,
+            minRentalDays,
             isAVM,
             avmName,
             estimatedDailyImpressions,
@@ -94,10 +116,11 @@ export async function PUT(
                 address,
                 latitude: parseFloat(String(latitude)),
                 longitude: parseFloat(String(longitude)),
-                width: parseFloat(String(width)),
-                height: parseFloat(String(height)),
+                width: parseDimension(width),
+                height: parseDimension(height),
                 priceWeekly: parseFloat(String(priceWeekly)),
                 priceDaily: priceDaily ? parseFloat(String(priceDaily)) : null,
+                minRentalDays: minRentalDays ? parseInt(String(minRentalDays)) : 7,
                 isAVM: Boolean(isAVM),
                 avmName: avmName || null,
                 estimatedDailyImpressions: estimatedDailyImpressions ? parseInt(String(estimatedDailyImpressions)) : 0,
