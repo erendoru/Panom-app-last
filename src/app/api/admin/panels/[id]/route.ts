@@ -105,25 +105,38 @@ export async function PUT(
             active
         } = body;
 
+        // Safe parse functions
+        const safeParseFloat = (val: any): number => {
+            if (val === null || val === undefined || val === '') return 0;
+            const parsed = parseFloat(String(val));
+            return isNaN(parsed) ? 0 : parsed;
+        };
+
+        const safeParseInt = (val: any, defaultVal: number = 0): number => {
+            if (val === null || val === undefined || val === '') return defaultVal;
+            const parsed = parseInt(String(val));
+            return isNaN(parsed) ? defaultVal : parsed;
+        };
+
         const panel = await prisma.staticPanel.update({
             where: { id: params.id },
             data: {
-                name,
-                type,
+                name: name || 'Taslak Pano',
+                type: type || 'BILLBOARD',
                 subType: subType || null,
-                city,
-                district,
-                address,
-                latitude: parseFloat(String(latitude)),
-                longitude: parseFloat(String(longitude)),
-                width: parseDimension(width),
-                height: parseDimension(height),
-                priceWeekly: parseFloat(String(priceWeekly)),
-                priceDaily: priceDaily ? parseFloat(String(priceDaily)) : null,
-                minRentalDays: minRentalDays ? parseInt(String(minRentalDays)) : 7,
+                city: city || '',
+                district: district || '',
+                address: address || '',
+                latitude: safeParseFloat(latitude),
+                longitude: safeParseFloat(longitude),
+                width: width ? parseDimension(width) : 0,
+                height: height ? parseDimension(height) : 0,
+                priceWeekly: safeParseFloat(priceWeekly),
+                priceDaily: priceDaily ? safeParseFloat(priceDaily) : null,
+                minRentalDays: safeParseInt(minRentalDays, 7),
                 isAVM: Boolean(isAVM),
                 avmName: avmName || null,
-                estimatedDailyImpressions: estimatedDailyImpressions ? parseInt(String(estimatedDailyImpressions)) : 0,
+                estimatedDailyImpressions: safeParseInt(estimatedDailyImpressions),
                 trafficLevel: trafficLevel || 'MEDIUM',
                 imageUrl: imageUrl || null,
                 active: active !== undefined ? Boolean(active) : true,

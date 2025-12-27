@@ -127,16 +127,18 @@ export default function EditPanelPage() {
 
             if (res.ok) {
                 console.log('Update successful');
-                router.refresh();
+                alert('Pano başarıyla güncellendi!');
                 router.push('/app/admin/panels');
             } else {
                 const data = await res.json();
                 console.error('Update failed:', data);
                 setError(data.error || 'Bir hata oluştu');
+                alert('Hata: ' + (data.error || 'Bir hata oluştu'));
             }
         } catch (error) {
             console.error('Error updating panel:', error);
             setError('Bir hata oluştu');
+            alert('Bir hata oluştu');
         } finally {
             setLoading(false);
         }
@@ -183,23 +185,18 @@ export default function EditPanelPage() {
                                     {formData.active ? '✓ Pano sitede görünür durumda' : '⚠ Pano taslak/pasif durumda'}
                                 </p>
                             </div>
-                            <label className="flex items-center gap-3 cursor-pointer">
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, active: !prev.active }))}
+                                className="flex items-center gap-3"
+                            >
                                 <span className={`text-sm font-medium ${formData.active ? 'text-green-700' : 'text-slate-500'}`}>
                                     {formData.active ? 'Aktif' : 'Pasif'}
                                 </span>
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        name="active"
-                                        checked={formData.active}
-                                        onChange={handleChange}
-                                        className="sr-only"
-                                    />
-                                    <div className={`w-14 h-8 rounded-full transition-colors ${formData.active ? 'bg-green-500' : 'bg-slate-300'}`}>
-                                        <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${formData.active ? 'translate-x-7' : 'translate-x-1'}`} />
-                                    </div>
+                                <div className={`relative w-14 h-8 rounded-full transition-colors ${formData.active ? 'bg-green-500' : 'bg-slate-300'}`}>
+                                    <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-transform ${formData.active ? 'translate-x-7' : 'translate-x-1'}`} />
                                 </div>
-                            </label>
+                            </button>
                         </div>
                     </div>
 
