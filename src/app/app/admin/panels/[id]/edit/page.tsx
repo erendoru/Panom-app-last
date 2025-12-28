@@ -571,11 +571,17 @@ export default function EditPanelPage() {
                         />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t">
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="bg-blue-600 hover:bg-blue-700"
+                            className="bg-blue-600 hover:bg-blue-700 touch-manipulation"
+                            onClick={(e) => {
+                                // Ensure form submits on mobile
+                                if (!loading) {
+                                    e.currentTarget.closest('form')?.requestSubmit();
+                                }
+                            }}
                         >
                             {loading ? 'Kaydediliyor...' : (
                                 <>
