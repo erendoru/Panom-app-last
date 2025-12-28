@@ -184,7 +184,7 @@ export default function LandingPage() {
                             {[
                                 { label: "Aktif Lokasyon", value: "100+" },
                                 { label: "Şehir", value: "81" },
-                                { label: "Reklam Formatı", value: "6+" },
+                                { label: "Reklam Formatı", value: "14+" },
                                 { label: "Fiyat", value: "En Uygun" },
                             ].map((stat, i) => (
                                 <motion.div

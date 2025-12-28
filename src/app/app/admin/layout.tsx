@@ -13,7 +13,9 @@ import {
     Menu,
     X,
     FileText,
-    Sparkles
+    Sparkles,
+    Zap,
+    ShoppingBag
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -38,7 +40,9 @@ export default function AdminLayout({
 
     const navItems = [
         { href: "/app/admin/dashboard", label: "Onay Bekleyenler", icon: ShieldCheck },
+        { href: "/app/admin/orders", label: "Siparişler", icon: ShoppingBag },
         { href: "/app/admin/panels", label: "Panolar", icon: LayoutGrid },
+        { href: "/app/admin/pricing-rules", label: "Fiyatlandırma", icon: Zap },
         { href: "/app/admin/availability", label: "Müsaitlik", icon: CalendarDays },
         { href: "/app/admin/users", label: "Kullanıcılar", icon: Users },
         { href: "/app/admin/screens", label: "Tüm Ekranlar", icon: Monitor },

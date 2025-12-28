@@ -258,9 +258,16 @@ model StaticPanel {
   estimatedDailyImpressions  Int            @default(0)
   trafficLevel               TrafficLevel   @default(MEDIUM)
   blockedDates               Json?          // Array of {startDate, endDate} objects
+  
+  // Pano Sahibi Bilgileri (Admin görür)
+  ownerName                  String?
+  ownerPhone                 String?
+  
   createdAt                  DateTime       @default(now())
   updatedAt                  DateTime       @updatedAt
   rentals                    StaticRental[]
+  cartItems                  CartItem[]
+  orderItems                 OrderItem[]
 
   @@map("static_panels")
 }
@@ -312,4 +319,114 @@ model Update {
   published   Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// Fiyatlandırma Kuralları (Toplu İndirimler)
+model PricingRule {
+  id              String   @id @default(uuid())
+  name            String   // "Kentvizyon CLP 20+ İndirimi"
+  
+  // Filtreler (hangi panolara uygulanır)
+  panelType       PanelType?  // null = tüm türler
+  ownerName       String?     // null = tüm sahipler
+  city            String?     // null = tüm şehirler
+  
+  // Kural
+  minQuantity     Int         // Minimum adet
+  
+  // İndirim (biri doldurulur)
+  discountPercent Float?      // %25 gibi
+  fixedUnitPrice  Float?      // 1500 TL gibi (birim başı sabit fiyat)
+  
+  priority        Int         @default(0)  // Yüksek = öncelikli
+  active          Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("pricing_rules")
+}
+
+// Sepet Öğeleri
+model CartItem {
+  id          String      @id @default(uuid())
+  
+  // Sahiplik
+  userId      String?     // Giriş yapmış kullanıcı
+  sessionId   String      // Misafir için localStorage session ID
+  
+  // İçerik
+  panelId     String
+  panel       StaticPanel @relation(fields: [panelId], references: [id])
+  startDate   DateTime?   // Sepet sayfasında seçilecek
+  endDate     DateTime?
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([sessionId])
+  @@index([userId])
+  @@map("cart_items")
+}
+
+// Sipariş Durumları
+enum OrderStatus {
+  PENDING      // Beklemede
+  REVIEWING    // İnceleniyor
+  APPROVED     // Onaylandı
+  IN_PROGRESS  // Üretimde
+  COMPLETED    // Tamamlandı
+  CANCELLED    // İptal
+}
+
+// Siparişler
+model Order {
+  id              String       @id @default(uuid())
+  orderNumber     String       @unique  // ORD-2024-001
+  status          OrderStatus  @default(PENDING)
+  
+  // Kampanya
+  campaignName    String
+  startDate       DateTime
+  endDate         DateTime
+  
+  // İletişim
+  contactName     String
+  contactPhone    String
+  contactEmail    String
+  companyName     String?
+  notes           String?      @db.Text
+  
+  // Görseller
+  hasOwnCreatives Boolean      @default(false)
+  needsDesignHelp Boolean      @default(false)
+  
+  // İlişkiler
+  userId          String?
+  items           OrderItem[]
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("orders")
+}
+
+// Sipariş Kalemleri
+model OrderItem {
+  id          String      @id @default(uuid())
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  panelId     String
+  panel       StaticPanel @relation(fields: [panelId], references: [id])
+  
+  startDate   DateTime
+  endDate     DateTime
+  weeklyPrice Float
+  
+  // Görsel
+  creativeUrl String?     // Yüklenen görsel
+  
+  createdAt   DateTime    @default(now())
+
+  @@map("order_items")
 }

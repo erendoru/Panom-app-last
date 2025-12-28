@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, Calendar, CheckCircle2, Navigation } from "lucide-react";
+import { X, MapPin, Calendar, CheckCircle2, Navigation, ShoppingCart, Loader2 } from "lucide-react";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { formatCurrency } from "@/lib/utils";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
@@ -13,7 +14,59 @@ interface PanelDetailSidebarProps {
     onRent: () => void;
 }
 
+// Get or create session ID
+function getSessionId(): string {
+    if (typeof window === 'undefined') return '';
+
+    let sessionId = localStorage.getItem('cart_session_id');
+    if (!sessionId) {
+        sessionId = `sess_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        localStorage.setItem('cart_session_id', sessionId);
+    }
+    return sessionId;
+}
+
 export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: PanelDetailSidebarProps) {
+    const [cartLoading, setCartLoading] = useState(false);
+    const [addedToCart, setAddedToCart] = useState(false);
+    const [cartError, setCartError] = useState<string | null>(null);
+
+    const handleAddToCart = async () => {
+        if (!panel?.id) {
+            setCartError('Pano bilgisi bulunamadı');
+            return;
+        }
+
+        setCartError(null);
+        setCartLoading(true);
+
+        try {
+            const sessionId = getSessionId();
+            const res = await fetch('/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-session-id': sessionId
+                },
+                body: JSON.stringify({ panelId: panel.id, sessionId })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setCartError(data.error || 'Bir hata oluştu');
+            } else {
+                setAddedToCart(true);
+                setTimeout(() => setAddedToCart(false), 3000);
+            }
+        } catch (error) {
+            console.error('Cart error:', error);
+            setCartError('Bağlantı hatası');
+        } finally {
+            setCartLoading(false);
+        }
+    };
+
     if (!panel) return null;
 
     return (
@@ -157,11 +210,30 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
 
             {/* Footer Actions */}
             <div className="p-4 border-t bg-white safe-padding-bottom">
-                <Button onClick={onRent} className="w-full text-lg h-12" size="lg">
-                    📅 Hemen Kirala
-                </Button>
-                <p className="text-xs text-center text-slate-400 mt-3">
-                    Güvenli ödeme ve anında rezervasyon onayı
+                <div className="flex gap-2 mb-2">
+                    <Button
+                        onClick={handleAddToCart}
+                        variant="outline"
+                        className={`flex-1 h-12 border-2 ${addedToCart ? 'border-green-500 text-green-600 bg-green-50' : 'border-blue-500 text-blue-600 hover:bg-blue-50'}`}
+                        disabled={cartLoading || addedToCart}
+                    >
+                        {cartLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : addedToCart ? (
+                            <><CheckCircle2 className="w-5 h-5 mr-2" /> Sepete Eklendi!</>
+                        ) : (
+                            <><ShoppingCart className="w-5 h-5 mr-2" /> Sepete Ekle</>
+                        )}
+                    </Button>
+                    <Button onClick={onRent} className="flex-1 text-lg h-12" size="lg">
+                        📅 Hemen Kirala
+                    </Button>
+                </div>
+                {cartError && (
+                    <p className="text-xs text-red-500 text-center mb-2">{cartError}</p>
+                )}
+                <p className="text-xs text-center text-slate-400">
+                    Toplu kiralama için sepete ekleyin • İndirim fırsatları sepette!
                 </p>
             </div>
         </div>

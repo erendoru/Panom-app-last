@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import prisma from "@/lib/prisma";
 import StaticBillboardsClient from "./client-page";
 import { Suspense } from "react";
+import HeaderCartIcon from "@/components/HeaderCartIcon";
 
 import { Metadata } from "next";
 
@@ -44,7 +45,7 @@ export default async function StaticBillboardsPage() {
                         Ana Sayfa
                     </Link>
                     <h1 className="text-xl font-bold text-slate-900">Klasik Panolar</h1>
-                    <div className="w-20"></div> {/* Spacer */}
+                    <HeaderCartIcon />
                 </div>
             </header>
 
@@ -54,3 +55,4 @@ export default async function StaticBillboardsPage() {
         </div>
     );
 }
+

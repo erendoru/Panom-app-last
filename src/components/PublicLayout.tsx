@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Menu, X, Globe, Twitter, Instagram, Linkedin } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { CartProvider } from "@/contexts/CartContext";
+import CartIcon from "@/components/CartIcon";
 
 interface PublicLayoutProps {
     children: React.ReactNode;
@@ -46,6 +48,7 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                     </nav>
 
                     <div className="flex items-center gap-3 md:gap-4">
+                        <CartIcon />
                         <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-white hover:text-blue-400 transition-colors">
                             Giriş Yap
                         </Link>

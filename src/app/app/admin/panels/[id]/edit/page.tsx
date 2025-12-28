@@ -51,6 +51,8 @@ export default function EditPanelPage() {
         trafficLevel: 'MEDIUM',
         imageUrl: '',
         active: true,
+        ownerName: '',
+        ownerPhone: '',
         blockedDates: [] as BlockedDateRange[]
     });
 
@@ -83,6 +85,8 @@ export default function EditPanelPage() {
                 trafficLevel: data.trafficLevel || 'MEDIUM',
                 imageUrl: data.imageUrl || '',
                 active: data.active !== undefined ? data.active : true,
+                ownerName: data.ownerName || '',
+                ownerPhone: data.ownerPhone || '',
                 blockedDates: (data.blockedDates as BlockedDateRange[]) || []
             });
         } catch (error) {
@@ -510,6 +514,41 @@ export default function EditPanelPage() {
                                     />
                                 </div>
                             )}
+                        </div>
+                    </div>
+
+                    {/* Pano Sahibi Bilgileri (Sadece Admin görür) */}
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                        <h2 className="text-lg font-semibold text-slate-900 mb-2">🔒 Pano Sahibi Bilgileri</h2>
+                        <p className="text-xs text-yellow-700 mb-4">Bu bilgiler sadece admin panelinde görünür, müşteriler göremez.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Pano Sahibi Adı
+                                </label>
+                                <input
+                                    type="text"
+                                    name="ownerName"
+                                    value={formData.ownerName}
+                                    onChange={handleChange}
+                                    placeholder="Örn: Kentvizyon"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <p className="text-xs text-slate-500 mt-1">İndirim kuralları için kullanılır</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Pano Sahibi Telefonu
+                                </label>
+                                <input
+                                    type="text"
+                                    name="ownerPhone"
+                                    value={formData.ownerPhone}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 0532 123 4567"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
                         </div>
                     </div>
 

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2 } from "lucide-react";
+import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2, ShoppingCart } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import RentalWizard from "@/components/static/RentalWizard";
@@ -11,6 +11,8 @@ import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import PanelDetailSidebar from "@/components/static/PanelDetailSidebar";
 import { useSearchParams } from "next/navigation";
+import { CartProvider, useCart } from "@/contexts/CartContext";
+import Link from "next/link";
 
 // Dynamically import Map to avoid SSR issues
 const Map = dynamic(() => import("@/components/domain/Map"), {
@@ -18,9 +20,11 @@ const Map = dynamic(() => import("@/components/domain/Map"), {
     loading: () => <div className="w-full h-full bg-slate-100 animate-pulse flex items-center justify-center text-slate-400">Harita Yükleniyor...</div>
 });
 
-export default function StaticBillboardsClient({ panels: initialPanels }: { panels: any[] }) {
+// Cart-wrapped inner component
+function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     // Client component for static billboards page
     const searchParams = useSearchParams();
+    const { count: cartCount } = useCart();
     const [selectedCity, setSelectedCity] = useState("Kocaeli"); // Default to Kocaeli
     const [panels, setPanels] = useState<any[]>(initialPanels);
     const [isLoadingPanels, setIsLoadingPanels] = useState(false);
@@ -389,5 +393,14 @@ export default function StaticBillboardsClient({ panels: initialPanels }: { pane
                 />
             )}
         </div>
+    );
+}
+
+// Export with CartProvider wrapper
+export default function StaticBillboardsClient({ panels }: { panels: any[] }) {
+    return (
+        <CartProvider>
+            <StaticBillboardsContent panels={panels} />
+        </CartProvider>
     );
 }

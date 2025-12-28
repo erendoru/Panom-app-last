@@ -102,7 +102,9 @@ export async function PUT(
             estimatedDailyImpressions,
             trafficLevel,
             imageUrl,
-            active
+            active,
+            ownerName,
+            ownerPhone
         } = body;
 
         // Safe parse functions
@@ -140,6 +142,8 @@ export async function PUT(
                 trafficLevel: trafficLevel || 'MEDIUM',
                 imageUrl: imageUrl || null,
                 active: active !== undefined ? Boolean(active) : true,
+                ownerName: ownerName || null,
+                ownerPhone: ownerPhone || null,
                 blockedDates: body.blockedDates || undefined
             }
         });
