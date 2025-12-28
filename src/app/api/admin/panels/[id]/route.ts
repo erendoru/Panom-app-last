@@ -123,9 +123,9 @@ export async function PUT(
         const panel = await prisma.staticPanel.update({
             where: { id: params.id },
             data: {
-                name: name || 'Taslak Pano',
+                name: name || '',
                 type: type || 'BILLBOARD',
-                subType: subType || null,
+                subType: subType || '',
                 city: city || '',
                 district: district || '',
                 address: address || '',
@@ -134,17 +134,17 @@ export async function PUT(
                 width: width ? parseDimension(width) : 0,
                 height: height ? parseDimension(height) : 0,
                 priceWeekly: safeParseFloat(priceWeekly),
-                priceDaily: priceDaily ? safeParseFloat(priceDaily) : null,
+                priceDaily: safeParseFloat(priceDaily),
                 minRentalDays: safeParseInt(minRentalDays, 7),
                 isAVM: Boolean(isAVM),
-                avmName: avmName || null,
+                avmName: avmName || '',
                 estimatedDailyImpressions: safeParseInt(estimatedDailyImpressions),
                 trafficLevel: trafficLevel || 'MEDIUM',
-                imageUrl: imageUrl || null,
+                imageUrl: imageUrl || '',
                 active: active !== undefined ? Boolean(active) : true,
-                ownerName: ownerName || null,
-                ownerPhone: ownerPhone || null,
-                blockedDates: body.blockedDates || undefined
+                ownerName: ownerName || '',
+                ownerPhone: ownerPhone || '',
+                blockedDates: body.blockedDates || []
             }
         });
 
@@ -188,15 +188,27 @@ export async function DELETE(
             );
         }
 
+        // Delete related cart items first
+        await prisma.cartItem.deleteMany({
+            where: { panelId: params.id }
+        });
+
+        // Delete related order items first
+        await prisma.orderItem.deleteMany({
+            where: { panelId: params.id }
+        });
+
+        // Now delete the panel
         await prisma.staticPanel.delete({
             where: { id: params.id }
         });
 
         return NextResponse.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error deleting panel:', error);
+        console.error('Error details:', error.message);
         return NextResponse.json(
-            { error: 'Failed to delete panel' },
+            { error: 'Failed to delete panel', details: error.message },
             { status: 500 }
         );
     }

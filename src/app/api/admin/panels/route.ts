@@ -121,9 +121,9 @@ export async function POST(req: NextRequest) {
 
         const panel = await prisma.staticPanel.create({
             data: {
-                name: name || 'Taslak Pano',
+                name: name || '',
                 type: type || 'BILLBOARD',
-                subType: subType || null,
+                subType: subType || '',
                 city: city || '',
                 district: district || '',
                 address: address || '',
@@ -132,13 +132,13 @@ export async function POST(req: NextRequest) {
                 width: width ? parseDimension(width) : 0,
                 height: height ? parseDimension(height) : 0,
                 priceWeekly: priceWeekly ? parseFloat(String(priceWeekly)) : 0,
-                priceDaily: priceDaily ? parseFloat(String(priceDaily)) : null,
+                priceDaily: priceDaily ? parseFloat(String(priceDaily)) : 0,
                 isAVM: Boolean(isAVM),
-                avmName: avmName || null,
+                avmName: avmName || '',
                 estimatedDailyImpressions: estimatedDailyImpressions ? parseInt(String(estimatedDailyImpressions)) : 0,
                 trafficLevel: trafficLevel || 'MEDIUM',
-                imageUrl: imageUrl || null,
-                active: isDraft ? false : (active !== undefined ? Boolean(active) : true),
+                imageUrl: imageUrl || '',
+                active: isDraft ? true : (active !== undefined ? Boolean(active) : true), // Quick add is also active
                 blockedDates: [] // Initialize empty blocked dates array
             }
         });

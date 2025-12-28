@@ -210,7 +210,7 @@ export default function EditPanelPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Pano Adı <span className="text-red-500">*</span>
+                                    Pano Adı
                                 </label>
                                 <input
                                     type="text"
@@ -224,7 +224,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Pano Türü <span className="text-red-500">*</span>
+                                    Pano Türü
                                 </label>
                                 <select
                                     name="type"
@@ -261,7 +261,7 @@ export default function EditPanelPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    İl <span className="text-red-500">*</span>
+                                    İl
                                 </label>
                                 <select
                                     name="city"
@@ -279,7 +279,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    İlçe <span className="text-red-500">*</span>
+                                    İlçe
                                 </label>
                                 <select
                                     name="district"
@@ -297,7 +297,7 @@ export default function EditPanelPage() {
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Adres <span className="text-red-500">*</span>
+                                    Adres
                                 </label>
                                 <textarea
                                     name="address"
@@ -311,7 +311,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Enlem (Latitude) <span className="text-red-500">*</span>
+                                    Enlem (Latitude)
                                 </label>
                                 <input
                                     type="number"
@@ -326,7 +326,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Boylam (Longitude) <span className="text-red-500">*</span>
+                                    Boylam (Longitude)
                                 </label>
                                 <input
                                     type="number"
@@ -365,7 +365,7 @@ export default function EditPanelPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Genişlik <span className="text-red-500">*</span>
+                                    Genişlik
                                 </label>
                                 <input
                                     type="text"
@@ -381,7 +381,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Yükseklik <span className="text-red-500">*</span>
+                                    Yükseklik
                                 </label>
                                 <input
                                     type="text"
@@ -397,7 +397,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Haftalık Fiyat (₺) <span className="text-red-500">*</span>
+                                    Haftalık Fiyat (₺)
                                 </label>
                                 <input
                                     type="number"
@@ -428,7 +428,7 @@ export default function EditPanelPage() {
 
                             <div className="md:col-span-2">
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Minimum Kiralama Süresi <span className="text-red-500">*</span>
+                                    Minimum Kiralama Süresi
                                 </label>
                                 <select
                                     name="minRentalDays"
@@ -501,7 +501,7 @@ export default function EditPanelPage() {
                             {formData.isAVM && (
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                                        AVM Adı <span className="text-red-500">*</span>
+                                        AVM Adı
                                     </label>
                                     <input
                                         type="text"

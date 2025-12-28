@@ -91,14 +91,22 @@ export default function QuickAddPanelPage() {
                     latitude: coordinates.lat,
                     longitude: coordinates.lng,
                     imageUrl: imageUrl,
-                    isDraft: true
+                    isDraft: true,
+                    // Varsayılan değerler - haritada görünmesi için gerekli
+                    city: 'Kocaeli',
+                    district: 'Körfez',
+                    name: '',
+                    type: 'BILLBOARD',
+                    width: 0,
+                    height: 0,
+                    priceWeekly: 0,
+                    active: true
                 })
             });
 
             if (res.ok) {
-                const panel = await res.json();
-                alert('Taslak pano başarıyla oluşturuldu! Düzenleme sayfasına yönlendiriliyorsunuz.');
-                router.push(`/app/admin/panels/${panel.id}/edit`);
+                alert('Pano başarıyla eklendi! Haritada görüntülenecek.');
+                router.push('/app/admin/panels');
             } else {
                 const data = await res.json();
                 alert(data.error || 'Bir hata oluştu');
@@ -215,18 +223,18 @@ export default function QuickAddPanelPage() {
 
                 {/* Step 3: Confirm */}
                 <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-6 ${!imageUrl ? 'opacity-50 pointer-events-none' : ''}`}>
-                    <h2 className="text-lg font-semibold mb-4">3. Taslak Oluştur</h2>
+                    <h2 className="text-lg font-semibold mb-4">3. Panoyu Ekle</h2>
 
                     {coordinates && imageUrl && (
                         <div className="mb-4 p-4 bg-slate-50 rounded-lg">
-                            <p className="text-sm text-slate-600 mb-2">Oluşturulacak taslak pano:</p>
+                            <p className="text-sm text-slate-600 mb-2">Eklenecek pano:</p>
                             <ul className="text-sm space-y-1">
                                 <li>📍 Konum: {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}</li>
                                 <li>📸 Fotoğraf: Yüklendi</li>
-                                <li>📝 Durum: Taslak (pasif)</li>
+                                <li>✅ Durum: Aktif (haritada görünecek)</li>
                             </ul>
                             <p className="text-xs text-slate-500 mt-3">
-                                * Diğer bilgileri düzenleme sayfasından doldurabilirsiniz
+                                * Diğer bilgileri daha sonra düzenleme sayfasından doldurabilirsiniz
                             </p>
                         </div>
                     )}
@@ -239,12 +247,12 @@ export default function QuickAddPanelPage() {
                         {loading ? (
                             <>
                                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Oluşturuluyor...
+                                Ekleniyor...
                             </>
                         ) : (
                             <>
                                 <CheckCircle className="w-4 h-4 mr-2" />
-                                Taslak Pano Oluştur
+                                Pano Ekle
                             </>
                         )}
                     </Button>
