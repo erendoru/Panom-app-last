@@ -34,8 +34,8 @@ export default function CartIcon() {
 
         fetchCartCount();
 
-        // Poll for updates every 10 seconds
-        const interval = setInterval(fetchCartCount, 10000);
+        // Poll for updates every 60 seconds (reduced for mobile performance)
+        const interval = setInterval(fetchCartCount, 60000);
         return () => clearInterval(interval);
     }, []);
 
