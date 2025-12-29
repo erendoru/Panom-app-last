@@ -96,8 +96,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     const filteredPanels = panels.filter(panel => {
         const price = Number(panel.priceWeekly);
         if (price < filters.priceRange[0] || price > filters.priceRange[1]) return false;
-        const area = Number(panel.width) * Number(panel.height);
-        if (area < filters.sizeRange[0] || area > filters.sizeRange[1]) return false;
+        // Size filter removed - all sizes allowed
         if (filters.panelTypes.length > 0 && !filters.panelTypes.includes(panel.type)) return false;
         if (filters.trafficLevels.length > 0 && !filters.trafficLevels.includes(panel.trafficLevel)) return false;
         if (filters.isAVM !== null && panel.isAVM !== filters.isAVM) return false;
@@ -108,8 +107,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         (filters.panelTypes.length > 0 ? 1 : 0) +
         (filters.trafficLevels.length > 0 ? 1 : 0) +
         (filters.isAVM !== null ? 1 : 0) +
-        (filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 1 : 0) +
-        (filters.sizeRange[0] > 0 || filters.sizeRange[1] < 100 ? 1 : 0);
+        (filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 1 : 0);
 
     // Toggle panel type filter
     const togglePanelType = (type: string) => {
