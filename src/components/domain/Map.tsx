@@ -1,6 +1,7 @@
 "use client";
 
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Button } from "@/components/ui/button";
@@ -52,6 +53,16 @@ function createCustomIcon(panelType: string, isSelected: boolean) {
     });
 }
 
+// Custom cluster icon
+function createClusterCustomIcon(cluster: any) {
+    const count = cluster.getChildCount();
+    return L.divIcon({
+        html: `<div class="cluster-icon">${count}</div>`,
+        className: 'custom-cluster-marker',
+        iconSize: L.point(40, 40, true),
+    });
+}
+
 export default function Map({
     panels,
     selectedPanel,
@@ -66,64 +77,111 @@ export default function Map({
     zoom?: number
 }) {
     return (
-        <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
-            <MapController center={center} zoom={zoom} />
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-            />
-            {panels.map((panel) => (
-                <Marker
-                    key={panel.id}
-                    position={[panel.latitude, panel.longitude]}
-                    icon={createCustomIcon(panel.type, selectedPanel?.id === panel.id)}
-                    eventHandlers={{
-                        click: () => {
-                            onPanelSelect?.(panel);
-                        },
+        <>
+            <style jsx global>{`
+                .custom-cluster-marker {
+                    background: transparent !important;
+                    border: none !important;
+                }
+                .cluster-icon {
+                    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                    color: white;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 14px;
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+                    border: 3px solid white;
+                }
+                .cluster-icon:hover {
+                    transform: scale(1.1);
+                    transition: transform 0.2s;
+                }
+            `}</style>
+            <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
+                <MapController center={center} zoom={zoom} />
+                <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                />
+                <MarkerClusterGroup
+                    chunkedLoading
+                    iconCreateFunction={createClusterCustomIcon}
+                    maxClusterRadius={50}
+                    spiderfyOnMaxZoom={false}
+                    showCoverageOnHover={false}
+                    zoomToBoundsOnClick={false}
+                    disableClusteringAtZoom={16}
+                    spiderLegPolylineOptions={{ weight: 1.5, color: '#3b82f6', opacity: 0.5 }}
+                    animate={true}
+                    removeOutsideVisibleBounds={false}
+                    spiderfyDistanceMultiplier={2}
+                    onClick={(e: any) => {
+                        // Force spiderfy on any cluster click
+                        if (e.layer && e.layer.spiderfy) {
+                            e.layer.spiderfy();
+                        }
                     }}
-                    zIndexOffset={selectedPanel?.id === panel.id ? 1000 : 0}
                 >
-                    <Popup className="min-w-[250px]">
-                        <div className="p-1">
-                            <img
-                                src={panel.imageUrl || "https://images.unsplash.com/photo-1637606346315-d353ec6d3c81?q=80&w=2000&auto=format&fit=crop"}
-                                alt={panel.name}
-                                className="w-full h-32 object-cover rounded mb-2"
-                            />
+                    {panels.map((panel) => (
+                        <Marker
+                            key={panel.id}
+                            position={[panel.latitude, panel.longitude]}
+                            icon={createCustomIcon(panel.type, selectedPanel?.id === panel.id)}
+                            eventHandlers={{
+                                click: () => {
+                                    onPanelSelect?.(panel);
+                                },
+                            }}
+                            zIndexOffset={selectedPanel?.id === panel.id ? 1000 : 0}
+                        >
+                            <Popup className="min-w-[250px]">
+                                <div className="p-1">
+                                    <img
+                                        src={panel.imageUrl || "https://images.unsplash.com/photo-1637606346315-d353ec6d3c81?q=80&w=2000&auto=format&fit=crop"}
+                                        alt={panel.name}
+                                        className="w-full h-32 object-cover rounded mb-2"
+                                    />
 
-                            {/* Panel Type Badge */}
-                            <div className="flex items-center gap-2 mb-2 p-2 bg-slate-50 rounded">
-                                <PanelTypeIcon type={panel.type} size={20} />
-                                <span className="text-xs font-semibold">{PANEL_TYPE_LABELS[panel.type] || panel.type}</span>
-                            </div>
+                                    {/* Panel Type Badge */}
+                                    <div className="flex items-center gap-2 mb-2 p-2 bg-slate-50 rounded">
+                                        <PanelTypeIcon type={panel.type} size={20} />
+                                        <span className="text-xs font-semibold">{PANEL_TYPE_LABELS[panel.type] || panel.type}</span>
+                                    </div>
 
-                            <h3 className="font-bold text-base mb-1">{panel.name}</h3>
-                            <p className="text-sm text-slate-500 mb-2">{panel.district}, {panel.city}</p>
+                                    <h3 className="font-bold text-base mb-1">{panel.name || 'Pano'}</h3>
+                                    <p className="text-sm text-slate-500 mb-2">{panel.district}, {panel.city}</p>
 
-                            <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mb-3 bg-slate-50 p-2 rounded">
-                                <div>
-                                    <span className="block font-semibold">Boyut</span>
-                                    {Number(panel.width)}m x {Number(panel.height)}m
+                                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mb-3 bg-slate-50 p-2 rounded">
+                                        <div>
+                                            <span className="block font-semibold">Boyut</span>
+                                            {Number(panel.width)}m x {Number(panel.height)}m
+                                        </div>
+                                        <div>
+                                            <span className="block font-semibold">Fiyat (Haftalık)</span>
+                                            {formatCurrency(Number(panel.priceWeekly))}
+                                        </div>
+                                    </div>
+
+                                    {panel.isAVM && (
+                                        <div className="flex items-center gap-1 text-xs text-pink-600 mb-2">
+                                            <span>🏬</span>
+                                            <span className="font-medium">AVM İçi</span>
+                                        </div>
+                                    )}
+
+                                    <Button size="sm" className="w-full mt-2" onClick={() => onPanelSelect?.(panel)}>Detayları Gör</Button>
                                 </div>
-                                <div>
-                                    <span className="block font-semibold">Fiyat (Haftalık)</span>
-                                    {formatCurrency(Number(panel.priceWeekly))}
-                                </div>
-                            </div>
-
-                            {panel.isAVM && (
-                                <div className="flex items-center gap-1 text-xs text-pink-600 mb-2">
-                                    <span>🏬</span>
-                                    <span className="font-medium">AVM İçi</span>
-                                </div>
-                            )}
-
-                            <Button size="sm" className="w-full mt-2" onClick={() => onPanelSelect?.(panel)}>Detayları Gör</Button>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
-        </MapContainer>
+                            </Popup>
+                        </Marker>
+                    ))}
+                </MarkerClusterGroup>
+            </MapContainer>
+        </>
     );
 }
+
