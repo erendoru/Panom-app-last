@@ -481,7 +481,7 @@ export default function LandingPage() {
                                 Hemen ücretsiz hesabınızı oluşturun ve ilk kampanyanızı bugün başlatın.
                             </p>
                             <Button asChild size="lg" className="h-16 px-10 text-xl bg-white text-black hover:bg-slate-200 rounded-full">
-                                <Link href="/auth/register">
+                                <Link href="/static-billboards">
                                     Şimdi Başla - Ücretsiz
                                 </Link>
                             </Button>
