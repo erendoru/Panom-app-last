@@ -171,166 +171,265 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         setIsRentalWizardOpen(true);
     };
 
+    // Mobile filter collapsed state
+    const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
     return (
         <div className="flex-1 flex flex-col overflow-hidden h-[calc(100vh-80px)]">
             {/* Top Filter Bar */}
-            <div className="bg-white border-b shadow-sm z-20 px-4 py-3">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                    {/* Left Side: City & Quick Filters */}
-                    <div className="flex items-center gap-2 flex-wrap flex-1">
+            <div className="bg-white border-b shadow-sm z-20">
+                {/* Mobile: Compact Header */}
+                <div className="md:hidden px-4 py-2">
+                    <div className="flex items-center justify-between">
+                        {/* Selected City Badge & Toggle */}
+                        <button
+                            onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
+                            className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200"
+                        >
+                            <MapPin className="w-4 h-4 text-blue-600" />
+                            <span className="font-medium text-blue-700">{selectedCity}</span>
+                            <ChevronDown className={`w-4 h-4 text-blue-600 transition-transform ${mobileFiltersOpen ? 'rotate-180' : ''}`} />
+                        </button>
 
-                        {/* City Pills */}
-                        <div className="flex items-center gap-1 mr-4 flex-wrap">
-                            {topCities.map(city => (
-                                <button
-                                    key={city}
-                                    onClick={() => handleCityClick(city)}
-                                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCity === city
-                                        ? 'bg-blue-600 text-white shadow-md'
-                                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                                        }`}
-                                >
-                                    {city}
-                                </button>
-                            ))}
-                        </div>
+                        <div className="flex items-center gap-2">
+                            {/* Panel Count */}
+                            <span className="text-xs text-slate-500 font-medium">
+                                {filteredPanels.length} pano
+                            </span>
 
-                        {/* Separator */}
-                        <div className="h-6 w-px bg-slate-200 mx-1 hidden md:block"></div>
-
-                        {/* Panel Type Dropdown */}
-                        <div className="relative custom-dropdown">
-                            <button
-                                onClick={() => toggleDropdown('type')}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
-                                    }`}
+                            {/* Full Filters Button */}
+                            <Button
+                                variant={showFiltersOverlay ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setShowFiltersOverlay(!showFiltersOverlay)}
+                                className="relative"
                             >
-                                <span>Pano Tipi</span>
-                                {filters.panelTypes.length > 0 && (
-                                    <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
-                                        {filters.panelTypes.length}
+                                <SlidersHorizontal className="w-4 h-4" />
+                                {activeFilterCount > 0 && !showFiltersOverlay && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                                        {activeFilterCount}
                                     </span>
                                 )}
-                                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-                            </button>
-
-                            {openDropdown === 'type' && (
-                                <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="space-y-1 max-h-[300px] overflow-y-auto">
-                                        {Object.entries(PANEL_TYPE_LABELS).map(([key, label]) => (
-                                            <button
-                                                key={key}
-                                                onClick={() => togglePanelType(key)}
-                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
-                                            >
-                                                <div className="flex items-center gap-2">
-                                                    <PanelTypeIcon type={key} size={16} />
-                                                    <span className="text-slate-700">{label}</span>
-                                                </div>
-                                                {filters.panelTypes.includes(key) && (
-                                                    <Check className="w-4 h-4 text-blue-600" />
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                            </Button>
                         </div>
-
-                        {/* Price Dropdown (Simplified) */}
-                        <div className="relative custom-dropdown">
-                            <button
-                                onClick={() => toggleDropdown('price')}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
-                                    }`}
-                            >
-                                <span>Fiyat</span>
-                                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-                            </button>
-
-                            {openDropdown === 'price' && (
-                                <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-100 p-4 z-50 animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="space-y-4">
-                                        <div className="flex justify-between text-sm text-slate-600">
-                                            <span>Min: {formatCurrency(filters.priceRange[0])}</span>
-                                            <span>Max: {formatCurrency(filters.priceRange[1])}</span>
-                                        </div>
-                                        {/* Note: Using FilterSidebar for full control is better, this is just a quick view */}
-                                        <p className="text-xs text-slate-400 text-center">
-                                            Detaylı fiyat ayarı için sağdaki filtre menüsünü kullanın.
-                                        </p>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Location Type Dropdown */}
-                        <div className="relative custom-dropdown">
-                            <button
-                                onClick={() => toggleDropdown('location')}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.isAVM !== null ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
-                                    }`}
-                            >
-                                <span>Konum</span>
-                                {filters.isAVM !== null && (
-                                    <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
-                                        1
-                                    </span>
-                                )}
-                                <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-                            </button>
-
-                            {openDropdown === 'location' && (
-                                <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
-                                    <div className="space-y-1">
-                                        <button
-                                            onClick={() => setFilters({ ...filters, isAVM: null })}
-                                            className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
-                                        >
-                                            <span className="text-slate-700">Tümü</span>
-                                            {filters.isAVM === null && <Check className="w-4 h-4 text-blue-600" />}
-                                        </button>
-                                        <button
-                                            onClick={() => setFilters({ ...filters, isAVM: true })}
-                                            className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
-                                        >
-                                            <span className="text-slate-700">🏬 AVM İçi</span>
-                                            {filters.isAVM === true && <Check className="w-4 h-4 text-blue-600" />}
-                                        </button>
-                                        <button
-                                            onClick={() => setFilters({ ...filters, isAVM: false })}
-                                            className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
-                                        >
-                                            <span className="text-slate-700">🏙️ Açık Alan</span>
-                                            {filters.isAVM === false && <Check className="w-4 h-4 text-blue-600" />}
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
                     </div>
 
-                    {/* Right Side: Filter Toggle & Count */}
-                    <div className="flex items-center gap-3">
-                        <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                            {filteredPanels.length} pano bulundu
-                        </p>
+                    {/* Mobile: Collapsible Filter Section */}
+                    {mobileFiltersOpen && (
+                        <div className="mt-3 pb-2 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                            {/* City Pills - Scrollable */}
+                            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+                                {topCities.map(city => (
+                                    <button
+                                        key={city}
+                                        onClick={() => {
+                                            handleCityClick(city);
+                                        }}
+                                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${selectedCity === city
+                                            ? 'bg-blue-600 text-white shadow-md'
+                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {city}
+                                    </button>
+                                ))}
+                            </div>
 
-                        <Button
-                            variant={showFiltersOverlay ? "default" : "outline"}
-                            size="sm"
-                            onClick={() => setShowFiltersOverlay(!showFiltersOverlay)}
-                            className="relative shadow-sm"
-                        >
-                            <SlidersHorizontal className="w-4 h-4 mr-2" />
-                            {showFiltersOverlay ? 'Filtreleri Gizle' : 'Tüm Filtreler'}
-                            {activeFilterCount > 0 && !showFiltersOverlay && (
-                                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm border border-white">
-                                    {activeFilterCount}
-                                </span>
-                            )}
-                        </Button>
+                            {/* Quick Filters Row */}
+                            <div className="flex gap-2 flex-wrap">
+                                {/* Panel Type - Opens Full Filter */}
+                                <button
+                                    onClick={() => setShowFiltersOverlay(true)}
+                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-sm ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200'
+                                        }`}
+                                >
+                                    <SlidersHorizontal className="w-3.5 h-3.5" />
+                                    <span>Pano Tipi</span>
+                                    {filters.panelTypes.length > 0 && (
+                                        <span className="bg-blue-600 text-white text-[10px] px-1 rounded-full">
+                                            {filters.panelTypes.length}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {/* Clear Filters if active */}
+                                {activeFilterCount > 0 && (
+                                    <button
+                                        onClick={() => setFilters({
+                                            priceRange: [0, 200000],
+                                            sizeRange: [0, 100],
+                                            panelTypes: [],
+                                            trafficLevels: [],
+                                            isAVM: null
+                                        })}
+                                        className="px-3 py-1.5 rounded-lg text-sm text-red-600 border border-red-200 bg-red-50"
+                                    >
+                                        Temizle ×
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Desktop: Full Filter Bar */}
+                <div className="hidden md:block px-4 py-3">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                        {/* Left Side: City & Quick Filters */}
+                        <div className="flex items-center gap-2 flex-wrap flex-1">
+
+                            {/* City Pills */}
+                            <div className="flex items-center gap-1 mr-4 flex-wrap">
+                                {topCities.map(city => (
+                                    <button
+                                        key={city}
+                                        onClick={() => handleCityClick(city)}
+                                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCity === city
+                                            ? 'bg-blue-600 text-white shadow-md'
+                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            }`}
+                                    >
+                                        {city}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Separator */}
+                            <div className="h-6 w-px bg-slate-200 mx-1"></div>
+
+                            {/* Panel Type Dropdown */}
+                            <div className="relative custom-dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('type')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <span>Pano Tipi</span>
+                                    {filters.panelTypes.length > 0 && (
+                                        <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                                            {filters.panelTypes.length}
+                                        </span>
+                                    )}
+                                    <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+                                </button>
+
+                                {openDropdown === 'type' && (
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="space-y-1 max-h-[300px] overflow-y-auto">
+                                            {Object.entries(PANEL_TYPE_LABELS).map(([key, label]) => (
+                                                <button
+                                                    key={key}
+                                                    onClick={() => togglePanelType(key)}
+                                                    className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <PanelTypeIcon type={key} size={16} />
+                                                        <span className="text-slate-700">{label}</span>
+                                                    </div>
+                                                    {filters.panelTypes.includes(key) && (
+                                                        <Check className="w-4 h-4 text-blue-600" />
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Price Dropdown */}
+                            <div className="relative custom-dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('price')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <span>Fiyat</span>
+                                    <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+                                </button>
+
+                                {openDropdown === 'price' && (
+                                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-100 p-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between text-sm text-slate-600">
+                                                <span>Min: {formatCurrency(filters.priceRange[0])}</span>
+                                                <span>Max: {formatCurrency(filters.priceRange[1])}</span>
+                                            </div>
+                                            <p className="text-xs text-slate-400 text-center">
+                                                Detaylı fiyat ayarı için sağdaki filtre menüsünü kullanın.
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Location Type Dropdown */}
+                            <div className="relative custom-dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('location')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.isAVM !== null ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                        }`}
+                                >
+                                    <span>Konum</span>
+                                    {filters.isAVM !== null && (
+                                        <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                                            1
+                                        </span>
+                                    )}
+                                    <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+                                </button>
+
+                                {openDropdown === 'location' && (
+                                    <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="space-y-1">
+                                            <button
+                                                onClick={() => setFilters({ ...filters, isAVM: null })}
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                            >
+                                                <span className="text-slate-700">Tümü</span>
+                                                {filters.isAVM === null && <Check className="w-4 h-4 text-blue-600" />}
+                                            </button>
+                                            <button
+                                                onClick={() => setFilters({ ...filters, isAVM: true })}
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                            >
+                                                <span className="text-slate-700">🏬 AVM İçi</span>
+                                                {filters.isAVM === true && <Check className="w-4 h-4 text-blue-600" />}
+                                            </button>
+                                            <button
+                                                onClick={() => setFilters({ ...filters, isAVM: false })}
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                            >
+                                                <span className="text-slate-700">🏙️ Açık Alan</span>
+                                                {filters.isAVM === false && <Check className="w-4 h-4 text-blue-600" />}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                        </div>
+
+                        {/* Right Side: Filter Toggle & Count */}
+                        <div className="flex items-center gap-3">
+                            <p className="text-xs text-slate-500 font-medium">
+                                {filteredPanels.length} pano bulundu
+                            </p>
+
+                            <Button
+                                variant={showFiltersOverlay ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setShowFiltersOverlay(!showFiltersOverlay)}
+                                className="relative shadow-sm"
+                            >
+                                <SlidersHorizontal className="w-4 h-4 mr-2" />
+                                {showFiltersOverlay ? 'Filtreleri Gizle' : 'Tüm Filtreler'}
+                                {activeFilterCount > 0 && !showFiltersOverlay && (
+                                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm border border-white">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>

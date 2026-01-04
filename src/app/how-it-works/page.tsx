@@ -36,6 +36,13 @@ export default function HowItWorksPage() {
                             Outdoor reklam vermek hiç bu kadar kolay olmamıştı.
                             4 basit adımda markanızı şehrin en görünür noktalarına taşıyın.
                         </p>
+                        <Link
+                            href="/kampanya-rehberi"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors"
+                        >
+                            📸 Görsel Adım Adım Rehber
+                            <ArrowRight className="w-4 h-4" />
+                        </Link>
                     </motion.div>
                 </div>
             </section>
@@ -267,8 +274,8 @@ export default function HowItWorksPage() {
                                     Ücretsiz Hesap Aç <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" variant="outline" className="h-14 px-8 text-lg border-white/30 text-white hover:bg-white/10 rounded-full backdrop-blur-sm">
-                                <Link href="/screens">
+                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-transparent border-2 border-white text-white hover:bg-white hover:text-black rounded-full transition-all">
+                                <Link href="/static-billboards">
                                     Panoları İncele
                                 </Link>
                             </Button>

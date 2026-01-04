@@ -4,10 +4,16 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, MapPin, Camera, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Camera, Loader2, CheckCircle, AlertCircle, Navigation } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 
 type LocationStatus = 'idle' | 'loading' | 'success' | 'error';
+
+interface AddressInfo {
+    city: string;
+    district: string;
+    address: string;
+}
 
 export default function QuickAddPanelPage() {
     const router = useRouter();
@@ -19,10 +25,65 @@ export default function QuickAddPanelPage() {
     const [imageUrl, setImageUrl] = useState<string>('');
     const [step, setStep] = useState<'location' | 'photo' | 'confirm'>('location');
 
+    // Address info from reverse geocoding
+    const [addressLoading, setAddressLoading] = useState(false);
+    const [addressInfo, setAddressInfo] = useState<AddressInfo>({
+        city: 'Kocaeli',
+        district: 'Körfez',
+        address: ''
+    });
+
     // Request location on mount
     useEffect(() => {
         requestLocation();
     }, []);
+
+    // Reverse geocoding function using Nominatim
+    const reverseGeocode = async (lat: number, lng: number) => {
+        setAddressLoading(true);
+        try {
+            const response = await fetch(
+                `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&accept-language=tr`,
+                {
+                    headers: {
+                        'User-Agent': 'PanoBu-App/1.0'
+                    }
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                const address = data.address || {};
+
+                // Map Nominatim fields to our structure
+                // Province/State -> City
+                let city = address.province || address.state || address.city || 'Kocaeli';
+                // Remove "Province" or "İli" suffix
+                city = city.replace(' Province', '').replace(' İli', '').replace(' ili', '');
+
+                // Town/District/Suburb -> District
+                const district = address.town || address.county || address.district || address.suburb || 'Körfez';
+
+                // Build full address
+                const addressParts = [];
+                if (address.neighbourhood) addressParts.push(address.neighbourhood);
+                if (address.road) addressParts.push(address.road);
+                if (address.house_number) addressParts.push('No: ' + address.house_number);
+                const fullAddress = addressParts.length > 0 ? addressParts.join(', ') : (data.display_name?.split(',').slice(0, 3).join(',') || '');
+
+                setAddressInfo({
+                    city: city,
+                    district: district,
+                    address: fullAddress
+                });
+            }
+        } catch (error) {
+            console.error('Reverse geocoding error:', error);
+            // Keep default values if geocoding fails
+        } finally {
+            setAddressLoading(false);
+        }
+    };
 
     const requestLocation = () => {
         if (!navigator.geolocation) {
@@ -36,13 +97,16 @@ export default function QuickAddPanelPage() {
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                setCoordinates({
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+
+                setCoordinates({ lat, lng });
                 setAccuracy(Math.round(position.coords.accuracy));
                 setLocationStatus('success');
                 setStep('photo');
+
+                // Get address from coordinates
+                reverseGeocode(lat, lng);
             },
             (error) => {
                 setLocationStatus('error');
@@ -92,9 +156,10 @@ export default function QuickAddPanelPage() {
                     longitude: coordinates.lng,
                     imageUrl: imageUrl,
                     isDraft: true,
-                    // Varsayılan değerler - haritada görünmesi için gerekli
-                    city: 'Kocaeli',
-                    district: 'Körfez',
+                    // Adres bilgileri - reverse geocoding'den
+                    city: addressInfo.city,
+                    district: addressInfo.district,
+                    address: addressInfo.address,
                     name: '',
                     type: 'BILLBOARD',
                     width: 0,
@@ -131,7 +196,7 @@ export default function QuickAddPanelPage() {
                         </Link>
                     </Button>
                     <h1 className="text-3xl font-bold text-slate-900">⚡ Hızlı Pano Ekle</h1>
-                    <p className="text-slate-600 mt-1">GPS konum + fotoğraf ile hızlıca taslak pano oluşturun</p>
+                    <p className="text-slate-600 mt-1">GPS konum + fotoğraf ile hızlıca pano oluşturun</p>
                 </div>
 
                 {/* Progress Steps */}
@@ -165,7 +230,7 @@ export default function QuickAddPanelPage() {
                     )}
 
                     {locationStatus === 'success' && coordinates && (
-                        <div className="p-4 bg-green-50 rounded-lg space-y-2">
+                        <div className="p-4 bg-green-50 rounded-lg space-y-3">
                             <p className="text-green-700 font-medium">✓ Konum başarıyla alındı!</p>
                             <div className="grid grid-cols-2 gap-4 text-sm">
                                 <div>
@@ -182,6 +247,48 @@ export default function QuickAddPanelPage() {
                                     Doğruluk: <span className="font-medium">~{accuracy} metre</span>
                                 </p>
                             )}
+
+                            {/* Address Info */}
+                            <div className="mt-3 pt-3 border-t border-green-200">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Navigation className="w-4 h-4 text-green-600" />
+                                    <span className="text-sm font-medium text-green-700">Tespit Edilen Adres:</span>
+                                    {addressLoading && <Loader2 className="w-4 h-4 text-green-600 animate-spin" />}
+                                </div>
+                                {!addressLoading && (
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex gap-2">
+                                            <span className="text-slate-500 w-12">İl:</span>
+                                            <input
+                                                type="text"
+                                                value={addressInfo.city}
+                                                onChange={(e) => setAddressInfo(prev => ({ ...prev, city: e.target.value }))}
+                                                className="flex-1 px-2 py-1 border border-green-200 rounded bg-white text-slate-900"
+                                            />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <span className="text-slate-500 w-12">İlçe:</span>
+                                            <input
+                                                type="text"
+                                                value={addressInfo.district}
+                                                onChange={(e) => setAddressInfo(prev => ({ ...prev, district: e.target.value }))}
+                                                className="flex-1 px-2 py-1 border border-green-200 rounded bg-white text-slate-900"
+                                            />
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <span className="text-slate-500 w-12">Adres:</span>
+                                            <input
+                                                type="text"
+                                                value={addressInfo.address}
+                                                onChange={(e) => setAddressInfo(prev => ({ ...prev, address: e.target.value }))}
+                                                placeholder="Mahalle, sokak..."
+                                                className="flex-1 px-2 py-1 border border-green-200 rounded bg-white text-slate-900"
+                                            />
+                                        </div>
+                                        <p className="text-xs text-slate-500 mt-1">* Gerekirse düzeltebilirsiniz</p>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
 
@@ -230,11 +337,13 @@ export default function QuickAddPanelPage() {
                             <p className="text-sm text-slate-600 mb-2">Eklenecek pano:</p>
                             <ul className="text-sm space-y-1">
                                 <li>📍 Konum: {coordinates.lat.toFixed(4)}, {coordinates.lng.toFixed(4)}</li>
+                                <li>🏙️ {addressInfo.city}, {addressInfo.district}</li>
+                                {addressInfo.address && <li>📮 {addressInfo.address}</li>}
                                 <li>📸 Fotoğraf: Yüklendi</li>
                                 <li>✅ Durum: Aktif (haritada görünecek)</li>
                             </ul>
                             <p className="text-xs text-slate-500 mt-3">
-                                * Diğer bilgileri daha sonra düzenleme sayfasından doldurabilirsiniz
+                                * Diğer bilgileri pano listesinden inline düzenleyebilirsiniz
                             </p>
                         </div>
                     )}

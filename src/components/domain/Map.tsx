@@ -131,13 +131,8 @@ export default function Map({
                         <Marker
                             key={panel.id}
                             position={[panel.latitude, panel.longitude]}
-                            icon={createCustomIcon(panel.type, selectedPanel?.id === panel.id)}
-                            eventHandlers={{
-                                click: () => {
-                                    onPanelSelect?.(panel);
-                                },
-                            }}
                             zIndexOffset={selectedPanel?.id === panel.id ? 1000 : 0}
+                            icon={createCustomIcon(panel.type, selectedPanel?.id === panel.id)}
                         >
                             <Popup className="min-w-[250px]">
                                 <div className="p-1">
@@ -156,14 +151,20 @@ export default function Map({
                                     <h3 className="font-bold text-base mb-1">{panel.name || 'Pano'}</h3>
                                     <p className="text-sm text-slate-500 mb-2">{panel.district}, {panel.city}</p>
 
+                                    {/* Price highlight */}
+                                    <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3 text-center">
+                                        <span className="text-lg font-bold text-green-700">{formatCurrency(Number(panel.priceWeekly))}</span>
+                                        <span className="text-xs text-green-600 ml-1">/hafta</span>
+                                    </div>
+
                                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mb-3 bg-slate-50 p-2 rounded">
                                         <div>
                                             <span className="block font-semibold">Boyut</span>
-                                            {Number(panel.width)}m x {Number(panel.height)}m
+                                            {Number(panel.width)}cm x {Number(panel.height)}cm
                                         </div>
                                         <div>
-                                            <span className="block font-semibold">Fiyat (Haftalık)</span>
-                                            {formatCurrency(Number(panel.priceWeekly))}
+                                            <span className="block font-semibold">Konum</span>
+                                            {panel.district}
                                         </div>
                                     </div>
 
@@ -171,6 +172,20 @@ export default function Map({
                                         <div className="flex items-center gap-1 text-xs text-pink-600 mb-2">
                                             <span>🏬</span>
                                             <span className="font-medium">AVM İçi</span>
+                                        </div>
+                                    )}
+
+                                    {/* CLP badges - compact */}
+                                    {panel.type === 'CLP' && (
+                                        <div className="flex flex-wrap gap-1 mb-2">
+                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-100 text-purple-700">
+                                                📋 Çift yüzlü
+                                            </span>
+                                            {panel.city === 'Kocaeli' && (
+                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-100 text-orange-700">
+                                                    🔥 20+ = 1.500₺
+                                                </span>
+                                            )}
                                         </div>
                                     )}
 

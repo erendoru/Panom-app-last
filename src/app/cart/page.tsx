@@ -12,6 +12,7 @@ import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
 function CartPageContent() {
     const { items, count, totals, removeFromCart, updateItemDates, clearCart, loading, calculateTotals } = useCart();
     const [dateSelections, setDateSelections] = useState<Record<string, { start: string; end: string }>>({});
+    const [clpDoubleSided, setClpDoubleSided] = useState<Record<string, boolean>>({});
 
     // Initialize date selections when items load
     useEffect(() => {
@@ -70,6 +71,18 @@ function CartPageContent() {
     const getPanelTypeLabel = (type: string) => {
         return PANEL_TYPE_LABELS[type as keyof typeof PANEL_TYPE_LABELS] || type;
     };
+
+    // Calculate CLP double-sided extra amount
+    const clpDoubleSidedExtra = items.reduce((sum, item) => {
+        if (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id]) {
+            return sum + item.panel.priceWeekly; // Add another week's price for double-sided
+        }
+        return sum;
+    }, 0);
+
+    // Calculate adjusted totals with CLP extra
+    const adjustedTotal = totals.total + clpDoubleSidedExtra;
+    const adjustedSubtotal = totals.subtotal + clpDoubleSidedExtra;
 
     if (count === 0) {
         return (
@@ -200,9 +213,43 @@ function CartPageContent() {
                                                 </div>
                                             </div>
 
+                                            {/* CLP Double-Sided Toggle */}
+                                            {item.panel.type === 'CLP' && (
+                                                <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm text-purple-700">📋 Çift Yüzlü Panel</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: false }))}
+                                                                className={`px-3 py-1 text-xs rounded-full transition-colors ${!clpDoubleSided[item.panel.id]
+                                                                    ? 'bg-purple-600 text-white'
+                                                                    : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                    }`}
+                                                            >
+                                                                Tek Yüz
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: true }))}
+                                                                className={`px-3 py-1 text-xs rounded-full transition-colors ${clpDoubleSided[item.panel.id]
+                                                                    ? 'bg-purple-600 text-white'
+                                                                    : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                    }`}
+                                                            >
+                                                                Çift Yüz (2x)
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             {/* Price */}
                                             <div className="mt-4 text-right">
-                                                <p className="text-lg font-bold text-slate-900">{formatPrice(item.panel.priceWeekly)}<span className="text-sm font-normal text-slate-500">/hafta</span></p>
+                                                <p className="text-lg font-bold text-slate-900">
+                                                    {formatPrice(item.panel.priceWeekly * (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? 2 : 1))}
+                                                    <span className="text-sm font-normal text-slate-500">/hafta{item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? ' (çift yüz)' : ''}</span>
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -244,8 +291,14 @@ function CartPageContent() {
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between text-slate-600">
                                     <span>Ara Toplam</span>
-                                    <span>{formatPrice(totals.subtotal)}</span>
+                                    <span>{formatPrice(adjustedSubtotal)}</span>
                                 </div>
+                                {clpDoubleSidedExtra > 0 && (
+                                    <div className="flex justify-between text-purple-600 text-sm">
+                                        <span>Çift Yüz Farkı</span>
+                                        <span>+{formatPrice(clpDoubleSidedExtra)}</span>
+                                    </div>
+                                )}
                                 {totals.discount > 0 && (
                                     <div className="flex justify-between text-green-600">
                                         <span>İndirim</span>
@@ -255,7 +308,7 @@ function CartPageContent() {
                                 <hr className="border-slate-200" />
                                 <div className="flex justify-between text-xl font-bold text-slate-900">
                                     <span>Toplam</span>
-                                    <span>{formatPrice(totals.total)}</span>
+                                    <span>{formatPrice(adjustedTotal)}</span>
                                 </div>
                             </div>
 

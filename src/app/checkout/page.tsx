@@ -103,6 +103,16 @@ export default function CheckoutPage() {
         fetchCart();
     }, [router]);
 
+    // CLP double-sided selection state: panelId -> true/false
+    const [clpDoubleSided, setClpDoubleSided] = useState<Record<string, boolean>>({});
+
+    const toggleClpDoubleSided = (panelId: string) => {
+        setClpDoubleSided(prev => ({
+            ...prev,
+            [panelId]: !prev[panelId]
+        }));
+    };
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
         if (type === 'checkbox') {
@@ -113,12 +123,31 @@ export default function CheckoutPage() {
         }
     };
 
+    // Count CLP panels in Kocaeli for bulk discount
+    const kocaeliClpCount = cartItems.filter(item =>
+        item.panel.type === 'CLP' && item.panel.city === 'Kocaeli'
+    ).length;
+    const clpBulkDiscount = kocaeliClpCount >= 20;
+
     const calculateTotal = () => {
         let panelsTotal = cartItems.reduce((sum, item) => {
             const weeks = item.startDate && item.endDate
                 ? Math.ceil((new Date(item.endDate).getTime() - new Date(item.startDate).getTime()) / (7 * 24 * 60 * 60 * 1000))
                 : 1;
-            return sum + (item.panel.priceWeekly * Math.max(1, weeks));
+
+            let itemPrice = item.panel.priceWeekly;
+
+            // CLP bulk discount for Kocaeli (20+ CLP = 1500 TL)
+            if (item.panel.type === 'CLP' && item.panel.city === 'Kocaeli' && clpBulkDiscount) {
+                itemPrice = 1500;
+            }
+
+            // CLP double-sided: 2x price
+            if (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id]) {
+                itemPrice = itemPrice * 2;
+            }
+
+            return sum + (itemPrice * Math.max(1, weeks));
         }, 0);
 
         // Tasarım desteği seçildiyse ekle
@@ -413,7 +442,7 @@ export default function CheckoutPage() {
                                 {formData.hasOwnCreatives && (
                                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                                         <p className="text-sm text-blue-800">
-                                            <strong>Görsel Boyutları:</strong> Sipariş onaylandıktan sonra size her pano için gerekli boyutları ileteceğiz.
+                                            <strong>Görsel Boyutları:</strong> Sipariş onaylandıktan sonra Panobu ekibi sizinle paylaştığınız telefon numarasıyla iletişime geçecek. Görselleriniz panolara yerleştirilecek ve fotoğrafları size mail ile iletilecek.
                                         </p>
                                     </div>
                                 )}
@@ -458,32 +487,96 @@ export default function CheckoutPage() {
                                     </div>
                                 </div>
 
+                                {/* CLP Bulk Discount Notice */}
+                                {kocaeliClpCount > 0 && (
+                                    <div className={`rounded-lg p-3 mb-4 ${clpBulkDiscount ? 'bg-green-50 border border-green-200' : 'bg-orange-50 border border-orange-200'}`}>
+                                        {clpBulkDiscount ? (
+                                            <p className="text-sm text-green-700">
+                                                <span className="font-bold">🎉 Tebrikler!</span> {kocaeliClpCount} CLP ile toplu indirim kazandınız! Her CLP <span className="font-bold">1.500₺/hafta</span>
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm text-orange-700">
+                                                <span className="font-bold">🔥 Kampanya:</span> 20+ CLP ile her biri 1.500₺/hafta! Şu an {kocaeliClpCount} CLP seçili ({20 - kocaeliClpCount} eksik)
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
                                 {/* Panels */}
                                 <div>
                                     <h3 className="font-medium text-slate-900 mb-3">Seçilen Panolar ({cartItems.length})</h3>
                                     <div className="space-y-3">
-                                        {cartItems.map(item => (
-                                            <div key={item.id} className="flex items-center gap-4 bg-slate-50 rounded-lg p-3">
-                                                <div className="w-16 h-16 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
-                                                    {item.panel.imageUrl ? (
-                                                        <Image src={item.panel.imageUrl} alt={item.panel.name} width={64} height={64} className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className="w-full h-full flex items-center justify-center">
-                                                            <MapPin className="w-6 h-6 text-slate-400" />
+                                        {cartItems.map(item => {
+                                            const isCLP = item.panel.type === 'CLP';
+                                            const isDoubleSided = clpDoubleSided[item.panel.id];
+                                            let displayPrice = item.panel.priceWeekly;
+
+                                            // Apply bulk discount
+                                            if (isCLP && item.panel.city === 'Kocaeli' && clpBulkDiscount) {
+                                                displayPrice = 1500;
+                                            }
+
+                                            // Apply double-sided multiplier
+                                            if (isCLP && isDoubleSided) {
+                                                displayPrice = displayPrice * 2;
+                                            }
+
+                                            return (
+                                                <div key={item.id} className="bg-slate-50 rounded-lg p-3">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-16 h-16 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                                                            {item.panel.imageUrl ? (
+                                                                <Image src={item.panel.imageUrl} alt={item.panel.name} width={64} height={64} className="w-full h-full object-cover" />
+                                                            ) : (
+                                                                <div className="w-full h-full flex items-center justify-center">
+                                                                    <MapPin className="w-6 h-6 text-slate-400" />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className="font-medium text-slate-900">{item.panel.name}</p>
+                                                            <p className="text-sm text-slate-500">{item.panel.city}, {item.panel.district}</p>
+                                                            <p className="text-xs text-blue-600">{PANEL_TYPE_LABELS[item.panel.type as keyof typeof PANEL_TYPE_LABELS]} • {item.panel.width}cm x {item.panel.height}cm</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-semibold text-slate-900">{formatCurrency(displayPrice)}</p>
+                                                            <p className="text-xs text-slate-500">/hafta{isDoubleSided ? ' (çift yüz)' : ''}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* CLP Double-sided toggle */}
+                                                    {isCLP && (
+                                                        <div className="mt-3 pt-3 border-t border-slate-200">
+                                                            <div className="flex items-center justify-between">
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-sm text-purple-700">📋 Çift Yüzlü Panel</span>
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <button
+                                                                        onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: false }))}
+                                                                        className={`px-3 py-1 text-xs rounded-full transition-colors ${!isDoubleSided
+                                                                            ? 'bg-purple-600 text-white'
+                                                                            : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                            }`}
+                                                                    >
+                                                                        Tek Yüz
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: true }))}
+                                                                        className={`px-3 py-1 text-xs rounded-full transition-colors ${isDoubleSided
+                                                                            ? 'bg-purple-600 text-white'
+                                                                            : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                            }`}
+                                                                    >
+                                                                        Çift Yüz (2x)
+                                                                    </button>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>
-                                                <div className="flex-1">
-                                                    <p className="font-medium text-slate-900">{item.panel.name}</p>
-                                                    <p className="text-sm text-slate-500">{item.panel.city}, {item.panel.district}</p>
-                                                    <p className="text-xs text-blue-600">{PANEL_TYPE_LABELS[item.panel.type as keyof typeof PANEL_TYPE_LABELS]} • {item.panel.width}m x {item.panel.height}m</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="font-semibold text-slate-900">{formatCurrency(item.panel.priceWeekly)}</p>
-                                                    <p className="text-xs text-slate-500">/hafta</p>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
                                     </div>
                                 </div>
 
@@ -513,7 +606,7 @@ export default function CheckoutPage() {
                                         <span>Tahmini Toplam</span>
                                         <span className="text-green-600">{formatCurrency(calculateTotal())}</span>
                                     </div>
-                                    <p className="text-xs text-slate-500 mt-1">* Süreye göre fiyat değişebilir. Kesin fiyat onay sonrası bildirilecektir.</p>
+
                                 </div>
                             </div>
                         )}

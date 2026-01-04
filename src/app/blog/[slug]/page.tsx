@@ -101,7 +101,15 @@ export default function BlogPostPage() {
 
                 {/* Content */}
                 <div
-                    className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-p:text-slate-300 prose-strong:text-white prose-a:text-blue-400"
+                    className="prose prose-invert prose-lg max-w-none 
+                        prose-headings:text-white prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
+                        prose-h2:text-2xl prose-h3:text-xl
+                        prose-p:text-slate-300 prose-p:leading-8 prose-p:mb-6
+                        prose-strong:text-white prose-strong:font-semibold
+                        prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+                        prose-li:text-slate-300 prose-li:leading-7
+                        prose-ul:my-6 prose-ol:my-6
+                        prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-800/50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
             </article>

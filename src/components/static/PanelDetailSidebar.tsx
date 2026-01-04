@@ -14,6 +14,20 @@ interface PanelDetailSidebarProps {
     onRent: () => void;
 }
 
+// Location type Turkish labels
+const LOCATION_TYPE_LABELS: Record<string, string> = {
+    'OPEN_AREA': 'Açık Alan',
+    'AVM': 'AVM İçi',
+    'HIGHWAY': 'Otoyol',
+    'E5': 'E5 Yolu',
+    'CITY_CENTER': 'Şehir Merkezi',
+    'METRO': 'Metro',
+    'STADIUM': 'Stadyum',
+    'HOSPITAL': 'Hastane',
+    'UNIVERSITY': 'Üniversite',
+    'AIRPORT': 'Havalimanı',
+};
+
 // Get or create session ID
 function getSessionId(): string {
     if (typeof window === 'undefined') return '';
@@ -102,7 +116,7 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
                         <span>{panel.district}, {panel.city}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 mb-6">
+                    <div className="flex items-center gap-2 mb-6 flex-wrap">
                         {panel.isAVM ? (
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
                                 🏬 AVM İçi
@@ -116,7 +130,30 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
                             <CheckCircle2 className="w-3 h-3 mr-1" />
                             Müsait
                         </span>
+                        {/* CLP double-sided badge */}
+                        {panel.type === 'CLP' && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                📋 Çift Yüzlü
+                            </span>
+                        )}
                     </div>
+
+                    {/* CLP Info Box */}
+                    {panel.type === 'CLP' && (
+                        <div className="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-4">
+                            <p className="text-sm text-purple-800 mb-1">
+                                <strong>Çift Yüzlü Panel:</strong> Gösterilen fiyat tek yüz içindir.
+                            </p>
+                            <p className="text-xs text-purple-600">
+                                Her iki yüzü kullanmak için sepette "Çift Yüz" seçeneğini işaretleyebilirsiniz.
+                            </p>
+                            {panel.city === 'Kocaeli' && (
+                                <p className="text-xs text-orange-600 font-medium mt-2">
+                                    🔥 Kampanya: 20+ CLP alımında her biri 1.500₺/hafta
+                                </p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Price Box */}
                     <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-6">
@@ -141,7 +178,9 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
                                                 panel.trafficLevel === 'MEDIUM' ? 'B' : 'C'
                                     )}
                                 </div>
-                                <div className="text-[10px] text-blue-400 mt-1 font-medium">{panel.locationType || "Lokasyon"}</div>
+                                <div className="text-[10px] text-blue-400 mt-1 font-medium">
+                                    {panel.locationType ? LOCATION_TYPE_LABELS[panel.locationType] || panel.locationType : "Lokasyon"}
+                                </div>
                             </div>
 
                             {/* Impressions Card */}

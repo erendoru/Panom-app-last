@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, ChevronUp, ChevronDown } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 import {
     TURKEY_CITIES,
@@ -56,9 +56,73 @@ export default function EditPanelPage() {
         blockedDates: [] as BlockedDateRange[]
     });
 
+    // Panel navigation state
+    const [panelIds, setPanelIds] = useState<string[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(-1);
+
+    // Fetch all panel IDs for navigation
+    useEffect(() => {
+        const fetchPanelIds = async () => {
+            try {
+                const res = await fetch('/api/admin/panels');
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    const ids = data.map((p: any) => p.id);
+                    setPanelIds(ids);
+                    const idx = ids.indexOf(params.id as string);
+                    setCurrentIndex(idx);
+                }
+            } catch (error) {
+                console.error('Error fetching panel list:', error);
+            }
+        };
+        fetchPanelIds();
+    }, [params.id]);
+
+    // Navigate to next panel
+    const goToNextPanel = useCallback(() => {
+        if (currentIndex < panelIds.length - 1) {
+            const nextId = panelIds[currentIndex + 1];
+            router.push(`/app/admin/panels/${nextId}/edit`);
+        }
+    }, [currentIndex, panelIds, router]);
+
+    // Navigate to previous panel
+    const goToPreviousPanel = useCallback(() => {
+        if (currentIndex > 0) {
+            const prevId = panelIds[currentIndex - 1];
+            router.push(`/app/admin/panels/${prevId}/edit`);
+        }
+    }, [currentIndex, panelIds, router]);
+
+    // Keyboard navigation - J for next, K for previous
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Don't trigger if user is typing in an input/textarea
+            if (
+                e.target instanceof HTMLInputElement ||
+                e.target instanceof HTMLTextAreaElement ||
+                e.target instanceof HTMLSelectElement
+            ) {
+                return;
+            }
+
+            if (e.key === 'j' || e.key === 'J') {
+                e.preventDefault();
+                goToNextPanel();
+            } else if (e.key === 'k' || e.key === 'K') {
+                e.preventDefault();
+                goToPreviousPanel();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [goToNextPanel, goToPreviousPanel]);
+
     useEffect(() => {
         fetchPanel();
-    }, []);
+    }, [params.id]);
 
     const fetchPanel = async () => {
         try {
@@ -116,11 +180,14 @@ export default function EditPanelPage() {
 
     // ... (existing code)
 
+    const [saveSuccess, setSaveSuccess] = useState(false);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Submitting form...', formData);
         setLoading(true);
         setError('');
+        setSaveSuccess(false);
 
         try {
             const res = await fetch(`/api/admin/panels/${params.id}`, {
@@ -131,18 +198,17 @@ export default function EditPanelPage() {
 
             if (res.ok) {
                 console.log('Update successful');
-                alert('Pano başarıyla güncellendi!');
-                router.push('/app/admin/panels');
+                setSaveSuccess(true);
+                // Auto-hide success message after 3 seconds
+                setTimeout(() => setSaveSuccess(false), 3000);
             } else {
                 const data = await res.json();
                 console.error('Update failed:', data);
                 setError(data.error || 'Bir hata oluştu');
-                alert('Hata: ' + (data.error || 'Bir hata oluştu'));
             }
         } catch (error) {
             console.error('Error updating panel:', error);
             setError('Bir hata oluştu');
-            alert('Bir hata oluştu');
         } finally {
             setLoading(false);
         }
@@ -162,12 +228,44 @@ export default function EditPanelPage() {
         <div className="min-h-screen bg-slate-50 p-4 md:p-8">
             <div className="max-w-4xl mx-auto">
                 <div className="mb-8">
-                    <Button asChild variant="outline" className="mb-4">
-                        <Link href="/app/admin/panels">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Geri Dön
-                        </Link>
-                    </Button>
+                    <div className="flex items-center justify-between mb-4">
+                        <Button asChild variant="outline">
+                            <Link href="/app/admin/panels">
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Geri Dön
+                            </Link>
+                        </Button>
+
+                        {/* Panel Navigation */}
+                        {panelIds.length > 1 && (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-slate-500 hidden sm:inline">
+                                    {currentIndex + 1} / {panelIds.length}
+                                </span>
+                                <div className="flex gap-1">
+                                    <button
+                                        onClick={goToPreviousPanel}
+                                        disabled={currentIndex <= 0}
+                                        className="p-2 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        title="Önceki pano (K)"
+                                    >
+                                        <ChevronUp className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={goToNextPanel}
+                                        disabled={currentIndex >= panelIds.length - 1}
+                                        className="p-2 rounded-md border border-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        title="Sonraki pano (J)"
+                                    >
+                                        <ChevronDown className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                <span className="text-xs text-slate-400 hidden md:inline ml-2">
+                                    K/J tuşları
+                                </span>
+                            </div>
+                        )}
+                    </div>
                     <h1 className="text-3xl font-bold text-slate-900">Pano Düzenle</h1>
                     <p className="text-slate-600 mt-1">{formData.name}</p>
                 </div>
@@ -175,6 +273,18 @@ export default function EditPanelPage() {
                 {error && (
                     <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
                         {error}
+                    </div>
+                )}
+
+                {/* Success Toast */}
+                {saveSuccess && (
+                    <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-top-2 duration-300">
+                        <div className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span className="font-medium">Kaydedildi!</span>
+                        </div>
                     </div>
                 )}
 

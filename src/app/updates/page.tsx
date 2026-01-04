@@ -90,48 +90,67 @@ export default function UpdatesPage() {
                     </div>
                 ) : (
                     <div className="max-w-4xl mx-auto space-y-6">
-                        {updates.map((update) => (
-                            <div
-                                key={update.id}
-                                className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all"
-                            >
-                                {update.imageUrl && (
-                                    <div className="aspect-video max-h-64 overflow-hidden">
-                                        <img
-                                            src={update.imageUrl}
-                                            alt={update.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
-                                )}
-                                <div className="p-6">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                                            <Sparkles className="w-6 h-6 text-blue-400" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <span className="text-xs font-medium px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full">
-                                                    {update.category}
-                                                </span>
-                                                <span className="text-slate-500 text-sm">
-                                                    {new Date(update.createdAt).toLocaleDateString("tr-TR", {
-                                                        year: "numeric",
-                                                        month: "long",
-                                                        day: "numeric",
-                                                    })}
-                                                </span>
-                                            </div>
-                                            <h3 className="text-xl font-bold mb-2">{update.title}</h3>
-                                            <div
-                                                className="text-slate-400 prose prose-invert prose-sm max-w-none"
-                                                dangerouslySetInnerHTML={{ __html: update.content }}
+                        {updates.map((update) => {
+                            // Check if update has a detail link
+                            const hasDetailLink = update.content.includes('href="/kampanya-rehberi"');
+                            const detailUrl = hasDetailLink ? '/kampanya-rehberi' : null;
+
+                            // Strip HTML for preview and limit to 150 chars
+                            const textContent = update.content.replace(/<[^>]*>/g, '').slice(0, 200);
+
+                            return (
+                                <div
+                                    key={update.id}
+                                    className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-blue-500/30 transition-all group"
+                                >
+                                    {update.imageUrl && (
+                                        <div className="aspect-video max-h-48 overflow-hidden">
+                                            <img
+                                                src={update.imageUrl}
+                                                alt={update.title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             />
+                                        </div>
+                                    )}
+                                    <div className="p-6">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                                <Sparkles className="w-6 h-6 text-blue-400" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-3 mb-3">
+                                                    <span className="text-xs font-medium px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full">
+                                                        {update.category}
+                                                    </span>
+                                                    <span className="text-slate-500 text-sm">
+                                                        {new Date(update.createdAt).toLocaleDateString("tr-TR", {
+                                                            year: "numeric",
+                                                            month: "long",
+                                                            day: "numeric",
+                                                        })}
+                                                    </span>
+                                                </div>
+                                                <h3 className="text-xl font-bold mb-3 text-white">{update.title}</h3>
+                                                <p className="text-slate-400 text-sm leading-relaxed line-clamp-3 mb-4">
+                                                    {textContent}...
+                                                </p>
+                                                {detailUrl && (
+                                                    <a
+                                                        href={detailUrl}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                                                    >
+                                                        Detaylı Oku
+                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                    </a>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </div>
