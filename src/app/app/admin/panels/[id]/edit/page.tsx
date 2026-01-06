@@ -507,7 +507,7 @@ export default function EditPanelPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
-                                    Haftalık Fiyat (₺)
+                                    Haftalık Fiyat (₺) (Opsiyonel)
                                 </label>
                                 <input
                                     type="number"
@@ -515,7 +515,6 @@ export default function EditPanelPage() {
                                     name="priceWeekly"
                                     value={formData.priceWeekly}
                                     onChange={handleChange}
-                                    required
                                     placeholder="Örn: 15000"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
