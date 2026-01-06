@@ -9,6 +9,28 @@ import Link from "next/link";
 
 const blogPosts = [
     {
+        id: 5,
+        slug: "billboard-reklam-fiyatlari-2026-rehberi",
+        title: "Billboard Reklam Fiyatları 2026 Rehberi",
+        excerpt: "Türkiye'de billboard kiralama fiyatları ne kadar? Şehir, lokasyon ve pano türüne göre 2026 yılı güncel fiyat rehberi. Bütçenizi en verimli şekilde kullanın.",
+        category: "Fiyat Rehberi",
+        author: "Panobu Ekibi",
+        date: "06 Ocak 2026",
+        readTime: "8 dk",
+        image: "https://images.unsplash.com/photo-1533750349088-cd871a92f312?w=800&auto=format&fit=crop&q=60"
+    },
+    {
+        id: 6,
+        slug: "kocaelide-reklam-vermek-lokasyon-rehberi",
+        title: "Kocaeli'de Reklam Vermek: Lokasyon Rehberi",
+        excerpt: "Kocaeli'nin en etkili reklam lokasyonları ve gizli yüksek trafik noktaları. Panobu ile özel stratejiler ve aynı fiyata premium lokasyonlar.",
+        category: "Strateji",
+        author: "Panobu Ekibi",
+        date: "06 Ocak 2026",
+        readTime: "6 dk",
+        image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&auto=format&fit=crop&q=60"
+    },
+    {
         id: 1,
         title: "2025'te Açık Hava Reklamcılığı Nereye Gidiyor?",
         excerpt: "Programatik DOOH (pDOOH), veri odaklı hedefleme ve dinamik içerik yönetimi ile açık hava reklamcılığının kurallarını yeniden yazıyor. İşte 2025 trendleri.",

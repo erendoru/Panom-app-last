@@ -71,8 +71,53 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const organizationSchema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Panobu",
+        "alternateName": "Panobu Billboard Kiralama",
+        "url": "https://panobu.com",
+        "logo": "https://panobu.com/favicon.png",
+        "description": "Türkiye genelinde billboard ve açık hava reklam alanı kiralama platformu. 81 ilde outdoor reklam, dijital ekran, CLP, raket pano kiralama.",
+        "foundingDate": "2024",
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Kocaeli",
+            "addressCountry": "TR"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+90-555-123-4567",
+            "contactType": "customer service",
+            "availableLanguage": "Turkish"
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/panobu",
+            "https://www.instagram.com/panobutr",
+            "https://twitter.com/panobu"
+        ],
+        "areaServed": {
+            "@type": "Country",
+            "name": "Turkey"
+        },
+        "serviceType": [
+            "Billboard Kiralama",
+            "Açık Hava Reklamcılığı",
+            "Dijital Ekran Kiralama",
+            "CLP Pano Kiralama",
+            "Outdoor Reklam"
+        ]
+    };
+
     return (
         <html lang="tr">
+            <head>
+                <meta name="google-site-verification" content="YVWCl1pbYY9-9ZD5FJsxUNERt70sKg47t3fOff07A4s" />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+                />
+            </head>
             <body className={inter.className}>{children}</body>
         </html>
     );
