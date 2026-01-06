@@ -283,6 +283,62 @@ export default function HowItWorksPage() {
                     </motion.div>
                 </div>
             </section>
+
+            {/* HowTo Schema for SEO */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{
+                    __html: JSON.stringify({
+                        "@context": "https://schema.org",
+                        "@type": "HowTo",
+                        "name": "Panobu ile Billboard Kiralama",
+                        "description": "Türkiye genelinde billboard ve açık hava reklam alanı kiralama adımları",
+                        "totalTime": "PT10M",
+                        "estimatedCost": {
+                            "@type": "MonetaryAmount",
+                            "currency": "TRY",
+                            "value": "1500"
+                        },
+                        "step": [
+                            {
+                                "@type": "HowToStep",
+                                "position": 1,
+                                "name": "Pano Seçimi",
+                                "text": "Harita üzerinden şehir ve lokasyon seçin, uygun panoları filtreleyin",
+                                "url": "https://panobu.com/static-billboards"
+                            },
+                            {
+                                "@type": "HowToStep",
+                                "position": 2,
+                                "name": "Tarihleri Belirleyin",
+                                "text": "Kampanya başlangıç ve bitiş tarihlerini seçin, müsaitlik durumunu kontrol edin",
+                                "url": "https://panobu.com/static-billboards"
+                            },
+                            {
+                                "@type": "HowToStep",
+                                "position": 3,
+                                "name": "Sepete Ekleyin",
+                                "text": "Beğendiğiniz panoları sepete ekleyin, birden fazla pano seçebilirsiniz",
+                                "url": "https://panobu.com/cart"
+                            },
+                            {
+                                "@type": "HowToStep",
+                                "position": 4,
+                                "name": "Bilgilerinizi Girin",
+                                "text": "İletişim bilgilerinizi ve kampanya detaylarını doldurun",
+                                "url": "https://panobu.com/checkout"
+                            },
+                            {
+                                "@type": "HowToStep",
+                                "position": 5,
+                                "name": "Görselinizi Gönderin",
+                                "text": "Reklam görselinizi yükleyin veya tasarım desteği talep edin",
+                                "url": "https://panobu.com/checkout"
+                            }
+                        ]
+                    })
+                }}
+            />
         </PublicLayout>
     );
 }

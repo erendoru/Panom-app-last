@@ -108,6 +108,51 @@ export default function RootLayout({
             "Outdoor Reklam"
         ]
     };
+    const localBusinessSchema = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Panobu",
+        "image": "https://panobu.com/favicon.png",
+        "url": "https://panobu.com",
+        "telephone": "+90-555-123-4567",
+        "priceRange": "₺₺",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Merkez",
+            "addressLocality": "Kocaeli",
+            "addressRegion": "Kocaeli",
+            "postalCode": "41000",
+            "addressCountry": "TR"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 40.7654,
+            "longitude": 29.9408
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+        },
+        "areaServed": [
+            { "@type": "City", "name": "Kocaeli" },
+            { "@type": "City", "name": "İstanbul" },
+            { "@type": "City", "name": "Ankara" },
+            { "@type": "City", "name": "İzmir" },
+            { "@type": "City", "name": "Bursa" }
+        ],
+        "serviceType": "Billboard Kiralama",
+        "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Açık Hava Reklam Hizmetleri",
+            "itemListElement": [
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Billboard Kiralama" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "CLP Pano Kiralama" } },
+                { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Dijital Ekran Kiralama" } }
+            ]
+        }
+    };
 
     return (
         <html lang="tr">
@@ -116,6 +161,10 @@ export default function RootLayout({
                 <script
                     type="application/ld+json"
                     dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+                />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
                 />
             </head>
             <body className={inter.className}>{children}</body>
