@@ -549,6 +549,7 @@ export default function EditPanelPage() {
                                 >
                                     <option value="1">Günlük (1 gün)</option>
                                     <option value="7">Haftalık (7 gün)</option>
+                                    <option value="10">10 Günlük</option>
                                     <option value="14">2 Haftalık (14 gün)</option>
                                     <option value="30">Aylık (30 gün)</option>
                                 </select>
