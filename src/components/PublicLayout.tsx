@@ -153,13 +153,42 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                                 <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
                                 <li><Link href="/updates" className="hover:text-white transition-colors">Yenilikler</Link></li>
                                 <li><Link href="/company/help" className="hover:text-white transition-colors">Yardım Merkezi</Link></li>
-                                <li><Link href="/company/privacy" className="hover:text-white transition-colors">Gizlilik Politikası</Link></li>
+                                <li><Link href="/legal/contact" className="hover:text-white transition-colors">İletişim</Link></li>
                             </ul>
                         </div>
                     </div>
 
-                    <div className="pt-8 border-t border-white/10 text-center text-slate-500 text-sm">
-                        <p>&copy; 2025 Panobu. Tüm hakları saklıdır.</p>
+                    {/* Payment Icons */}
+                    <div className="flex flex-wrap items-center justify-center gap-4 py-6 border-t border-b border-white/10 mb-6">
+                        <span className="text-slate-500 text-sm mr-4">Güvenli Ödeme:</span>
+                        <div className="flex items-center gap-3">
+                            <div className="bg-white rounded px-2 py-1">
+                                <svg viewBox="0 0 38 24" className="h-6 w-auto" xmlns="http://www.w3.org/2000/svg"><path d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z" fill="#000" /><circle cx="15" cy="12" r="7" fill="#EB001B" /><circle cx="23" cy="12" r="7" fill="#F79E1B" /><path d="M19 17.5a7 7 0 010-11 7 7 0 000 11z" fill="#FF5F00" /></svg>
+                            </div>
+                            <div className="bg-white rounded px-2 py-1">
+                                <svg viewBox="0 0 38 24" className="h-6 w-auto" xmlns="http://www.w3.org/2000/svg"><path d="M35 0H3C1.3 0 0 1.3 0 3v18c0 1.7 1.4 3 3 3h32c1.7 0 3-1.3 3-3V3c0-1.7-1.4-3-3-3z" fill="#1A1F71" /><path d="M15 18.5l1.5-9h2.4l-1.5 9H15zm9.8-9c-.5-.2-1.2-.4-2.2-.4-2.4 0-4.1 1.3-4.1 3.1 0 1.4 1.2 2.1 2.1 2.5 1 .5 1.3.8 1.3 1.2 0 .6-.8 1-1.5 1-.9 0-1.5-.1-2.3-.5l-.3-.2-.4 2.2c.6.3 1.7.5 2.9.5 2.6 0 4.2-1.3 4.3-3.2 0-1.1-.6-1.9-2-2.6-.8-.4-1.3-.7-1.3-1.1 0-.4.4-.8 1.3-.8.8 0 1.3.2 1.8.4l.2.1.3-2.2zm6.5-.1h-1.9c-.6 0-1 .2-1.3.8l-3.6 8.7h2.6l.5-1.4h3.2c.1.3.3 1.4.3 1.4h2.3l-2.1-9.5zM28 15.5l1-2.6 1.3-3.6.2 1.2.8 4.9H28zm-14.1-9l-2.5 6.1-.3-1.4c-.5-1.6-2-3.4-3.6-4.2l2.2 8.4h2.6l3.9-9h-2.3z" fill="#fff" /><path d="M8.2 9.5H4.4l-.1.4c3.1.8 5.1 2.7 5.9 5l-.9-4.3c-.1-.5-.5-.7-1.1-.8z" fill="#F7A600" /></svg>
+                            </div>
+                            <div className="bg-white rounded px-3 py-1">
+                                <span className="text-blue-600 font-bold text-sm">iyzico</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Legal Links */}
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-400 mb-6">
+                        <Link href="/legal/privacy" className="hover:text-white transition-colors">Gizlilik Politikası</Link>
+                        <span className="text-slate-600">•</span>
+                        <Link href="/legal/refund" className="hover:text-white transition-colors">İade Politikası</Link>
+                        <span className="text-slate-600">•</span>
+                        <Link href="/legal/terms" className="hover:text-white transition-colors">Hizmet Şartları</Link>
+                        <span className="text-slate-600">•</span>
+                        <Link href="/legal/delivery" className="hover:text-white transition-colors">Teslimat Koşulları</Link>
+                        <span className="text-slate-600">•</span>
+                        <Link href="/legal/contact" className="hover:text-white transition-colors">İletişim</Link>
+                    </div>
+
+                    <div className="text-center text-slate-500 text-sm">
+                        <p>&copy; 2026 Panobu. Tüm hakları saklıdır.</p>
                     </div>
                 </div>
             </footer>

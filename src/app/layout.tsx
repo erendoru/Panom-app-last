@@ -24,8 +24,11 @@ export const metadata: Metadata = {
         "panobu"
     ],
     icons: {
-        icon: "/favicon.png",
+        icon: [
+            { url: "/favicon.png", type: "image/png" },
+        ],
         apple: "/favicon.png",
+        shortcut: "/favicon.png",
     },
     openGraph: {
         title: "Billboard Kiralama | Açık Hava Reklam Platformu - Panobu",
