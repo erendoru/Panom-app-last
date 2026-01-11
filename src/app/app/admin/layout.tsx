@@ -27,11 +27,32 @@ export default function AdminLayout({
     const pathname = usePathname();
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [pendingOrderCount, setPendingOrderCount] = useState(0);
 
     // Close sidebar when route changes (mobile)
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [pathname]);
+
+    // Fetch pending order count
+    useEffect(() => {
+        async function fetchPendingOrders() {
+            try {
+                const res = await fetch('/api/admin/orders/pending-count');
+                if (res.ok) {
+                    const data = await res.json();
+                    setPendingOrderCount(data.count || 0);
+                }
+            } catch (error) {
+                console.error('Failed to fetch pending orders:', error);
+            }
+        }
+
+        fetchPendingOrders();
+        // Refresh every 30 seconds
+        const interval = setInterval(fetchPendingOrders, 30000);
+        return () => clearInterval(interval);
+    }, []);
 
     async function handleLogout() {
         await fetch("/api/auth/logout", { method: "POST" });
@@ -40,7 +61,7 @@ export default function AdminLayout({
 
     const navItems = [
         { href: "/app/admin/dashboard", label: "Onay Bekleyenler", icon: ShieldCheck },
-        { href: "/app/admin/orders", label: "Siparişler", icon: ShoppingBag },
+        { href: "/app/admin/orders", label: "Siparişler", icon: ShoppingBag, badge: pendingOrderCount },
         { href: "/app/admin/panels", label: "Panolar", icon: LayoutGrid },
         { href: "/app/admin/pricing-rules", label: "Fiyatlandırma", icon: Zap },
         { href: "/app/admin/availability", label: "Müsaitlik", icon: CalendarDays },
@@ -109,7 +130,12 @@ export default function AdminLayout({
                                     }`}
                             >
                                 <Icon className="w-5 h-5" />
-                                {item.label}
+                                <span className="flex-1">{item.label}</span>
+                                {item.badge && item.badge > 0 && (
+                                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                                        {item.badge > 99 ? '99+' : item.badge}
+                                    </span>
+                                )}
                             </Link>
                         );
                     })}

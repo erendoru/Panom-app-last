@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { sendOrderNotificationEmail, sendOrderConfirmationToCustomer } from '@/lib/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -99,6 +100,58 @@ export async function POST(req: NextRequest) {
                 where: { sessionId }
             });
         }
+
+        // Send email notifications (don't await - fire and forget)
+        sendOrderNotificationEmail({
+            orderNumber: order.orderNumber,
+            campaignName: order.campaignName,
+            contactName: order.contactName,
+            contactPhone: order.contactPhone,
+            contactEmail: order.contactEmail,
+            companyName: order.companyName,
+            notes: order.notes,
+            hasOwnCreatives: order.hasOwnCreatives,
+            needsDesignHelp: order.needsDesignHelp,
+            startDate: order.startDate,
+            endDate: order.endDate,
+            items: order.items.map(item => ({
+                panel: {
+                    name: item.panel.name,
+                    type: item.panel.type,
+                    city: item.panel.city,
+                    district: item.panel.district
+                },
+                startDate: item.startDate,
+                endDate: item.endDate,
+                weeklyPrice: item.weeklyPrice
+            }))
+        }).catch(err => console.error('Failed to send order notification:', err));
+
+        // Also send confirmation to customer
+        sendOrderConfirmationToCustomer({
+            orderNumber: order.orderNumber,
+            campaignName: order.campaignName,
+            contactName: order.contactName,
+            contactPhone: order.contactPhone,
+            contactEmail: order.contactEmail,
+            companyName: order.companyName,
+            notes: order.notes,
+            hasOwnCreatives: order.hasOwnCreatives,
+            needsDesignHelp: order.needsDesignHelp,
+            startDate: order.startDate,
+            endDate: order.endDate,
+            items: order.items.map(item => ({
+                panel: {
+                    name: item.panel.name,
+                    type: item.panel.type,
+                    city: item.panel.city,
+                    district: item.panel.district
+                },
+                startDate: item.startDate,
+                endDate: item.endDate,
+                weeklyPrice: item.weeklyPrice
+            }))
+        }).catch(err => console.error('Failed to send customer confirmation:', err));
 
         return NextResponse.json({
             success: true,
