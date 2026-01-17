@@ -22,7 +22,7 @@ export async function getSession() {
 
         const dbUser = await prisma.user.findUnique({
             where: { email: session.user.email! },
-            select: { role: true, id: true, name: true }
+            select: { role: true, id: true, name: true, assignedCity: true }
         });
 
         return {
@@ -30,6 +30,7 @@ export async function getSession() {
             userId: dbUser?.id,
             role: dbUser?.role,
             name: dbUser?.name,
+            assignedCity: dbUser?.assignedCity,
             accessToken: session.access_token
         };
 

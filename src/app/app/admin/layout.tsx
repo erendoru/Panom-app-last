@@ -15,7 +15,8 @@ import {
     FileText,
     Sparkles,
     Zap,
-    ShoppingBag
+    ShoppingBag,
+    MapPin
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -28,29 +29,38 @@ export default function AdminLayout({
     const router = useRouter();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [pendingOrderCount, setPendingOrderCount] = useState(0);
+    const [assignedCity, setAssignedCity] = useState<string | null>(null);
 
     // Close sidebar when route changes (mobile)
     useEffect(() => {
         setIsSidebarOpen(false);
     }, [pathname]);
 
-    // Fetch pending order count
+    // Fetch pending order count and user info
     useEffect(() => {
-        async function fetchPendingOrders() {
+        async function fetchData() {
             try {
-                const res = await fetch('/api/admin/orders/pending-count');
-                if (res.ok) {
-                    const data = await res.json();
+                // Fetch pending orders
+                const ordersRes = await fetch('/api/admin/orders/pending-count');
+                if (ordersRes.ok) {
+                    const data = await ordersRes.json();
                     setPendingOrderCount(data.count || 0);
                 }
+
+                // Fetch session info (me API returns session with assignedCity)
+                const sessionRes = await fetch('/api/auth/me');
+                if (sessionRes.ok) {
+                    const sessionData = await sessionRes.json();
+                    setAssignedCity(sessionData.user?.assignedCity || null);
+                }
             } catch (error) {
-                console.error('Failed to fetch pending orders:', error);
+                console.error('Failed to fetch data:', error);
             }
         }
 
-        fetchPendingOrders();
+        fetchData();
         // Refresh every 30 seconds
-        const interval = setInterval(fetchPendingOrders, 30000);
+        const interval = setInterval(fetchData, 30000);
         return () => clearInterval(interval);
     }, []);
 
@@ -116,7 +126,18 @@ export default function AdminLayout({
                         Panobu <span className="text-xs text-slate-400 font-normal">Admin</span>
                     </Link>
                 </div>
-                <nav className="p-4 space-y-1">
+
+                {/* Regional Admin City Badge */}
+                {assignedCity && (
+                    <div className="mx-4 mt-4 px-4 py-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                        <div className="flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-blue-400" />
+                            <span className="text-sm font-medium text-blue-300">{assignedCity} Yöneticisi</span>
+                        </div>
+                    </div>
+                )}
+
+                <nav className={`p-4 space-y-1 ${assignedCity ? 'pt-2' : ''}`}>
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = pathname.startsWith(item.href);

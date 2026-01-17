@@ -3,10 +3,27 @@ export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
+// Helper to check if regional admin can access this panel
+async function canAccessPanel(session: any, panelId: string): Promise<boolean> {
+    if (!session.assignedCity) return true; // Full admin has access to all
+
+    const panel = await prisma.staticPanel.findUnique({
+        where: { id: panelId },
+        select: { city: true }
+    });
+
+    return panel?.city === session.assignedCity;
+}
+
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const session = await getSession();
-        if (!session || session.role !== "ADMIN") {
+        if (!session || !hasAdminAccess(session)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -15,6 +32,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         });
 
         if (!panel) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+        // Check if regional admin can access this panel
+        if (session.assignedCity && panel.city !== session.assignedCity) {
+            return NextResponse.json({ error: "Bu panoya erişim yetkiniz yok" }, { status: 403 });
+        }
 
         return NextResponse.json(panel);
     } catch (error) {
@@ -26,8 +48,16 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const session = await getSession();
-        if (!session || session.role !== "ADMIN") {
+        if (!session || !hasAdminAccess(session)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        // Check if regional admin can access this panel
+        if (session.assignedCity) {
+            const canAccess = await canAccessPanel(session, params.id);
+            if (!canAccess) {
+                return NextResponse.json({ error: "Bu panoya erişim yetkiniz yok" }, { status: 403 });
+            }
         }
 
         const body = await request.json();
@@ -37,6 +67,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
             locationType, socialGrade, avmName, isAVM, trafficLevel,
             priceDaily, minRentalDays
         } = body;
+
+        // Regional admin cannot change city to a different city
+        if (session.assignedCity && city !== session.assignedCity) {
+            return NextResponse.json({ error: `Sadece ${session.assignedCity} iline ait panolar düzenleyebilirsiniz` }, { status: 403 });
+        }
 
         const panel = await prisma.staticPanel.update({
             where: { id: params.id },
@@ -73,8 +108,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
     try {
         const session = await getSession();
-        if (!session || session.role !== "ADMIN") {
+        if (!session || !hasAdminAccess(session)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        // Check if regional admin can access this panel
+        if (session.assignedCity) {
+            const canAccess = await canAccessPanel(session, params.id);
+            if (!canAccess) {
+                return NextResponse.json({ error: "Bu panoya erişim yetkiniz yok" }, { status: 403 });
+            }
         }
 
         await prisma.staticPanel.delete({

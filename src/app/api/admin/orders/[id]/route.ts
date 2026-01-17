@@ -4,6 +4,32 @@ import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
+// Helper to check if regional admin can access this order
+async function canAccessOrder(session: any, orderId: string): Promise<boolean> {
+    if (!session.assignedCity) return true; // Full admin has access to all
+
+    const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+            items: {
+                include: {
+                    panel: { select: { city: true } }
+                }
+            }
+        }
+    });
+
+    if (!order) return false;
+
+    // Check if any panel in order belongs to admin's city
+    return order.items.some(item => item.panel.city === session.assignedCity);
+}
+
 // PUT: Update order status (admin only)
 export async function PUT(
     req: NextRequest,
@@ -11,8 +37,16 @@ export async function PUT(
 ) {
     const session = await getSession();
 
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if regional admin can access this order
+    if (session.assignedCity) {
+        const canAccess = await canAccessOrder(session, params.id);
+        if (!canAccess) {
+            return NextResponse.json({ error: 'Bu siparişe erişim yetkiniz yok' }, { status: 403 });
+        }
     }
 
     try {
@@ -44,7 +78,7 @@ export async function GET(
 ) {
     const session = await getSession();
 
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -62,6 +96,14 @@ export async function GET(
 
         if (!order) {
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+        }
+
+        // Check if regional admin can access this order
+        if (session.assignedCity) {
+            const hasAccess = order.items.some(item => item.panel.city === session.assignedCity);
+            if (!hasAccess) {
+                return NextResponse.json({ error: 'Bu siparişe erişim yetkiniz yok' }, { status: 403 });
+            }
         }
 
         return NextResponse.json({ order });

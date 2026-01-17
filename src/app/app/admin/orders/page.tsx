@@ -47,13 +47,38 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
 
 export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
+    const [allOrders, setAllOrders] = useState<Order[]>([]); // For extracting unique cities
     const [loading, setLoading] = useState(true);
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
     const [statusFilter, setStatusFilter] = useState<string>('');
+    const [cityFilter, setCityFilter] = useState<string>('');
+    const [uniqueCities, setUniqueCities] = useState<string[]>([]);
+    const [assignedCity, setAssignedCity] = useState<string | null>(null);
+
+    // Fetch session to check if regional admin
+    useEffect(() => {
+        async function fetchSession() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    setAssignedCity(data.user?.assignedCity || null);
+                }
+            } catch (error) {
+                console.error('Error fetching session:', error);
+            }
+        }
+        fetchSession();
+    }, []);
 
     useEffect(() => {
         fetchOrders();
     }, [statusFilter]);
+
+    // Filter orders by city (client-side for performance)
+    const filteredOrders = cityFilter
+        ? orders.filter(order => order.items.some(item => item.panel.city === cityFilter))
+        : orders;
 
     const fetchOrders = async () => {
         try {
@@ -62,7 +87,20 @@ export default function AdminOrdersPage() {
                 : '/api/admin/orders';
             const res = await fetch(url);
             const data = await res.json();
-            setOrders(data.orders || []);
+            const fetchedOrders = data.orders || [];
+            setOrders(fetchedOrders);
+            setAllOrders(fetchedOrders);
+
+            // Extract unique cities from all orders
+            const cities = new Set<string>();
+            fetchedOrders.forEach((order: Order) => {
+                order.items.forEach(item => {
+                    if (item.panel.city) {
+                        cities.add(item.panel.city);
+                    }
+                });
+            });
+            setUniqueCities(Array.from(cities).sort());
         } catch (error) {
             console.error('Error fetching orders:', error);
         } finally {
@@ -104,17 +142,34 @@ export default function AdminOrdersPage() {
                     <p className="text-slate-600">Müşteri siparişlerini yönetin</p>
                 </div>
 
-                {/* Status Filter */}
-                <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="px-4 py-2 border border-slate-300 rounded-lg"
-                >
-                    <option value="">Tüm Durumlar</option>
-                    {Object.entries(STATUS_CONFIG).map(([key, config]) => (
-                        <option key={key} value={key}>{config.label}</option>
-                    ))}
-                </select>
+                {/* Filters */}
+                <div className="flex items-center gap-3">
+                    {/* City Filter - Only show for ADMIN (not regional admin) */}
+                    {!assignedCity && uniqueCities.length > 0 && (
+                        <select
+                            value={cityFilter}
+                            onChange={(e) => setCityFilter(e.target.value)}
+                            className="px-4 py-2 border border-slate-300 rounded-lg"
+                        >
+                            <option value="">Tüm İller</option>
+                            {uniqueCities.map(city => (
+                                <option key={city} value={city}>{city}</option>
+                            ))}
+                        </select>
+                    )}
+
+                    {/* Status Filter */}
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg"
+                    >
+                        <option value="">Tüm Durumlar</option>
+                        {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+                            <option key={key} value={key}>{config.label}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -122,13 +177,13 @@ export default function AdminOrdersPage() {
                 <div className="lg:col-span-2 space-y-4">
                     {loading ? (
                         <div className="text-center py-12 text-slate-500">Yükleniyor...</div>
-                    ) : orders.length === 0 ? (
+                    ) : filteredOrders.length === 0 ? (
                         <div className="text-center py-12 bg-white rounded-xl border">
                             <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                             <h3 className="text-lg font-medium text-slate-900">Henüz sipariş yok</h3>
                         </div>
                     ) : (
-                        orders.map(order => {
+                        filteredOrders.map(order => {
                             const StatusIcon = STATUS_CONFIG[order.status]?.icon || Clock;
                             return (
                                 <div

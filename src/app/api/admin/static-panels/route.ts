@@ -3,10 +3,15 @@ export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
 export async function POST(request: NextRequest) {
     try {
         const session = await getSession();
-        if (!session || session.role !== "ADMIN") {
+        if (!session || !hasAdminAccess(session)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -32,6 +37,14 @@ export async function POST(request: NextRequest) {
 
         if (!name || !city || !district || !priceWeekly) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        // Regional admin can only add panels to their assigned city
+        if (session.assignedCity && city !== session.assignedCity) {
+            return NextResponse.json(
+                { error: `Sadece ${session.assignedCity} iline pano ekleyebilirsiniz` },
+                { status: 403 }
+            );
         }
 
         const panel = await prisma.staticPanel.create({
@@ -69,11 +82,17 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
     try {
         const session = await getSession();
-        if (!session || session.role !== "ADMIN") {
+        if (!session || !hasAdminAccess(session)) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        // Filter by assigned city for regional admins
+        const whereClause = session.assignedCity
+            ? { city: session.assignedCity }
+            : {};
+
         const panels = await prisma.staticPanel.findMany({
+            where: whereClause,
             orderBy: { createdAt: "desc" },
         });
 

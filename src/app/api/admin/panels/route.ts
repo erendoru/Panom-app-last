@@ -5,6 +5,11 @@ export const dynamic = 'force-dynamic'; // Fix for Vercel build error
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
 // Helper function to parse dimension string to meters
 function parseDimension(value: string | number): number {
     if (typeof value === 'number') return value;
@@ -29,7 +34,7 @@ function parseDimension(value: string | number): number {
 // GET: Fetch all panels with optional filtering (Admin only)
 export async function GET(req: NextRequest) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
@@ -45,6 +50,11 @@ export async function GET(req: NextRequest) {
         if (district) where.district = district;
         if (type) where.type = type;
         if (isAVM === 'true') where.isAVM = true;
+
+        // Regional admin can only see panels from their assigned city
+        if (session.assignedCity) {
+            where.city = session.assignedCity;
+        }
 
         const panels = await prisma.staticPanel.findMany({
             where,
@@ -74,7 +84,7 @@ export async function GET(req: NextRequest) {
 // POST: Create a new panel (Admin only)
 export async function POST(req: NextRequest) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
@@ -101,6 +111,14 @@ export async function POST(req: NextRequest) {
             isDraft // For quick add feature
         } = body;
 
+        // Regional admin can only add panels to their assigned city
+        if (session.assignedCity && city && city !== session.assignedCity) {
+            return NextResponse.json(
+                { error: `Sadece ${session.assignedCity} iline pano ekleyebilirsiniz` },
+                { status: 403 }
+            );
+        }
+
         // Skip validation for draft panels (quick add)
         if (!isDraft) {
             // Validation
@@ -119,12 +137,15 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        // Use assigned city for regional admin if city not provided
+        const finalCity = city || session.assignedCity || '';
+
         const panel = await prisma.staticPanel.create({
             data: {
                 name: name || '',
                 type: type || 'BILLBOARD',
                 subType: subType || '',
-                city: city || '',
+                city: finalCity,
                 district: district || '',
                 address: address || '',
                 latitude: latitude ? parseFloat(String(latitude)) : 0,

@@ -34,9 +34,10 @@ model User {
   id            String    @id @default(uuid())
   email         String    @unique
   passwordHash  String
-  role          String
+  role          String    // "ADMIN", "REGIONAL_ADMIN", "ADVERTISER", "SCREEN_OWNER"
   name          String
   phone         String?
+  assignedCity  String?   // Regional admin için atanmış il (null = tüm illere erişim)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

@@ -3,6 +3,24 @@ export const dynamic = 'force-dynamic';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
+// Helper to check if regional admin can access this panel
+async function canAccessPanel(session: any, panelId: string): Promise<{ canAccess: boolean; panel: any }> {
+    const panel = await prisma.staticPanel.findUnique({
+        where: { id: panelId },
+        select: { city: true }
+    });
+
+    if (!session.assignedCity) return { canAccess: true, panel }; // Full admin has access to all
+    if (!panel) return { canAccess: false, panel: null };
+
+    return { canAccess: panel.city === session.assignedCity, panel };
+}
+
 // Helper function to parse dimension string to meters
 function parseDimension(value: string | number): number {
     if (typeof value === 'number') return value;
@@ -30,7 +48,7 @@ export async function GET(
     { params }: { params: { id: string } }
 ) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     try {
@@ -61,6 +79,11 @@ export async function GET(
             );
         }
 
+        // Check if regional admin can access this panel
+        if (session.assignedCity && panel.city !== session.assignedCity) {
+            return NextResponse.json({ error: 'Bu panoya erişim yetkiniz yok' }, { status: 403 });
+        }
+
         return NextResponse.json(panel);
     } catch (error) {
         console.error('Error fetching panel:', error);
@@ -77,9 +100,18 @@ export async function PUT(
     { params }: { params: { id: string } }
 ) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Check if regional admin can access this panel
+    if (session.assignedCity) {
+        const { canAccess } = await canAccessPanel(session, params.id);
+        if (!canAccess) {
+            return NextResponse.json({ error: 'Bu panoya erişim yetkiniz yok' }, { status: 403 });
+        }
+    }
+
     try {
         const body = await req.json();
         console.log('PUT Body:', JSON.stringify(body, null, 2));
@@ -107,6 +139,11 @@ export async function PUT(
             ownerPhone
         } = body;
 
+        // Regional admin cannot change city to a different city
+        if (session.assignedCity && city && city !== session.assignedCity) {
+            return NextResponse.json({ error: `Sadece ${session.assignedCity} iline ait panolar düzenleyebilirsiniz` }, { status: 403 });
+        }
+
         // Safe parse functions
         const safeParseFloat = (val: any): number => {
             if (val === null || val === undefined || val === '') return 0;
@@ -126,7 +163,7 @@ export async function PUT(
                 name: name || '',
                 type: type || 'BILLBOARD',
                 subType: subType || '',
-                city: city || '',
+                city: city || session.assignedCity || '',
                 district: district || '',
                 address: address || '',
                 latitude: safeParseFloat(latitude),
@@ -165,9 +202,18 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    // Check if regional admin can access this panel
+    if (session.assignedCity) {
+        const { canAccess } = await canAccessPanel(session, params.id);
+        if (!canAccess) {
+            return NextResponse.json({ error: 'Bu panoya erişim yetkiniz yok' }, { status: 403 });
+        }
+    }
+
     try {
         // Check if panel has active rentals
         const panel = await prisma.staticPanel.findUnique({
@@ -213,3 +259,4 @@ export async function DELETE(
         );
     }
 }
+

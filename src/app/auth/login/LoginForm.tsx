@@ -71,7 +71,7 @@ export default function LoginForm() {
 
                 // Use redirect param if available, otherwise role-based redirect
                 let finalRedirect = redirectTo || (
-                    userData.role === 'ADMIN' ? '/app/admin/panels' :
+                    (userData.role === 'ADMIN' || userData.role === 'REGIONAL_ADMIN') ? '/app/admin/panels' :
                         userData.role === 'SCREEN_OWNER' ? '/app/owner/dashboard' :
                             '/app/advertiser/dashboard'
                 );

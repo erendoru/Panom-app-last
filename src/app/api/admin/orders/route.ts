@@ -4,11 +4,16 @@ import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
+// Helper to check if user has admin access
+function hasAdminAccess(session: any) {
+    return session?.role === "ADMIN" || session?.role === "REGIONAL_ADMIN";
+}
+
 // GET: Get all orders (admin only)
 export async function GET(req: NextRequest) {
     const session = await getSession();
 
-    if (!session || session.role !== 'ADMIN') {
+    if (!session || !hasAdminAccess(session)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -19,6 +24,17 @@ export async function GET(req: NextRequest) {
         const where: any = {};
         if (status) {
             where.status = status;
+        }
+
+        // Regional admin: filter orders by their assigned city
+        if (session.assignedCity) {
+            where.items = {
+                some: {
+                    panel: {
+                        city: session.assignedCity
+                    }
+                }
+            };
         }
 
         const orders = await prisma.order.findMany({
