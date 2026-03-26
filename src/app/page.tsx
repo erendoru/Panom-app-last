@@ -228,7 +228,7 @@ export default function LandingPage() {
                                 <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent whitespace-nowrap">
                                     Tüm Türkiye
                                 </div>
-                                <div className="text-xs md:text-sm text-emerald-500/80 uppercase tracking-widest">Yakında Global</div>
+                                <div className="text-xs md:text-sm text-emerald-500/80 uppercase tracking-widest">Yakında</div>
                             </motion.div>
 
                             <motion.div
