@@ -1,11 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin, Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
+
+function CountUp({ target, suffix = "", duration = 2 }: { target: number; suffix?: string; duration?: number }) {
+    const [count, setCount] = useState(0);
+    const ref = useRef<HTMLSpanElement>(null);
+    const isInView = useInView(ref, { once: true });
+
+    useEffect(() => {
+        if (!isInView) return;
+        let start = 0;
+        const step = target / (duration * 60);
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= target) {
+                setCount(target);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 1000 / 60);
+        return () => clearInterval(timer);
+    }, [isInView, target, duration]);
+
+    return <span ref={ref}>{count}{suffix}</span>;
+}
 
 const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -180,24 +204,58 @@ export default function LandingPage() {
                 {/* Stats Section */}
                 <section className="pt-10 md:pt-20 pb-20 border-y border-white/5 bg-white/5 backdrop-blur-sm relative z-10">
                     <div className="container mx-auto px-4">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                            {[
-                                { label: "Aktif Lokasyon", value: "100+" },
-                                { label: "Şehir", value: "81" },
-                                { label: "Reklam Formatı", value: "14+" },
-                                { label: "Fiyat", value: "En Uygun" },
-                            ].map((stat, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                >
-                                    <div className="text-4xl md:text-5xl font-bold text-white mb-2">{stat.value}</div>
-                                    <div className="text-slate-400">{stat.label}</div>
-                                </motion.div>
-                            ))}
+                        <div className="grid grid-cols-2 md:grid-cols-4">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0, duration: 0.5 }}
+                                className="text-center py-4 md:py-0 md:border-r border-white/10"
+                            >
+                                <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                                    <CountUp target={300} suffix="+" duration={2} />
+                                </div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Reklam Ünitesi</div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.15, duration: 0.5 }}
+                                className="text-center py-4 md:py-0 md:border-r border-white/10"
+                            >
+                                <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent whitespace-nowrap">
+                                    Tüm Türkiye
+                                </div>
+                                <div className="text-xs md:text-sm text-emerald-500/80 uppercase tracking-widest">Yakında Global</div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.3, duration: 0.5 }}
+                                className="text-center py-4 md:py-0 md:border-r border-white/10"
+                            >
+                                <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
+                                    En Uygun
+                                </div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Fiyat Garantisi</div>
+                            </motion.div>
+
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.45, duration: 0.5 }}
+                                className="text-center py-4 md:py-0"
+                            >
+                                <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                                    <CountUp target={5} suffix=" dk" duration={1.5} />
+                                </div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Hızlı Başlangıç</div>
+                            </motion.div>
                         </div>
                     </div>
                 </section>
@@ -538,11 +596,6 @@ export default function LandingPage() {
                                 <li><Link href="/legal/contact" className="hover:text-white transition-colors">İletişim</Link></li>
                             </ul>
                         </div>
-                    </div>
-
-                    {/* Payment Icons */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 py-6 border-t border-b border-white/10 mb-6">
-                        <img src="/images/payment-methods.png" alt="Ödeme Yöntemleri - iyzico, Mastercard, Visa, American Express, Troy" className="h-8" />
                     </div>
 
                     {/* Legal Links */}
