@@ -95,19 +95,19 @@ export default function LoginForm() {
     return (
         <div className="space-y-6">
             {showRentalMessage && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-green-800">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 text-center">
+                    <p className="text-sm text-emerald-300">
                         ✨ Giriş yaptıktan sonra pano kiralama işleminize devam edebilirsiniz!
                     </p>
                 </div>
             )}
             <div className="space-y-2 text-center">
-                <h1 className="text-3xl font-bold">Giriş Yap</h1>
-                <p className="text-gray-500">Hesabınıza erişmek için bilgilerinizi girin</p>
+                <h1 className="text-3xl font-bold text-white">Giriş Yap</h1>
+                <p className="text-slate-400">Hesabınıza erişmek için bilgilerinizi girin</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email">E-posta</Label>
+                    <Label htmlFor="email" className="text-slate-300">E-posta</Label>
                     <Input
                         id="email"
                         placeholder="ornek@sirket.com"
@@ -115,31 +115,33 @@ export default function LoginForm() {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="password">Şifre</Label>
+                    <Label htmlFor="password" className="text-slate-300">Şifre</Label>
                     <Input
                         id="password"
                         required
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                     />
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button className="w-full" type="submit" disabled={loading}>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" type="submit" disabled={loading}>
                     {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
                 </Button>
             </form>
             <div className="text-center text-sm">
-                <Link className="text-blue-600 hover:underline" href="/auth/forgot-password">
+                <Link className="text-blue-400 hover:underline" href="/auth/forgot-password">
                     Şifremi Unuttum
                 </Link>
             </div>
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-slate-400">
                 Hesabınız yok mu?{" "}
-                <Link className="underline" href="/auth/register">
+                <Link className="underline text-blue-400" href="/auth/register">
                     Kayıt Ol
                 </Link>
             </div>

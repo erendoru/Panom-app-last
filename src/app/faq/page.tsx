@@ -48,7 +48,7 @@ const FAQ_ITEMS = [
 export default function FAQPage() {
     return (
         <PublicLayout>
-            <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 pt-24 pb-16">
+            <div className="min-h-screen pt-24 pb-16">
                 <div className="container mx-auto px-4 max-w-4xl">
                     {/* Header */}
                     <div className="text-center mb-12">

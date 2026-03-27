@@ -17,7 +17,7 @@ import Link from "next/link";
 // Dynamically import Map to avoid SSR issues
 const Map = dynamic(() => import("@/components/domain/Map"), {
     ssr: false,
-    loading: () => <div className="w-full h-full bg-slate-100 animate-pulse flex items-center justify-center text-slate-400">Harita Yükleniyor...</div>
+    loading: () => <div className="w-full h-full bg-[#0f1729] animate-pulse flex items-center justify-center text-slate-500">Harita Yükleniyor...</div>
 });
 
 // Cart-wrapped inner component
@@ -177,23 +177,23 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     return (
         <div className="flex-1 flex flex-col overflow-hidden h-[calc(100vh-80px)]">
             {/* Top Filter Bar */}
-            <div className="bg-white border-b shadow-sm z-20">
+            <div className="bg-[#0f1729] border-b border-white/5 z-20">
                 {/* Mobile: Compact Header */}
                 <div className="md:hidden px-4 py-2">
                     <div className="flex items-center justify-between">
                         {/* Selected City Badge & Toggle */}
                         <button
                             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-                            className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200"
+                            className="flex items-center gap-2 px-3 py-2 bg-blue-500/10 rounded-lg border border-blue-500/20"
                         >
-                            <MapPin className="w-4 h-4 text-blue-600" />
-                            <span className="font-medium text-blue-700">{selectedCity}</span>
-                            <ChevronDown className={`w-4 h-4 text-blue-600 transition-transform ${mobileFiltersOpen ? 'rotate-180' : ''}`} />
+                            <MapPin className="w-4 h-4 text-blue-400" />
+                            <span className="font-medium text-blue-300">{selectedCity}</span>
+                            <ChevronDown className={`w-4 h-4 text-blue-400 transition-transform ${mobileFiltersOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         <div className="flex items-center gap-2">
                             {/* Panel Count */}
-                            <span className="text-xs text-slate-500 font-medium">
+                            <span className="text-xs text-slate-400 font-medium">
                                 {filteredPanels.length} pano
                             </span>
 
@@ -227,7 +227,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                         }}
                                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${selectedCity === city
                                             ? 'bg-blue-600 text-white shadow-md'
-                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            : 'bg-white/[0.06] text-slate-300 hover:bg-white/10'
                                             }`}
                                     >
                                         {city}
@@ -240,7 +240,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 {/* Panel Type - Opens Full Filter */}
                                 <button
                                     onClick={() => setShowFiltersOverlay(true)}
-                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-sm ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200'
+                                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border text-sm ${filters.panelTypes.length > 0 ? 'bg-blue-500/10 border-blue-500/20 text-blue-300' : 'bg-white/[0.06] border-white/10 text-slate-300'
                                         }`}
                                 >
                                     <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -262,7 +262,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                             trafficLevels: [],
                                             isAVM: null
                                         })}
-                                        className="px-3 py-1.5 rounded-lg text-sm text-red-600 border border-red-200 bg-red-50"
+                                        className="px-3 py-1.5 rounded-lg text-sm text-red-400 border border-red-500/20 bg-red-500/10"
                                     >
                                         Temizle ×
                                     </button>
@@ -286,7 +286,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                         onClick={() => handleCityClick(city)}
                                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCity === city
                                             ? 'bg-blue-600 text-white shadow-md'
-                                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                            : 'bg-white/[0.06] text-slate-300 hover:bg-white/10'
                                             }`}
                                     >
                                         {city}
@@ -295,13 +295,13 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                             </div>
 
                             {/* Separator */}
-                            <div className="h-6 w-px bg-slate-200 mx-1"></div>
+                            <div className="h-6 w-px bg-white/10 mx-1"></div>
 
                             {/* Panel Type Dropdown */}
                             <div className="relative custom-dropdown">
                                 <button
                                     onClick={() => toggleDropdown('type')}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.panelTypes.length > 0 ? 'bg-blue-500/10 border-blue-500/20 text-blue-300' : 'bg-white/[0.06] border-white/10 text-slate-300 hover:bg-white/10'
                                         }`}
                                 >
                                     <span>Pano Tipi</span>
@@ -314,17 +314,17 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 </button>
 
                                 {openDropdown === 'type' && (
-                                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="absolute top-full left-0 mt-2 w-64 bg-[#1a2332] rounded-lg shadow-xl border border-white/10 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                                         <div className="space-y-1 max-h-[300px] overflow-y-auto">
                                             {Object.entries(PANEL_TYPE_LABELS).map(([key, label]) => (
                                                 <button
                                                     key={key}
                                                     onClick={() => togglePanelType(key)}
-                                                    className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                                    className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-white/[0.06] transition-colors text-left"
                                                 >
                                                     <div className="flex items-center gap-2">
                                                         <PanelTypeIcon type={key} size={16} />
-                                                        <span className="text-slate-700">{label}</span>
+                                                        <span className="text-slate-300">{label}</span>
                                                     </div>
                                                     {filters.panelTypes.includes(key) && (
                                                         <Check className="w-4 h-4 text-blue-600" />
@@ -340,7 +340,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                             <div className="relative custom-dropdown">
                                 <button
                                     onClick={() => toggleDropdown('price')}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 'bg-blue-500/10 border-blue-500/20 text-blue-300' : 'bg-white/[0.06] border-white/10 text-slate-300 hover:bg-white/10'
                                         }`}
                                 >
                                     <span>Fiyat</span>
@@ -348,9 +348,9 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 </button>
 
                                 {openDropdown === 'price' && (
-                                    <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-slate-100 p-4 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="absolute top-full left-0 mt-2 w-72 bg-[#1a2332] rounded-lg shadow-xl border border-white/10 p-4 z-50 animate-in fade-in zoom-in-95 duration-200">
                                         <div className="space-y-4">
-                                            <div className="flex justify-between text-sm text-slate-600">
+                                            <div className="flex justify-between text-sm text-slate-300">
                                                 <span>Min: {formatCurrency(filters.priceRange[0])}</span>
                                                 <span>Max: {formatCurrency(filters.priceRange[1])}</span>
                                             </div>
@@ -366,7 +366,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                             <div className="relative custom-dropdown">
                                 <button
                                     onClick={() => toggleDropdown('location')}
-                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.isAVM !== null ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 hover:bg-slate-50'
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.isAVM !== null ? 'bg-blue-500/10 border-blue-500/20 text-blue-300' : 'bg-white/[0.06] border-white/10 text-slate-300 hover:bg-white/10'
                                         }`}
                                 >
                                     <span>Konum</span>
@@ -379,28 +379,28 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 </button>
 
                                 {openDropdown === 'location' && (
-                                    <div className="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-100 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="absolute top-full left-0 mt-2 w-48 bg-[#1a2332] rounded-lg shadow-xl border border-white/10 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                                         <div className="space-y-1">
                                             <button
                                                 onClick={() => setFilters({ ...filters, isAVM: null })}
-                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-white/[0.06] transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">Tümü</span>
-                                                {filters.isAVM === null && <Check className="w-4 h-4 text-blue-600" />}
+                                                <span className="text-slate-300">Tümü</span>
+                                                {filters.isAVM === null && <Check className="w-4 h-4 text-blue-400" />}
                                             </button>
                                             <button
                                                 onClick={() => setFilters({ ...filters, isAVM: true })}
-                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-white/[0.06] transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">🏬 AVM İçi</span>
-                                                {filters.isAVM === true && <Check className="w-4 h-4 text-blue-600" />}
+                                                <span className="text-slate-300">🏬 AVM İçi</span>
+                                                {filters.isAVM === true && <Check className="w-4 h-4 text-blue-400" />}
                                             </button>
                                             <button
                                                 onClick={() => setFilters({ ...filters, isAVM: false })}
-                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
+                                                className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-white/[0.06] transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">🏙️ Açık Alan</span>
-                                                {filters.isAVM === false && <Check className="w-4 h-4 text-blue-600" />}
+                                                <span className="text-slate-300">🏙️ Açık Alan</span>
+                                                {filters.isAVM === false && <Check className="w-4 h-4 text-blue-400" />}
                                             </button>
                                         </div>
                                     </div>
@@ -411,7 +411,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
 
                         {/* Right Side: Filter Toggle & Count */}
                         <div className="flex items-center gap-3">
-                            <p className="text-xs text-slate-500 font-medium">
+                            <p className="text-xs text-slate-400 font-medium">
                                 {filteredPanels.length} pano bulundu
                             </p>
 
@@ -464,10 +464,10 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                 {/* Map */}
                 <div className="flex-1 relative z-10">
                     {isLoadingPanels && (
-                        <div className="absolute inset-0 bg-white/70 z-20 flex items-center justify-center">
-                            <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg">
-                                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                                <span className="text-slate-600 font-medium">Panolar yükleniyor...</span>
+                        <div className="absolute inset-0 bg-[#0B1120]/70 z-20 flex items-center justify-center">
+                            <div className="flex items-center gap-3 bg-[#1a2332] px-6 py-4 rounded-xl shadow-lg border border-white/10">
+                                <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
+                                <span className="text-slate-300 font-medium">Panolar yükleniyor...</span>
                             </div>
                         </div>
                     )}

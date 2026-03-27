@@ -7,9 +7,10 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
     return (
+        <div className="min-h-screen bg-[#0B1120] text-white">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-8">Kullanım Koşulları</h1>
-            <div className="prose prose-slate max-w-none">
+            <h1 className="text-3xl font-bold mb-8 text-white">Kullanım Koşulları</h1>
+            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300">
                 <p className="mb-4">Son Güncelleme: {new Date().toLocaleDateString('tr-TR')}</p>
                 <p>
                     Panobu platformunu kullanarak aşağıdaki koşulları kabul etmiş sayılırsınız.
@@ -32,6 +33,7 @@ export default function TermsPage() {
                     farklılık gösterebilir.
                 </p>
             </div>
+        </div>
         </div>
     );
 }

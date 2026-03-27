@@ -7,9 +7,10 @@ export const metadata: Metadata = {
 
 export default function KvkkPage() {
     return (
+        <div className="min-h-screen bg-[#0B1120] text-white">
         <div className="container mx-auto px-4 py-12 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-8">KVKK Aydınlatma Metni</h1>
-            <div className="prose prose-slate max-w-none">
+            <h1 className="text-3xl font-bold mb-8 text-white">KVKK Aydınlatma Metni</h1>
+            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300">
                 <p>
                     6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, kişisel verileriniz;
                     veri sorumlusu olarak Panobu tarafından aşağıda açıklanan kapsamda işlenebilecektir.
@@ -34,6 +35,7 @@ export default function KvkkPage() {
                     işlenmişse buna ilişkin bilgi talep etme haklarına sahipsiniz.
                 </p>
             </div>
+        </div>
         </div>
     );
 }

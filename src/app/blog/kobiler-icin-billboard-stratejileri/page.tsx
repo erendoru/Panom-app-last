@@ -43,9 +43,9 @@ export default function KobiStratejileriPage() {
             </section>
 
             {/* Content */}
-            <section className="py-12 bg-white text-slate-900">
+            <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
+                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
 
                         <h2>Billboard Reklamı Sadece Büyük Markalar İçin mi?</h2>
                         <p>
@@ -65,7 +65,7 @@ export default function KobiStratejileriPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-blue-900 mb-2">1. Hiper-Yerel Hedefleme</h3>
-                                        <p className="text-slate-700">
+                                        <p className="text-slate-300">
                                             Şehir genelinde reklam vermek yerine, müşterilerinizin yoğun olduğu 1-2
                                             lokasyona odaklanın. Dükkanınızın 2 km çevresindeki panolar, city-wide
                                             kampanyadan çok daha etkili olacaktır.
@@ -81,7 +81,7 @@ export default function KobiStratejileriPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-green-900 mb-2">2. CLP Panoları Tercih Edin</h3>
-                                        <p className="text-slate-700">
+                                        <p className="text-slate-300">
                                             Büyük billboard'lar yerine CLP (City Light Poster) panolar, haftalık ₺1.500-3.000
                                             gibi uygun fiyatlarla başlangıç için ideal. Yaya trafiğinin yoğun olduğu
                                             duraklar ve kaldırımlar, yerel işletmeler için mükemmel.
@@ -97,7 +97,7 @@ export default function KobiStratejileriPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-purple-900 mb-2">3. Stratejik Zamanlama</h3>
-                                        <p className="text-slate-700">
+                                        <p className="text-slate-300">
                                             Tüm yıl reklam vermek yerine, sezonunuzun en yoğun dönemlerine odaklanın.
                                             Restoran için bayram öncesi, okul malzemecisi için Eylül, hediye dükkanı için Aralık.
                                         </p>
@@ -112,7 +112,7 @@ export default function KobiStratejileriPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-orange-900 mb-2">4. Tek Bir Net Mesaj</h3>
-                                        <p className="text-slate-700">
+                                        <p className="text-slate-300">
                                             Billboard'da sadece 3-5 saniye dikkat çekebilirsiniz. Telefon numarası,
                                             adres, slogan, logo hepsini koymaya çalışmayın. Tek bir güçlü mesaj ve
                                             arama eylemi (call-to-action) yeterli.
@@ -128,7 +128,7 @@ export default function KobiStratejileriPage() {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-bold text-pink-900 mb-2">5. Rakip Lokasyonları Hedefleyin</h3>
-                                        <p className="text-slate-700">
+                                        <p className="text-slate-300">
                                             Rakibinizin dükkanına giden yol üzerinde pano kiralamak, onların müşterilerini
                                             size çekebilir. Agresif ama etkili bir strateji!
                                         </p>
@@ -144,7 +144,7 @@ export default function KobiStratejileriPage() {
 
                         <div className="overflow-x-auto not-prose my-6">
                             <table className="w-full border-collapse border border-slate-300 rounded-lg overflow-hidden">
-                                <thead className="bg-slate-100">
+                                <thead className="bg-white/[0.06]">
                                     <tr>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Kalem</th>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Bütçe</th>
@@ -157,7 +157,7 @@ export default function KobiStratejileriPage() {
                                         <td className="border border-slate-300 px-4 py-3">₺4.000</td>
                                         <td className="border border-slate-300 px-4 py-3">Dükkan yakını</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3 font-medium">Tasarım</td>
                                         <td className="border border-slate-300 px-4 py-3">₺1.000</td>
                                         <td className="border border-slate-300 px-4 py-3">Profesyonel görsel</td>
@@ -167,7 +167,7 @@ export default function KobiStratejileriPage() {
                                         <td className="border border-slate-300 px-4 py-3">₺3.000</td>
                                         <td className="border border-slate-300 px-4 py-3">Google/Facebook</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3 font-medium">Rezerv</td>
                                         <td className="border border-slate-300 px-4 py-3">₺2.000</td>
                                         <td className="border border-slate-300 px-4 py-3">Ani fırsatlar</td>
@@ -192,7 +192,7 @@ export default function KobiStratejileriPage() {
                                 <LightbulbIcon className="w-6 h-6 text-yellow-500" />
                                 <h3 className="text-xl font-bold text-blue-900">Panobu ile KOBİ Avantajları</h3>
                             </div>
-                            <ul className="space-y-2 text-slate-700 mb-4">
+                            <ul className="space-y-2 text-slate-300 mb-4">
                                 <li>✓ Haftalık ₺1.500'den başlayan fiyatlar</li>
                                 <li>✓ Minimum 7 gün kiralama (uzun taahhüt yok)</li>
                                 <li>✓ Şeffaf fiyatlandırma (gizli maliyet yok)</li>

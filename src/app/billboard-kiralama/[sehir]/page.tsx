@@ -117,16 +117,16 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             </section>
 
             {/* Panel Types */}
-            <section className="py-16 bg-white text-slate-900">
+            <section className="py-16">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">
+                    <h2 className="text-3xl font-bold text-center text-white mb-12">
                         {cityName}'de Mevcut Pano Türleri
                     </h2>
                     <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-6 max-w-6xl mx-auto">
                         {panelTypes.map((type, i) => (
-                            <div key={i} className="bg-slate-50 rounded-xl p-6 text-center hover:shadow-lg transition-shadow">
-                                <h3 className="font-bold text-lg mb-2">{type.name}</h3>
-                                <p className="text-sm text-slate-600">{type.desc}</p>
+                            <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 text-center hover:bg-white/[0.06] transition-all">
+                                <h3 className="font-bold text-lg text-white mb-2">{type.name}</h3>
+                                <p className="text-sm text-slate-400">{type.desc}</p>
                             </div>
                         ))}
                     </div>

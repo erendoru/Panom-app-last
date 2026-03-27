@@ -43,9 +43,9 @@ export default function KocaeliReklamRehberiPage() {
             </section>
 
             {/* Content */}
-            <section className="py-12 bg-white text-slate-900">
+            <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
+                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
 
                         <h2>Kocaeli: Türkiye'nin Sanayi Kalbi</h2>
                         <p>
@@ -91,7 +91,7 @@ export default function KocaeliReklamRehberiPage() {
                                 <Star className="w-6 h-6 text-yellow-500" />
                                 <h3 className="text-xl font-bold text-blue-900">Panobu Özel: Gizli Premium Lokasyonlar</h3>
                             </div>
-                            <p className="text-slate-700 mb-4">
+                            <p className="text-slate-300 mb-4">
                                 Panobu ile özel çalışmalar yürüten müşterilerimize sunduğumuz <strong>gizli yüksek trafik lokasyonları</strong>
                                 ile rekabet avantajı yakalayın. Bu lokasyonlar:
                             </p>
@@ -109,7 +109,7 @@ export default function KocaeliReklamRehberiPage() {
                                     <span><strong>Stratejik konumlar:</strong> Rakiplerinizin bilmediği altın noktalar</span>
                                 </li>
                             </ul>
-                            <p className="text-sm text-slate-600 italic mb-4">
+                            <p className="text-sm text-slate-400 italic mb-4">
                                 Bu lokasyonlar herkese açık değildir. Panobu ekibi ile özel görüşme yaparak bu fırsatlardan yararlanabilirsiniz.
                             </p>
                             <Button asChild className="bg-blue-600 hover:bg-blue-700">
@@ -156,9 +156,9 @@ export default function KocaeliReklamRehberiPage() {
                             <li><strong>Yaz ayları:</strong> Daha uygun fiyatlar ve az rekabet</li>
                         </ul>
 
-                        <div className="bg-slate-100 border border-slate-200 rounded-lg p-6 my-8 not-prose">
-                            <h3 className="text-xl font-bold text-slate-900 mb-3">Kocaeli'de Panolarımızı İnceleyin</h3>
-                            <p className="text-slate-600 mb-4">
+                        <div className="bg-white/[0.04] border border-white/10 rounded-lg p-6 my-8 not-prose">
+                            <h3 className="text-xl font-bold text-white mb-3">Kocaeli'de Panolarımızı İnceleyin</h3>
+                            <p className="text-slate-400 mb-4">
                                 Tüm Kocaeli lokasyonlarını harita üzerinde görüntüleyin ve kampanyanızı bugün başlatın.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3">
@@ -167,7 +167,7 @@ export default function KocaeliReklamRehberiPage() {
                                         Panoları Görüntüle <ArrowRight className="w-4 h-4 ml-2" />
                                     </Link>
                                 </Button>
-                                <Button asChild variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-200">
+                                <Button asChild variant="outline" className="border-slate-300 text-slate-300 hover:bg-slate-200">
                                     <Link href="/billboard-kiralama/kocaeli">
                                         Kocaeli Sayfası
                                     </Link>

@@ -220,14 +220,14 @@ export default function CheckoutPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="min-h-screen bg-[#0B1120] text-white flex items-center justify-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
+        <div className="min-h-screen bg-[#0B1120] text-white py-8">
             <div className="container mx-auto px-4 max-w-4xl">
                 {/* Header */}
                 <div className="mb-8">
@@ -239,7 +239,7 @@ export default function CheckoutPage() {
                             </Link>
                         </Button>
                     )}
-                    <h1 className="text-3xl font-bold text-slate-900">Sipariş Oluştur</h1>
+                    <h1 className="text-3xl font-bold text-white">Sipariş Oluştur</h1>
                 </div>
 
                 {/* Steps Indicator */}
@@ -254,14 +254,14 @@ export default function CheckoutPage() {
                                 <div key={step.id} className="flex items-center">
                                     <div className={`flex items-center justify-center w-10 h-10 rounded-full ${isCompleted ? 'bg-green-500 text-white' :
                                         isActive ? 'bg-blue-600 text-white' :
-                                            'bg-slate-200 text-slate-500'
+                                            'bg-white/[0.06] text-slate-400'
                                         }`}>
                                         {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
                                     </div>
-                                    <span className={`ml-2 text-sm font-medium hidden sm:block ${isActive ? 'text-blue-600' : 'text-slate-500'
+                                    <span className={`ml-2 text-sm font-medium hidden sm:block ${isActive ? 'text-blue-600' : 'text-slate-400'
                                         }`}>{step.title}</span>
                                     {index < STEPS.length - 1 && (
-                                        <div className={`w-12 sm:w-24 h-1 mx-2 sm:mx-4 ${isCompleted ? 'bg-green-500' : 'bg-slate-200'
+                                        <div className={`w-12 sm:w-24 h-1 mx-2 sm:mx-4 ${isCompleted ? 'bg-green-500' : 'bg-white/[0.06]'
                                             }`} />
                                     )}
                                 </div>
@@ -277,15 +277,15 @@ export default function CheckoutPage() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
-                        className="bg-white rounded-xl shadow-sm border border-slate-200 p-6"
+                        className="bg-white/[0.03] rounded-xl shadow-sm border border-white/[0.06] p-6"
                     >
                         {/* Step 1: Campaign Info */}
                         {currentStep === 1 && (
                             <div className="space-y-6">
-                                <h2 className="text-xl font-semibold text-slate-900">Kampanya Bilgileri</h2>
+                                <h2 className="text-xl font-semibold text-white">Kampanya Bilgileri</h2>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
                                         <FileText className="w-4 h-4 inline mr-2" />
                                         Kampanya Adı *
                                     </label>
@@ -295,16 +295,16 @@ export default function CheckoutPage() {
                                         value={formData.campaignName}
                                         onChange={handleInputChange}
                                         placeholder="Örn: 2024 Yaz Kampanyası"
-                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                     />
                                 </div>
 
-                                <hr />
-                                <h3 className="text-lg font-medium text-slate-800">İletişim Bilgileri</h3>
+                                <hr className="border-white/[0.06]" />
+                                <h3 className="text-lg font-medium text-slate-200">İletişim Bilgileri</h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
                                             <User className="w-4 h-4 inline mr-2" />
                                             Ad Soyad *
                                         </label>
@@ -314,11 +314,11 @@ export default function CheckoutPage() {
                                             value={formData.contactName}
                                             onChange={handleInputChange}
                                             placeholder="Adınız Soyadınız"
-                                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
                                             <Phone className="w-4 h-4 inline mr-2" />
                                             Telefon *
                                         </label>
@@ -328,14 +328,14 @@ export default function CheckoutPage() {
                                             value={formData.contactPhone}
                                             onChange={handleInputChange}
                                             placeholder="0532 123 4567"
-                                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                         />
                                     </div>
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
                                             <Mail className="w-4 h-4 inline mr-2" />
                                             E-posta *
                                         </label>
@@ -345,11 +345,11 @@ export default function CheckoutPage() {
                                             value={formData.contactEmail}
                                             onChange={handleInputChange}
                                             placeholder="ornek@sirket.com"
-                                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                         />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                                        <label className="block text-sm font-medium text-slate-300 mb-2">
                                             <Building2 className="w-4 h-4 inline mr-2" />
                                             Şirket Adı (Opsiyonel)
                                         </label>
@@ -359,7 +359,7 @@ export default function CheckoutPage() {
                                             value={formData.companyName}
                                             onChange={handleInputChange}
                                             placeholder="Şirket Adı"
-                                            className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                         />
                                     </div>
                                 </div>
@@ -369,14 +369,14 @@ export default function CheckoutPage() {
                         {/* Step 2: Creatives */}
                         {currentStep === 2 && (
                             <div className="space-y-6">
-                                <h2 className="text-xl font-semibold text-slate-900">Görsel Durumu</h2>
-                                <p className="text-slate-600">Reklam görselleriniz hazır mı, yoksa tasarım desteği mi istiyorsunuz?</p>
+                                <h2 className="text-xl font-semibold text-white">Görsel Durumu</h2>
+                                <p className="text-slate-400">Reklam görselleriniz hazır mı, yoksa tasarım desteği mi istiyorsunuz?</p>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <label
                                         className={`cursor-pointer border-2 rounded-xl p-6 transition-all ${formData.hasOwnCreatives
                                             ? 'border-blue-500 bg-blue-50'
-                                            : 'border-slate-200 hover:border-slate-300'
+                                            : 'border-white/[0.06] hover:border-white/10'
                                             }`}
                                     >
                                         <input
@@ -393,13 +393,13 @@ export default function CheckoutPage() {
                                             className="hidden"
                                         />
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.hasOwnCreatives ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-500'
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.hasOwnCreatives ? 'bg-blue-500 text-white' : 'bg-white/[0.06] text-slate-400'
                                                 }`}>
                                                 <Upload className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold text-slate-900">Görsellerim Hazır</h3>
-                                                <p className="text-sm text-slate-500">Tasarımlarım mevcut</p>
+                                                <h3 className="font-semibold text-white">Görsellerim Hazır</h3>
+                                                <p className="text-sm text-slate-400">Tasarımlarım mevcut</p>
                                             </div>
                                         </div>
                                     </label>
@@ -407,7 +407,7 @@ export default function CheckoutPage() {
                                     <label
                                         className={`cursor-pointer border-2 rounded-xl p-6 transition-all ${formData.needsDesignHelp
                                             ? 'border-purple-500 bg-purple-50'
-                                            : 'border-slate-200 hover:border-slate-300'
+                                            : 'border-white/[0.06] hover:border-white/10'
                                             }`}
                                     >
                                         <input
@@ -424,13 +424,13 @@ export default function CheckoutPage() {
                                             className="hidden"
                                         />
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.needsDesignHelp ? 'bg-purple-500 text-white' : 'bg-slate-100 text-slate-500'
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${formData.needsDesignHelp ? 'bg-purple-500 text-white' : 'bg-white/[0.06] text-slate-400'
                                                 }`}>
                                                 <HelpCircle className="w-6 h-6" />
                                             </div>
                                             <div className="flex-1">
-                                                <h3 className="font-semibold text-slate-900">Tasarım Desteği İstiyorum</h3>
-                                                <p className="text-sm text-slate-500">Profesyonel tasarım hizmeti</p>
+                                                <h3 className="font-semibold text-white">Tasarım Desteği İstiyorum</h3>
+                                                <p className="text-sm text-slate-400">Profesyonel tasarım hizmeti</p>
                                             </div>
                                             <div className="text-right">
                                                 <p className="font-semibold text-purple-600">+{formatCurrency(DESIGN_FEE)}</p>
@@ -456,7 +456,7 @@ export default function CheckoutPage() {
                                 )}
 
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    <label className="block text-sm font-medium text-slate-300 mb-2">
                                         Notlarınız (Opsiyonel)
                                     </label>
                                     <textarea
@@ -465,7 +465,7 @@ export default function CheckoutPage() {
                                         onChange={handleInputChange}
                                         rows={3}
                                         placeholder="Kampanya ile ilgili eklemek istediğiniz notlar..."
-                                        className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 border border-white/10 rounded-lg focus:ring-2 focus:ring-blue-500 bg-white/[0.06] text-white placeholder:text-slate-400"
                                     />
                                 </div>
                             </div>
@@ -474,12 +474,12 @@ export default function CheckoutPage() {
                         {/* Step 3: Summary */}
                         {currentStep === 3 && (
                             <div className="space-y-6">
-                                <h2 className="text-xl font-semibold text-slate-900">Sipariş Özeti</h2>
+                                <h2 className="text-xl font-semibold text-white">Sipariş Özeti</h2>
 
                                 {/* Campaign Info Summary */}
-                                <div className="bg-slate-50 rounded-lg p-4">
-                                    <h3 className="font-medium text-slate-900 mb-2">Kampanya: {formData.campaignName}</h3>
-                                    <div className="text-sm text-slate-600 space-y-1">
+                                <div className="bg-white/[0.04] rounded-lg p-4">
+                                    <h3 className="font-medium text-white mb-2">Kampanya: {formData.campaignName}</h3>
+                                    <div className="text-sm text-slate-400 space-y-1">
                                         <p><User className="w-4 h-4 inline mr-2" />{formData.contactName}</p>
                                         <p><Phone className="w-4 h-4 inline mr-2" />{formData.contactPhone}</p>
                                         <p><Mail className="w-4 h-4 inline mr-2" />{formData.contactEmail}</p>
@@ -504,7 +504,7 @@ export default function CheckoutPage() {
 
                                 {/* Panels */}
                                 <div>
-                                    <h3 className="font-medium text-slate-900 mb-3">Seçilen Panolar ({cartItems.length})</h3>
+                                    <h3 className="font-medium text-white mb-3">Seçilen Panolar ({cartItems.length})</h3>
                                     <div className="space-y-3">
                                         {cartItems.map(item => {
                                             const isCLP = item.panel.type === 'CLP';
@@ -522,9 +522,9 @@ export default function CheckoutPage() {
                                             }
 
                                             return (
-                                                <div key={item.id} className="bg-slate-50 rounded-lg p-3">
+                                                <div key={item.id} className="bg-white/[0.04] rounded-lg p-3">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="w-16 h-16 bg-slate-200 rounded-lg overflow-hidden flex-shrink-0">
+                                                        <div className="w-16 h-16 bg-white/[0.06] rounded-lg overflow-hidden flex-shrink-0">
                                                             {item.panel.imageUrl ? (
                                                                 <Image src={item.panel.imageUrl} alt={item.panel.name} width={64} height={64} className="w-full h-full object-cover" />
                                                             ) : (
@@ -534,19 +534,19 @@ export default function CheckoutPage() {
                                                             )}
                                                         </div>
                                                         <div className="flex-1">
-                                                            <p className="font-medium text-slate-900">{item.panel.name}</p>
-                                                            <p className="text-sm text-slate-500">{item.panel.city}, {item.panel.district}</p>
+                                                            <p className="font-medium text-white">{item.panel.name}</p>
+                                                            <p className="text-sm text-slate-400">{item.panel.city}, {item.panel.district}</p>
                                                             <p className="text-xs text-blue-600">{PANEL_TYPE_LABELS[item.panel.type as keyof typeof PANEL_TYPE_LABELS]} • {item.panel.width}cm x {item.panel.height}cm</p>
                                                         </div>
                                                         <div className="text-right">
-                                                            <p className="font-semibold text-slate-900">{formatCurrency(displayPrice)}</p>
-                                                            <p className="text-xs text-slate-500">/hafta{isDoubleSided ? ' (çift yüz)' : ''}</p>
+                                                            <p className="font-semibold text-white">{formatCurrency(displayPrice)}</p>
+                                                            <p className="text-xs text-slate-400">/hafta{isDoubleSided ? ' (çift yüz)' : ''}</p>
                                                         </div>
                                                     </div>
 
                                                     {/* CLP Double-sided toggle */}
                                                     {isCLP && (
-                                                        <div className="mt-3 pt-3 border-t border-slate-200">
+                                                        <div className="mt-3 pt-3 border-t border-white/[0.06]">
                                                             <div className="flex items-center justify-between">
                                                                 <div className="flex items-center gap-2">
                                                                     <span className="text-sm text-purple-700">📋 Çift Yüzlü Panel</span>
@@ -556,7 +556,7 @@ export default function CheckoutPage() {
                                                                         onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: false }))}
                                                                         className={`px-3 py-1 text-xs rounded-full transition-colors ${!isDoubleSided
                                                                             ? 'bg-purple-600 text-white'
-                                                                            : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                            : 'bg-white/[0.06] text-slate-400 hover:bg-white/10'
                                                                             }`}
                                                                     >
                                                                         Tek Yüz
@@ -565,7 +565,7 @@ export default function CheckoutPage() {
                                                                         onClick={() => setClpDoubleSided(prev => ({ ...prev, [item.panel.id]: true }))}
                                                                         className={`px-3 py-1 text-xs rounded-full transition-colors ${isDoubleSided
                                                                             ? 'bg-purple-600 text-white'
-                                                                            : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                                                                            : 'bg-white/[0.06] text-slate-400 hover:bg-white/10'
                                                                             }`}
                                                                     >
                                                                         Çift Yüz (2x)
@@ -581,17 +581,17 @@ export default function CheckoutPage() {
                                 </div>
 
                                 {/* Creative Status */}
-                                <div className="flex items-center justify-between gap-3 bg-slate-50 rounded-lg p-4">
+                                <div className="flex items-center justify-between gap-3 bg-white/[0.04] rounded-lg p-4">
                                     <div className="flex items-center gap-3">
                                         {formData.hasOwnCreatives ? (
                                             <>
                                                 <Upload className="w-5 h-5 text-blue-600" />
-                                                <span className="text-slate-700">Görseller hazır - sipariş sonrası yüklenecek</span>
+                                                <span className="text-slate-300">Görseller hazır - sipariş sonrası yüklenecek</span>
                                             </>
                                         ) : (
                                             <>
                                                 <HelpCircle className="w-5 h-5 text-purple-600" />
-                                                <span className="text-slate-700">Tasarım desteği talep edildi</span>
+                                                <span className="text-slate-300">Tasarım desteği talep edildi</span>
                                             </>
                                         )}
                                     </div>
@@ -618,8 +618,8 @@ export default function CheckoutPage() {
                                     <CheckCircle2 className="w-10 h-10 text-green-600" />
                                 </div>
 
-                                <h2 className="text-2xl font-bold text-slate-900 mb-2">Siparişiniz Alındı!</h2>
-                                <p className="text-lg text-slate-600 mb-4">Sipariş No: <span className="font-semibold text-blue-600">{orderNumber}</span></p>
+                                <h2 className="text-2xl font-bold text-white mb-2">Siparişiniz Alındı!</h2>
+                                <p className="text-lg text-slate-400 mb-4">Sipariş No: <span className="font-semibold text-blue-600">{orderNumber}</span></p>
 
                                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-6 text-left">
                                     <h3 className="font-semibold text-blue-900 mb-2">📞 En kısa sürede sizinle iletişime geçeceğiz</h3>
@@ -628,9 +628,9 @@ export default function CheckoutPage() {
                                     </p>
                                 </div>
 
-                                <div className="bg-slate-50 rounded-xl p-6 mb-6">
-                                    <h3 className="font-semibold text-slate-900 mb-3">Destek</h3>
-                                    <p className="text-slate-600 mb-2">Sorularınız için bize ulaşın:</p>
+                                <div className="bg-white/[0.04] rounded-xl p-6 mb-6">
+                                    <h3 className="font-semibold text-white mb-3">Destek</h3>
+                                    <p className="text-slate-400 mb-2">Sorularınız için bize ulaşın:</p>
                                     <a href="mailto:destek@panobu.com" className="text-blue-600 font-medium hover:underline">
                                         📧 destek@panobu.com
                                     </a>

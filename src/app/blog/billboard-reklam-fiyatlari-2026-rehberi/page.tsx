@@ -43,9 +43,9 @@ export default function BillboardFiyatlariPage() {
             </section>
 
             {/* Content */}
-            <section className="py-12 bg-white text-slate-900">
+            <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
+                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
 
                         <h2>Billboard Fiyatlarını Belirleyen Faktörler</h2>
                         <p>
@@ -67,7 +67,7 @@ export default function BillboardFiyatlariPage() {
 
                         <div className="overflow-x-auto not-prose">
                             <table className="w-full border-collapse border border-slate-300">
-                                <thead className="bg-slate-100">
+                                <thead className="bg-white/[0.06]">
                                     <tr>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Pano Türü</th>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Boyut</th>
@@ -80,7 +80,7 @@ export default function BillboardFiyatlariPage() {
                                         <td className="border border-slate-300 px-4 py-3">5x3m</td>
                                         <td className="border border-slate-300 px-4 py-3">₺10.000 - ₺25.000</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3">Billboard (Büyük)</td>
                                         <td className="border border-slate-300 px-4 py-3">12x4m</td>
                                         <td className="border border-slate-300 px-4 py-3">₺30.000 - ₺50.000</td>
@@ -90,7 +90,7 @@ export default function BillboardFiyatlariPage() {
                                         <td className="border border-slate-300 px-4 py-3">120x175cm</td>
                                         <td className="border border-slate-300 px-4 py-3">₺1.500 - ₺3.000</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3">Raket Pano</td>
                                         <td className="border border-slate-300 px-4 py-3">140x200cm</td>
                                         <td className="border border-slate-300 px-4 py-3">₺2.000 - ₺5.000</td>
@@ -100,7 +100,7 @@ export default function BillboardFiyatlariPage() {
                                         <td className="border border-slate-300 px-4 py-3">6x3m</td>
                                         <td className="border border-slate-300 px-4 py-3">₺15.000 - ₺40.000</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3">Dijital Ekran</td>
                                         <td className="border border-slate-300 px-4 py-3">LED 6x4m</td>
                                         <td className="border border-slate-300 px-4 py-3">₺20.000 - ₺100.000</td>

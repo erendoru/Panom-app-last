@@ -43,9 +43,9 @@ export default function AcikHavaVsDijitalPage() {
             </section>
 
             {/* Content */}
-            <section className="py-12 bg-white text-slate-900">
+            <section className="py-12">
                 <div className="container mx-auto px-4">
-                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-slate-900 prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
+                    <article className="max-w-3xl mx-auto prose prose-lg prose-slate prose-headings:font-bold prose-headings:text-white prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-3 prose-p:mb-5 prose-p:leading-relaxed prose-ul:my-5 prose-ol:my-5 prose-li:mb-2">
 
                         <h2>Reklam Dünyasında İki Dev: Açık Hava ve Dijital</h2>
                         <p>
@@ -67,7 +67,7 @@ export default function AcikHavaVsDijitalPage() {
                             ].map((item, i) => (
                                 <div key={i} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
                                     <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                                    <span className="text-slate-700">{item}</span>
+                                    <span className="text-slate-300">{item}</span>
                                 </div>
                             ))}
                         </div>
@@ -84,7 +84,7 @@ export default function AcikHavaVsDijitalPage() {
                             ].map((item, i) => (
                                 <div key={i} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
                                     <Zap className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                                    <span className="text-slate-700">{item}</span>
+                                    <span className="text-slate-300">{item}</span>
                                 </div>
                             ))}
                         </div>
@@ -93,7 +93,7 @@ export default function AcikHavaVsDijitalPage() {
 
                         <div className="overflow-x-auto not-prose my-6">
                             <table className="w-full border-collapse border border-slate-300 rounded-lg overflow-hidden">
-                                <thead className="bg-slate-100">
+                                <thead className="bg-white/[0.06]">
                                     <tr>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Özellik</th>
                                         <th className="border border-slate-300 px-4 py-3 text-left">Açık Hava</th>
@@ -106,7 +106,7 @@ export default function AcikHavaVsDijitalPage() {
                                         <td className="border border-slate-300 px-4 py-3 text-green-700">✓ Engellenemez</td>
                                         <td className="border border-slate-300 px-4 py-3 text-orange-700">△ AdBlock riski</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3 font-medium">Hedefleme</td>
                                         <td className="border border-slate-300 px-4 py-3 text-orange-700">△ Lokasyon bazlı</td>
                                         <td className="border border-slate-300 px-4 py-3 text-green-700">✓ Hassas hedefleme</td>
@@ -116,7 +116,7 @@ export default function AcikHavaVsDijitalPage() {
                                         <td className="border border-slate-300 px-4 py-3 text-orange-700">△ Tahmini</td>
                                         <td className="border border-slate-300 px-4 py-3 text-green-700">✓ Detaylı analitik</td>
                                     </tr>
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-white/[0.03]">
                                         <td className="border border-slate-300 px-4 py-3 font-medium">Marka Güveni</td>
                                         <td className="border border-slate-300 px-4 py-3 text-green-700">✓ Yüksek</td>
                                         <td className="border border-slate-300 px-4 py-3 text-orange-700">△ Değişken</td>
@@ -155,7 +155,7 @@ export default function AcikHavaVsDijitalPage() {
 
                         <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6 my-8 not-prose">
                             <h3 className="text-xl font-bold text-blue-900 mb-3">💡 Panobu Önerisi</h3>
-                            <p className="text-slate-700 mb-4">
+                            <p className="text-slate-300 mb-4">
                                 Dijital kampanyalarınızı başlatmadan önce, hedef bölgenizde açık hava reklamla marka bilinirliği oluşturun.
                                 Bu, dijital reklamlarınızın tıklama oranını ve güvenilirliğini artıracaktır.
                             </p>

@@ -26,9 +26,9 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
     ];
 
     return (
-        <div className="min-h-screen flex flex-col bg-black text-white">
+        <div className="min-h-screen flex flex-col bg-[#0B1120] text-white">
             {/* Navigation */}
-            <header className="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-lg border-b border-white/10">
+            <header className="fixed top-0 w-full z-50 bg-[#0B1120]/80 backdrop-blur-xl border-b border-white/5">
                 <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
                     <Link href="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
                         Panobu
@@ -74,7 +74,7 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="lg:hidden bg-black/95 backdrop-blur-lg border-t border-white/10"
+                            className="lg:hidden bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/5"
                         >
                             <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
                                 {navLinks.map((link) => (
@@ -108,7 +108,7 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
             </main>
 
             {/* Footer */}
-            <footer className="bg-slate-950 text-white py-16 border-t border-white/10">
+            <footer className="bg-[#060a14] text-white py-16 border-t border-white/5">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-4 gap-12 mb-16">
                         <div className="space-y-6">

@@ -16,10 +16,10 @@ export const metadata: Metadata = {
 
 function LoadingFallback() {
     return (
-        <div className="flex-1 flex items-center justify-center bg-slate-100">
+        <div className="flex-1 flex items-center justify-center bg-[#0f1729]">
             <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p className="text-slate-600">Yükleniyor...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                <p className="text-slate-400">Yükleniyor...</p>
             </div>
         </div>
     );
@@ -37,14 +37,14 @@ export default async function StaticBillboardsPage() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
-            <header className="bg-white border-b py-4 shadow-sm z-10">
+        <div className="min-h-screen bg-[#0B1120] flex flex-col">
+            <header className="bg-[#0B1120]/80 backdrop-blur-xl border-b border-white/5 py-4 z-10">
                 <div className="container mx-auto px-4 flex justify-between items-center">
-                    <Link href="/" className="flex items-center text-slate-500 hover:text-slate-900 font-medium">
+                    <Link href="/" className="flex items-center text-slate-400 hover:text-white font-medium transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Ana Sayfa
                     </Link>
-                    <h1 className="text-xl font-bold text-slate-900">Klasik Panolar</h1>
+                    <h1 className="text-xl font-bold text-white">Klasik Panolar</h1>
                     <HeaderCartIcon />
                 </div>
             </header>

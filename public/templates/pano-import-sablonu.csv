@@ -1,0 +1,3 @@
+name,type,city,district,address,googleMapsUrl,latitude,longitude,width_cm,height_cm,priceDaily,priceWeekly,priceMonthly,price3Month,price6Month,priceYearly,locationType,ownerName,ownerPhone,isAVM,avmName,estimatedDailyImpressions,trafficLevel,subType
+M1 Adana AVM Megalight,MEGALIGHT,Adana,Seyhan,"Yeni Mahallesi Öğretmenler Bulvarı, 87071. Sk. No:5, 01200 Seyhan/Adana",https://www.google.com/maps/place/37.0193747,35.28422,385,260,,,,80000,150000,,AVM,Medyapark,0850 750 07 71,true,M1 Adana AVM,50000,HIGH,İçten Aydınlatmalı
+Yeni Adana Stadyumu Megaboard,MEGABOARD,Adana,Sarıçam,"Hekimköy Blv, Çarkıpare, 01790 Sarıçam/Adana",https://www.google.com/maps/place/37.0193747,35.28422,500,200,,,25000,60000,100000,180000,OPEN_AREA,Medyapark,0850 750 07 71,false,,30000,MEDIUM,

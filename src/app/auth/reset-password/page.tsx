@@ -62,11 +62,11 @@ export default function ResetPasswordPage() {
         return (
             <div className="space-y-6">
                 <div className="space-y-4 text-center">
-                    <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-8 h-8 text-green-600" />
+                    <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-8 h-8 text-emerald-400" />
                     </div>
-                    <h1 className="text-2xl font-bold">Şifre Güncellendi!</h1>
-                    <p className="text-gray-500">
+                    <h1 className="text-2xl font-bold text-white">Şifre Güncellendi!</h1>
+                    <p className="text-slate-400">
                         Şifreniz başarıyla güncellendi. Giriş sayfasına yönlendiriliyorsunuz...
                     </p>
                 </div>
@@ -77,17 +77,17 @@ export default function ResetPasswordPage() {
     return (
         <div className="space-y-6">
             <div className="space-y-2 text-center">
-                <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                    <KeyRound className="w-8 h-8 text-blue-600" />
+                <div className="mx-auto w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
+                    <KeyRound className="w-8 h-8 text-blue-400" />
                 </div>
-                <h1 className="text-2xl font-bold">Yeni Şifre Belirle</h1>
-                <p className="text-gray-500">
+                <h1 className="text-2xl font-bold text-white">Yeni Şifre Belirle</h1>
+                <p className="text-slate-400">
                     Hesabınız için yeni bir şifre oluşturun.
                 </p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="password">Yeni Şifre</Label>
+                    <Label htmlFor="password" className="text-slate-300">Yeni Şifre</Label>
                     <div className="relative">
                         <Input
                             id="password"
@@ -96,18 +96,19 @@ export default function ResetPasswordPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="En az 6 karakter"
+                            className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
                         >
                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </button>
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Şifre Tekrar</Label>
+                    <Label htmlFor="confirmPassword" className="text-slate-300">Şifre Tekrar</Label>
                     <Input
                         id="confirmPassword"
                         required
@@ -115,10 +116,11 @@ export default function ResetPasswordPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Şifrenizi tekrar girin"
+                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                     />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button className="w-full" type="submit" disabled={loading}>
+                {error && <p className="text-sm text-red-400">{error}</p>}
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" type="submit" disabled={loading}>
                     {loading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
                 </Button>
             </form>

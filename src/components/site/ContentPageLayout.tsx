@@ -12,7 +12,7 @@ export default function ContentPageLayout({ title, subtitle, children }: Content
     return (
         <PublicLayout>
             <div className="container mx-auto px-4 py-12 max-w-4xl">
-                <div className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-8 md:p-12">
+                <div className="bg-white/[0.03] backdrop-blur-sm rounded-2xl border border-white/[0.06] p-8 md:p-12">
                     <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{title}</h1>
                     {subtitle && <p className="text-xl text-slate-400 mb-8">{subtitle}</p>}
 

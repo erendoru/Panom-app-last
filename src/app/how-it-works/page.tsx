@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
             </section>
 
             {/* Main Steps */}
-            <section className="py-16 bg-white text-slate-900">
+            <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
                         {[
@@ -62,19 +62,19 @@ export default function HowItWorksPage() {
                                     "Filtrele: Şehir, ilçe, bütçe, format",
                                     "Her panonun fiyatı ve müsaitlik durumu görünür"
                                 ],
-                                color: "blue"
+                                gradient: "from-blue-500 to-blue-600"
                             },
                             {
                                 step: "2",
                                 icon: Calendar,
                                 title: "Tarih ve Bütçe Belirle",
-                                description: "Kampanyanızın başlangıç ve bitiş tarihlerini seçin. Bütçenizi belirleyin. ",
+                                description: "Kampanyanızın başlangıç ve bitiş tarihlerini seçin. Bütçenizi belirleyin.",
                                 details: [
                                     "Boş tarih aralıkları anında görünür",
                                     "Esnek tarihlendirme seçenekleri",
                                     "Toplam maliyeti anında hesaplıyoruz"
                                 ],
-                                color: "purple"
+                                gradient: "from-purple-500 to-purple-600"
                             },
                             {
                                 step: "3",
@@ -86,7 +86,7 @@ export default function HowItWorksPage() {
                                     "Klasik billboard: Yüksek çözünürlük baskı dosyaları",
                                     "Format kontrolü ve önizleme"
                                 ],
-                                color: "green"
+                                gradient: "from-emerald-500 to-emerald-600"
                             },
                             {
                                 step: "4",
@@ -98,7 +98,7 @@ export default function HowItWorksPage() {
                                     "Pano görsellerini sizlere iletiyoruz.",
                                     "Anlık bildirimler ve raporlama"
                                 ],
-                                color: "yellow"
+                                gradient: "from-amber-500 to-amber-600"
                             }
                         ].map((item, i) => (
                             <motion.div
@@ -110,21 +110,21 @@ export default function HowItWorksPage() {
                                 className="flex gap-6"
                             >
                                 <div className="flex-shrink-0">
-                                    <div className={`w-16 h-16 rounded-2xl bg-${item.color}-100 text-${item.color}-600 flex items-center justify-center font-bold text-2xl shadow-lg`}>
+                                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${item.gradient} text-white flex items-center justify-center font-bold text-2xl shadow-lg`}>
                                         {item.step}
                                     </div>
                                 </div>
                                 <div className="flex-1">
-                                    <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full bg-${item.color}-50 text-${item.color}-700 text-xs font-semibold mb-3`}>
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] text-slate-300 text-xs font-semibold mb-3">
                                         <item.icon className="w-4 h-4" />
                                         <span>Adım {item.step}</span>
                                     </div>
-                                    <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-                                    <p className="text-slate-600 mb-4 leading-relaxed">{item.description}</p>
+                                    <h3 className="text-2xl font-bold text-white mb-3">{item.title}</h3>
+                                    <p className="text-slate-400 mb-4 leading-relaxed">{item.description}</p>
                                     <ul className="space-y-2">
                                         {item.details.map((detail, idx) => (
                                             <li key={idx} className="flex items-start gap-2 text-sm text-slate-500">
-                                                <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                                                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
                                                 <span>{detail}</span>
                                             </li>
                                         ))}
@@ -137,7 +137,7 @@ export default function HowItWorksPage() {
             </section>
 
             {/* Avantajlar - Why Panobu is Better */}
-            <section className="py-24 bg-gradient-to-br from-slate-900 to-black text-white">
+            <section className="py-24 bg-white/[0.02] border-y border-white/5">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -194,7 +194,7 @@ export default function HowItWorksPage() {
             </section>
 
             {/* Supported Formats */}
-            <section className="py-24 bg-white text-slate-900">
+            <section className="py-24">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -202,8 +202,8 @@ export default function HowItWorksPage() {
                         viewport={{ once: true }}
                         className="text-center mb-16"
                     >
-                        <h2 className="text-4xl font-bold mb-4">Tüm Reklam Formatları</h2>
-                        <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                        <h2 className="text-4xl font-bold text-white mb-4">Tüm Reklam Formatları</h2>
+                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
                             Dijital ekranlardan klasik billboardlara, durak panolarından bina kaplamalarına - hepsi tek platformda.
                         </p>
                     </motion.div>
@@ -232,16 +232,16 @@ export default function HowItWorksPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-slate-50 rounded-2xl p-8 border border-slate-200 hover:shadow-lg transition-all"
+                                className="bg-white/[0.03] rounded-2xl p-8 border border-white/[0.06] hover:bg-white/[0.06] transition-all"
                             >
-                                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
-                                    <category.icon className="w-7 h-7 text-blue-600" />
+                                <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
+                                    <category.icon className="w-7 h-7 text-blue-400" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-4">{category.title}</h3>
+                                <h3 className="text-xl font-bold text-white mb-4">{category.title}</h3>
                                 <ul className="space-y-2">
                                     {category.formats.map((format, idx) => (
-                                        <li key={idx} className="flex items-center gap-2 text-sm text-slate-600">
-                                            <div className="w-1.5 h-1.5 bg-blue-600 rounded-full" />
+                                        <li key={idx} className="flex items-center gap-2 text-sm text-slate-400">
+                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                                             {format}
                                         </li>
                                     ))}
@@ -253,8 +253,8 @@ export default function HowItWorksPage() {
             </section>
 
             {/* CTA */}
-            <section className="py-32 bg-gradient-to-r from-blue-900 to-purple-900 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black/20" />
+            <section className="py-32 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 text-white relative overflow-hidden border-t border-white/5">
+                <div className="absolute inset-0 bg-[#0B1120]/50" />
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}

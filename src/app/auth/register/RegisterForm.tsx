@@ -111,17 +111,17 @@ export default function RegisterForm() {
     if (registrationSuccess) {
         return (
             <div className="space-y-6 text-center py-8">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
+                    <svg className="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-slate-900">Tebrikler! 🎉</h2>
-                    <p className="text-slate-600 mt-2">Hesabınız başarıyla oluşturuldu.</p>
+                    <h2 className="text-2xl font-bold text-white">Tebrikler! 🎉</h2>
+                    <p className="text-slate-400 mt-2">Hesabınız başarıyla oluşturuldu.</p>
                 </div>
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <p className="text-sm text-blue-800">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <p className="text-sm text-blue-300">
                         <strong>{formData.email}</strong> adresine bir onay maili gönderdik.
                         <br />
                         Lütfen mail kutunuzu kontrol edin ve hesabınızı doğrulayın.
@@ -137,22 +137,22 @@ export default function RegisterForm() {
     return (
         <div className="space-y-6">
             {showRentalMessage && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-green-800">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 text-center">
+                    <p className="text-sm text-emerald-300">
                         ✨ Kayıt olduktan sonra pano kiralama işleminize devam edebilirsiniz!
                     </p>
                 </div>
             )}
             <div className="space-y-2 text-center">
-                <h1 className="text-3xl font-bold">Kayıt Ol</h1>
-                <p className="text-gray-500">Panobu platformuna katılın</p>
+                <h1 className="text-3xl font-bold text-white">Kayıt Ol</h1>
+                <p className="text-slate-400">Panobu platformuna katılın</p>
             </div>
 
-            <div className="flex p-1 bg-slate-100 rounded-lg">
+            <div className="flex p-1 bg-white/[0.06] rounded-lg">
                 <button
                     type="button"
                     onClick={() => setRole("ADVERTISER")}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "ADVERTISER" ? "bg-white shadow text-slate-900" : "text-slate-500 hover:text-slate-900"
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "ADVERTISER" ? "bg-blue-600 shadow text-white" : "text-slate-400 hover:text-white"
                         }`}
                 >
                     Reklam Veren
@@ -160,7 +160,7 @@ export default function RegisterForm() {
                 <button
                     type="button"
                     onClick={() => setRole("SCREEN_OWNER")}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "SCREEN_OWNER" ? "bg-white shadow text-slate-900" : "text-slate-500 hover:text-slate-900"
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "SCREEN_OWNER" ? "bg-blue-600 shadow text-white" : "text-slate-400 hover:text-white"
                         }`}
                 >
                     Ekran Sahibi
@@ -169,12 +169,12 @@ export default function RegisterForm() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="name">Ad Soyad</Label>
-                    <Input id="name" name="name" required onChange={handleChange} />
+                    <Label htmlFor="name" className="text-slate-300">Ad Soyad</Label>
+                    <Input id="name" name="name" required onChange={handleChange} className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500" />
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="companyName">
+                    <Label htmlFor="companyName" className="text-slate-300">
                         {role === "ADVERTISER" ? "Şirket Adı (Opsiyonel)" : "Şirket / İşletme Adı"}
                     </Label>
                     <Input
@@ -182,29 +182,30 @@ export default function RegisterForm() {
                         name="companyName"
                         required={role === "SCREEN_OWNER"}
                         onChange={handleChange}
+                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
                     />
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="email">E-posta</Label>
-                    <Input id="email" name="email" type="email" required onChange={handleChange} />
+                    <Label htmlFor="email" className="text-slate-300">E-posta</Label>
+                    <Input id="email" name="email" type="email" required onChange={handleChange} className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500" />
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="password">Şifre</Label>
-                    <Input id="password" name="password" type="password" required onChange={handleChange} />
+                    <Label htmlFor="password" className="text-slate-300">Şifre</Label>
+                    <Input id="password" name="password" type="password" required onChange={handleChange} className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500" />
                 </div>
 
-                {error && <p className="text-sm text-red-500">{error}</p>}
+                {error && <p className="text-sm text-red-400">{error}</p>}
 
-                <Button className="w-full" type="submit" disabled={loading}>
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" type="submit" disabled={loading}>
                     {loading ? "Kayıt Yapılıyor..." : "Kayıt Ol"}
                 </Button>
             </form>
 
-            <div className="text-center text-sm">
+            <div className="text-center text-sm text-slate-400">
                 Zaten hesabınız var mı?{" "}
-                <Link className="underline" href="/auth/login">
+                <Link className="underline text-blue-400" href="/auth/login">
                     Giriş Yap
                 </Link>
             </div>

@@ -206,16 +206,16 @@ export default function PanelTypePage({ params }: { params: { type: string } }) 
             </section>
 
             {/* Features & Advantages */}
-            <section className="py-16 bg-white text-slate-900">
+            <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
                         {/* Features */}
                         <div>
-                            <h2 className="text-2xl font-bold mb-6">Özellikler</h2>
+                            <h2 className="text-2xl font-bold text-white mb-6">Özellikler</h2>
                             <ul className="space-y-4">
                                 {data.features.map((feature, i) => (
-                                    <li key={i} className="flex items-start gap-3">
-                                        <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                                        <CheckCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
                                         <span>{feature}</span>
                                     </li>
                                 ))}
@@ -224,11 +224,11 @@ export default function PanelTypePage({ params }: { params: { type: string } }) 
 
                         {/* Advantages */}
                         <div>
-                            <h2 className="text-2xl font-bold mb-6">Avantajlar</h2>
+                            <h2 className="text-2xl font-bold text-white mb-6">Avantajlar</h2>
                             <ul className="space-y-4">
                                 {data.advantages.map((advantage, i) => (
-                                    <li key={i} className="flex items-start gap-3">
-                                        <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                                    <li key={i} className="flex items-start gap-3 text-slate-300">
+                                        <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
                                         <span>{advantage}</span>
                                     </li>
                                 ))}

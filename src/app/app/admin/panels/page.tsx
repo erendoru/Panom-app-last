@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare } from 'lucide-react';
+import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload } from 'lucide-react';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -242,7 +242,13 @@ export default function AdminPanelsPage() {
                         <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Pano Yönetimi</h1>
                         <p className="text-slate-600 mt-1 text-sm md:text-base">Tüm klasik panoları görüntüleyin ve yönetin</p>
                     </div>
-                    <div className="flex gap-2 w-full sm:w-auto">
+                    <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+                        <Button asChild variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50 flex-1 sm:flex-none">
+                            <Link href="/app/admin/panels/import">
+                                <Upload className="w-4 h-4 mr-2" />
+                                Toplu Import
+                            </Link>
+                        </Button>
                         <Button asChild variant="outline" className="border-green-500 text-green-600 hover:bg-green-50 flex-1 sm:flex-none">
                             <Link href="/app/admin/panels/quick-add">
                                 <Zap className="w-4 h-4 mr-2" />

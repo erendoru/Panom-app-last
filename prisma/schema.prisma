@@ -246,6 +246,10 @@ model StaticPanel {
   height                     Float
   priceWeekly                Float
   priceDaily                 Float?
+  priceMonthly               Float?
+  price3Month                Float?
+  price6Month                Float?
+  priceYearly                Float?
   minRentalDays              Int            @default(7)  // Minimum rental period in days
   
   // Location & Analytics

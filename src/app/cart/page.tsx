@@ -86,12 +86,12 @@ function CartPageContent() {
 
     if (count === 0) {
         return (
-            <div className="min-h-screen bg-slate-50 pt-24 pb-16">
+            <div className="min-h-screen bg-[#0B1120] text-white pt-24 pb-16">
                 <div className="container mx-auto px-4 max-w-4xl">
                     <div className="text-center py-16">
-                        <ShoppingCart className="w-24 h-24 mx-auto text-slate-300 mb-6" />
-                        <h1 className="text-3xl font-bold text-slate-900 mb-4">Sepetiniz Boş</h1>
-                        <p className="text-slate-600 mb-8">Henüz sepetinize pano eklemediniz.</p>
+                        <ShoppingCart className="w-24 h-24 mx-auto text-slate-600 mb-6" />
+                        <h1 className="text-3xl font-bold text-white mb-4">Sepetiniz Boş</h1>
+                        <p className="text-slate-400 mb-8">Henüz sepetinize pano eklemediniz.</p>
                         <Button asChild className="bg-blue-600 hover:bg-blue-700">
                             <Link href="/static-billboards">
                                 <MapPin className="w-4 h-4 mr-2" />
@@ -105,7 +105,7 @@ function CartPageContent() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pt-24 pb-16">
+        <div className="min-h-screen bg-[#0B1120] text-white pt-24 pb-16">
             <div className="container mx-auto px-4 max-w-6xl">
                 {/* Header */}
                 <div className="mb-8">
@@ -117,8 +117,8 @@ function CartPageContent() {
                     </Button>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-900">Sepetim</h1>
-                            <p className="text-slate-600">{count} pano seçili</p>
+                            <h1 className="text-3xl font-bold text-white">Sepetim</h1>
+                            <p className="text-slate-400">{count} pano seçili</p>
                         </div>
                         <Button variant="outline" onClick={clearCart} className="text-red-600 border-red-300 hover:bg-red-50">
                             <Trash2 className="w-4 h-4 mr-2" />
@@ -151,7 +151,7 @@ function CartPageContent() {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, x: -100 }}
                                     transition={{ delay: index * 0.05 }}
-                                    className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"
+                                    className="bg-white/[0.03] rounded-xl shadow-sm border border-white/[0.06] overflow-hidden"
                                 >
                                     <div className="flex flex-col md:flex-row">
                                         {/* Image */}
@@ -177,7 +177,7 @@ function CartPageContent() {
                                                     <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded">
                                                         {getPanelTypeLabel(item.panel.type)}
                                                     </span>
-                                                    <h3 className="text-lg font-semibold text-slate-900 mt-2">{item.panel.name}</h3>
+                                                    <h3 className="text-lg font-semibold text-white mt-2">{item.panel.name}</h3>
                                                     <p className="text-sm text-slate-500">{item.panel.city}, {item.panel.district}</p>
                                                 </div>
                                                 <button
@@ -192,7 +192,7 @@ function CartPageContent() {
                                             {/* Date Selection */}
                                             <div className="mt-4 grid grid-cols-2 gap-4">
                                                 <div>
-                                                    <label className="block text-xs font-medium text-slate-600 mb-1">Başlangıç</label>
+                                                    <label className="block text-xs font-medium text-slate-400 mb-1">Başlangıç</label>
                                                     <input
                                                         type="date"
                                                         value={dateSelections[item.id]?.start || ''}
@@ -202,7 +202,7 @@ function CartPageContent() {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-xs font-medium text-slate-600 mb-1">Bitiş</label>
+                                                    <label className="block text-xs font-medium text-slate-400 mb-1">Bitiş</label>
                                                     <input
                                                         type="date"
                                                         value={dateSelections[item.id]?.end || ''}
@@ -246,7 +246,7 @@ function CartPageContent() {
 
                                             {/* Price */}
                                             <div className="mt-4 text-right">
-                                                <p className="text-lg font-bold text-slate-900">
+                                                <p className="text-lg font-bold text-white">
                                                     {formatPrice(item.panel.priceWeekly * (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? 2 : 1))}
                                                     <span className="text-sm font-normal text-slate-500">/hafta{item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? ' (çift yüz)' : ''}</span>
                                                 </p>
@@ -260,8 +260,8 @@ function CartPageContent() {
 
                     {/* Order Summary */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sticky top-24">
-                            <h2 className="text-xl font-bold text-slate-900 mb-4">Sipariş Özeti</h2>
+                        <div className="bg-white/[0.03] rounded-xl shadow-sm border border-white/[0.06] p-6 sticky top-24">
+                            <h2 className="text-xl font-bold text-white mb-4">Sipariş Özeti</h2>
 
                             {/* Discount Suggestions */}
                             {totals.suggestions.length > 0 && (
@@ -289,7 +289,7 @@ function CartPageContent() {
                             )}
 
                             <div className="space-y-3 mb-6">
-                                <div className="flex justify-between text-slate-600">
+                                <div className="flex justify-between text-slate-400">
                                     <span>Ara Toplam</span>
                                     <span>{formatPrice(adjustedSubtotal)}</span>
                                 </div>
@@ -306,7 +306,7 @@ function CartPageContent() {
                                     </div>
                                 )}
                                 <hr className="border-slate-200" />
-                                <div className="flex justify-between text-xl font-bold text-slate-900">
+                                <div className="flex justify-between text-xl font-bold text-white">
                                     <span>Toplam</span>
                                     <span>{formatPrice(adjustedTotal)}</span>
                                 </div>

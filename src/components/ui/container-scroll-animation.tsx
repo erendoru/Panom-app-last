@@ -108,7 +108,7 @@ export const Card = ({
                 rotateX: rotate,
                 scale,
             }}
-            className="max-w-5xl -mt-12 mx-auto h-[22rem] md:h-[40rem] w-full p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl"
+            className="max-w-5xl -mt-12 mx-auto h-[22rem] md:h-[40rem] w-full p-2 md:p-6 bg-[#1a2332] rounded-[30px] shadow-2xl"
         >
             <div className="h-full w-full rounded-2xl bg-gray-100 dark:bg-zinc-900 md:rounded-2xl relative">
                 {children}
