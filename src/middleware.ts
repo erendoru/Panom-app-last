@@ -12,9 +12,29 @@ export async function middleware(req: NextRequest) {
 
     const { pathname } = req.nextUrl;
 
-    // Public paths
-    const publicPaths = ["/", "/auth/login", "/auth/register", "/screens", "/static-billboards"];
-    if (publicPaths.some(path => pathname === path || pathname.startsWith(path + "/") || pathname.startsWith("/api/auth"))) {
+    // Public paths (exact or prefix)
+    const publicExact = ["/", "/auth/login", "/auth/register"];
+    const publicPrefixes = [
+        "/screens",
+        "/static-billboards",
+        "/billboard-kiralama",
+        "/pano-turleri",
+        "/blog",
+        "/platform",
+        "/company",
+        "/how-it-works",
+        "/kampanya-rehberi",
+        "/updates",
+        "/faq",
+        "/legal",
+        "/cart",
+        "/checkout",
+    ];
+    if (
+        publicExact.some((p) => pathname === p) ||
+        publicPrefixes.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
+        pathname.startsWith("/api/auth")
+    ) {
         return res;
     }
 

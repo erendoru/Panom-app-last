@@ -7,12 +7,23 @@ const nextConfig = {
         ],
     },
     experimental: {
-        serverComponentsExternalPackages: ['iyzipay'], // Fix for Iyzipay ENOENT resource error
+        serverComponentsExternalPackages: ['iyzipay'],
     },
     eslint: {
-        // Warning: This allows production builds to successfully complete even if
-        // your project has ESLint errors.
         ignoreDuringBuilds: true,
+    },
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    { key: 'X-Content-Type-Options', value: 'nosniff' },
+                    { key: 'X-Frame-Options', value: 'DENY' },
+                    { key: 'X-XSS-Protection', value: '1; mode=block' },
+                    { key: 'Referrer-Policy', value: 'origin-when-cross-origin' },
+                ],
+            },
+        ];
     },
 };
 

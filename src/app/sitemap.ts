@@ -1,69 +1,46 @@
 import { MetadataRoute } from 'next';
 import { TURKEY_CITIES } from '@/lib/turkey-data';
-
-// Convert city names to URL-friendly slugs
-function toSlug(cityName: string): string {
-    const turkishMap: Record<string, string> = {
-        'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u',
-        'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'
-    };
-    return cityName
-        .toLowerCase()
-        .split('')
-        .map(char => turkishMap[char] || char)
-        .join('')
-        .replace(/\s+/g, '-');
-}
+import { cityToSlug } from '@/lib/city-slug';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://panobu.com';
+    const now = new Date().toISOString();
 
-    // Static pages
-    const staticPages = [
-        { path: '', priority: 1 },
-        { path: '/static-billboards', priority: 0.9 },
-        { path: '/screens', priority: 0.8 },
-        { path: '/how-it-works', priority: 0.8 },
-        { path: '/blog', priority: 0.7 },
-        { path: '/updates', priority: 0.7 },
-        { path: '/kampanya-rehberi', priority: 0.8 },
-        { path: '/company/about', priority: 0.5 },
-        { path: '/company/privacy', priority: 0.5 },
-        { path: '/company/terms', priority: 0.5 },
-        { path: '/company/kvkk', priority: 0.5 },
+    const staticPages: MetadataRoute.Sitemap = [
+        { url: baseUrl, lastModified: now, changeFrequency: 'daily', priority: 1.0 },
+        { url: `${baseUrl}/billboard-kiralama`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+        { url: `${baseUrl}/static-billboards`, lastModified: now, changeFrequency: 'daily', priority: 0.95 },
+        { url: `${baseUrl}/screens`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/how-it-works`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+        { url: `${baseUrl}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
+        { url: `${baseUrl}/updates`, lastModified: now, changeFrequency: 'weekly', priority: 0.6 },
+        { url: `${baseUrl}/kampanya-rehberi`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
+
+        { url: `${baseUrl}/platform/why-panobu`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/platform/advantages`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/platform/advertisers`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+        { url: `${baseUrl}/platform/publishers`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+
+        { url: `${baseUrl}/company/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
+        { url: `${baseUrl}/company/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+        { url: `${baseUrl}/company/terms`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+        { url: `${baseUrl}/company/kvkk`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
     ];
 
-    const staticUrls = staticPages.map(page => ({
-        url: `${baseUrl}${page.path}`,
-        lastModified: new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: page.priority,
-    }));
-
-    // City pages (81 il)
-    const cityUrls = TURKEY_CITIES.map(city => ({
-        url: `${baseUrl}/billboard-kiralama/${toSlug(city)}`,
-        lastModified: new Date(),
+    const cityPages: MetadataRoute.Sitemap = TURKEY_CITIES.map(city => ({
+        url: `${baseUrl}/billboard-kiralama/${cityToSlug(city)}`,
+        lastModified: now,
         changeFrequency: 'weekly' as const,
         priority: 0.9,
     }));
 
-    // Panel type pages
-    const panelTypes = [
-        'billboard',
-        'clp-pano',
-        'raket-pano',
-        'megalight',
-        'totem',
-        'dijital-ekran',
-    ];
-
-    const panelTypeUrls = panelTypes.map(type => ({
+    const panelTypes = ['billboard', 'clp-pano', 'raket-pano', 'megalight', 'totem', 'dijital-ekran'];
+    const panelTypePages: MetadataRoute.Sitemap = panelTypes.map(type => ({
         url: `${baseUrl}/pano-turleri/${type}`,
-        lastModified: new Date(),
+        lastModified: now,
         changeFrequency: 'monthly' as const,
         priority: 0.7,
     }));
 
-    return [...staticUrls, ...cityUrls, ...panelTypeUrls];
+    return [...staticPages, ...cityPages, ...panelTypePages];
 }

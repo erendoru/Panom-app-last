@@ -1,20 +1,20 @@
 User-agent: *
 Allow: /
 
-# Sitemap
 Sitemap: https://panobu.com/sitemap.xml
 
-# Disallow admin and auth pages
 Disallow: /app/
 Disallow: /api/
 Disallow: /auth/
+Disallow: /_next/
 
-# Allow search engines to crawl main pages
-Allow: /
 Allow: /static-billboards
 Allow: /screens
 Allow: /how-it-works
 Allow: /blog
 Allow: /updates
 Allow: /billboard-kiralama/
+Allow: /pano-turleri/
 Allow: /kampanya-rehberi
+Allow: /platform/
+Allow: /company/

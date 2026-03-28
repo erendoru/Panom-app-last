@@ -77,8 +77,8 @@ export const Header = ({ translate }: { translate: any }) => {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
                 <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-white text-black hover:bg-slate-200 rounded-full transition-all hover:scale-105">
-                    <Link href="/auth/register">
-                        Kampanya Oluştur <ArrowRight className="w-5 h-5 ml-2" />
+                    <Link href="/static-billboards">
+                        Panoları Gör <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                 </Button>
                 <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full backdrop-blur-sm">

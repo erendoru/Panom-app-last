@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck } from "lucide-react";
+import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck, Calculator } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
@@ -29,6 +29,166 @@ function CountUp({ target, suffix = "", duration = 2 }: { target: number; suffix
     }, [isInView, target, duration]);
 
     return <span ref={ref}>{count}{suffix}</span>;
+}
+
+const BUDGET_PRESETS = [
+    { label: "5.000 ₺", value: 5000 },
+    { label: "10.000 ₺", value: 10000 },
+    { label: "25.000 ₺", value: 25000 },
+    { label: "50.000 ₺", value: 50000 },
+    { label: "100.000 ₺", value: 100000 },
+];
+
+const DURATION_OPTIONS = [
+    { label: "1 Hafta", value: 1, multiplier: 1 },
+    { label: "2 Hafta", value: 2, multiplier: 2 },
+    { label: "1 Ay", value: 4, multiplier: 4 },
+    { label: "3 Ay", value: 12, multiplier: 12 },
+];
+
+const AVG_WEEKLY_PRICE = 2500;
+const AVG_DAILY_IMPRESSIONS = 25000;
+
+function BudgetCalculator() {
+    const [budget, setBudget] = useState(10000);
+    const [durationIdx, setDurationIdx] = useState(0);
+    const duration = DURATION_OPTIONS[durationIdx];
+
+    const results = useMemo(() => {
+        const totalWeeks = duration.multiplier;
+        const costPerPanel = AVG_WEEKLY_PRICE * totalWeeks;
+        const panelCount = Math.max(1, Math.floor(budget / costPerPanel));
+        const totalImpressions = panelCount * AVG_DAILY_IMPRESSIONS * totalWeeks * 7;
+        const cpm = totalImpressions > 0 ? (budget / totalImpressions) * 1000 : 0;
+        return { panelCount, totalImpressions, cpm, costPerPanel };
+    }, [budget, duration]);
+
+    const formatNumber = (n: number) => {
+        if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
+        if (n >= 1000) return (n / 1000).toFixed(0) + "K";
+        return n.toString();
+    };
+
+    return (
+        <section className="py-24 relative bg-[#0f1829]">
+            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
+            <div className="container mx-auto px-4">
+                <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
+                    <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">
+                        <Calculator className="w-4 h-4 inline mr-1.5 -mt-0.5" />Bütçe Hesaplayıcı
+                    </span>
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">Ne Kadara Ne Alırım?</h2>
+                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        Bütçenizi girin, süreyi seçin — kaç panoya ulaşabileceğinizi ve tahmini gösterim sayınızı anında görün.
+                    </p>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="max-w-4xl mx-auto"
+                >
+                    <div className="bg-[#111827] border border-white/5 rounded-3xl p-6 md:p-10">
+                        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+                            {/* Left: Inputs */}
+                            <div className="space-y-8">
+                                {/* Budget */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-3">Toplam Bütçe</label>
+                                    <div className="flex flex-wrap gap-2 mb-4">
+                                        {BUDGET_PRESETS.map((p) => (
+                                            <button
+                                                key={p.value}
+                                                onClick={() => setBudget(p.value)}
+                                                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all ${
+                                                    budget === p.value
+                                                        ? "bg-emerald-500 text-white shadow-lg shadow-emerald-500/25"
+                                                        : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/5"
+                                                }`}
+                                            >
+                                                {p.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type="range"
+                                            min={1000}
+                                            max={200000}
+                                            step={1000}
+                                            value={budget}
+                                            onChange={(e) => setBudget(Number(e.target.value))}
+                                            className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-500 [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-emerald-500/30 [&::-webkit-slider-thumb]:cursor-pointer"
+                                        />
+                                        <div className="flex justify-between mt-2 text-xs text-slate-500">
+                                            <span>1.000 ₺</span>
+                                            <span className="text-emerald-400 font-bold text-base">{budget.toLocaleString("tr-TR")} ₺</span>
+                                            <span>200.000 ₺</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Duration */}
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-300 mb-3">Kampanya Süresi</label>
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {DURATION_OPTIONS.map((d, i) => (
+                                            <button
+                                                key={d.value}
+                                                onClick={() => setDurationIdx(i)}
+                                                className={`py-3 rounded-xl text-sm font-medium transition-all ${
+                                                    durationIdx === i
+                                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                                                        : "bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/5"
+                                                }`}
+                                            >
+                                                {d.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right: Results */}
+                            <div className="flex flex-col justify-center">
+                                <div className="space-y-4">
+                                    <div className="bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 rounded-2xl p-6 text-center">
+                                        <div className="text-sm text-emerald-400 font-medium mb-1">Ulaşabileceğiniz Pano Sayısı</div>
+                                        <div className="text-5xl md:text-6xl font-black text-white mb-1">{results.panelCount}</div>
+                                        <div className="text-xs text-slate-500">pano × {duration.label}</div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 text-center">
+                                            <div className="text-xs text-slate-500 mb-1">Tahmini Gösterim</div>
+                                            <div className="text-2xl font-bold text-white">{formatNumber(results.totalImpressions)}</div>
+                                            <div className="text-[10px] text-slate-500 mt-0.5">toplam kişi</div>
+                                        </div>
+                                        <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 text-center">
+                                            <div className="text-xs text-slate-500 mb-1">Bin Gösterim Maliyeti</div>
+                                            <div className="text-2xl font-bold text-emerald-400">₺{results.cpm.toFixed(1)}</div>
+                                            <div className="text-[10px] text-slate-500 mt-0.5">CPM</div>
+                                        </div>
+                                    </div>
+
+                                    <Button asChild size="lg" className="w-full h-14 text-base bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-all hover:scale-[1.02]">
+                                        <Link href="/static-billboards">
+                                            Panoları Gör ve Seç <ArrowRight className="w-5 h-5 ml-2" />
+                                        </Link>
+                                    </Button>
+
+                                    <p className="text-[11px] text-slate-600 text-center">
+                                        * Ortalama pano fiyatları ve gösterim verileri baz alınmıştır. Gerçek fiyatlar lokasyona göre değişir.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+        </section>
+    );
 }
 
 export default function LandingPage() {
@@ -211,6 +371,9 @@ export default function LandingPage() {
                     </div>
                 </section>
 
+                {/* Budget Calculator */}
+                <BudgetCalculator />
+
                 {/* Neden Panobu */}
                 <section className="py-24 relative bg-[#0f1829]">
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
@@ -262,6 +425,42 @@ export default function LandingPage() {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Competitive Edge Bar */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.4 }}
+                            className="mt-12 max-w-4xl mx-auto"
+                        >
+                            <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/15 rounded-2xl p-6 md:p-8">
+                                <div className="flex items-center justify-center gap-2 mb-5">
+                                    <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold">
+                                        Türkiye&apos;nin İlk Aracısız OOH Platformu
+                                    </span>
+                                </div>
+                                <div className="grid grid-cols-3 gap-4 md:gap-8 text-center mb-5">
+                                    <div>
+                                        <div className="text-2xl md:text-3xl font-bold text-emerald-400">%0</div>
+                                        <div className="text-xs text-slate-500 mt-1">Ajans Komisyonu</div>
+                                    </div>
+                                    <div className="border-x border-white/10">
+                                        <div className="text-2xl md:text-3xl font-bold text-blue-400">Yok</div>
+                                        <div className="text-xs text-slate-500 mt-1">Minimum Bütçe</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-2xl md:text-3xl font-bold text-indigo-400">5 dk</div>
+                                        <div className="text-xs text-slate-500 mt-1">Başlangıç Süresi</div>
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <Link href="/platform/why-panobu" className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                                        Detaylı karşılaştırmayı gör <ArrowRight className="w-4 h-4 ml-1" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 
