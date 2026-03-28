@@ -5,17 +5,24 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ScreensPage() {
     const session = await getSession();
 
-    const owner = await prisma.screenOwner.findUnique({
-        where: { userId: session?.user.id },
-    });
+    let screens: any[] = [];
+    try {
+        const owner = await prisma.screenOwner.findUnique({
+            where: { userId: session?.user.id },
+        });
 
-    const screens = await prisma.screen.findMany({
-        where: { ownerId: owner?.id },
-        orderBy: { createdAt: "desc" },
-    });
+        screens = await prisma.screen.findMany({
+            where: { ownerId: owner?.id },
+            orderBy: { createdAt: "desc" },
+        });
+    } catch (error) {
+        console.error("Error fetching owner screens:", error);
+    }
 
     return (
         <div>

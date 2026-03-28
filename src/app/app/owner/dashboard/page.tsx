@@ -3,21 +3,27 @@ import { Monitor, TrendingUp, Users, Activity } from "lucide-react";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+export const dynamic = 'force-dynamic';
+
 export default async function OwnerDashboard() {
     const session = await getSession();
 
-    // Fetch real data
-    const owner = await prisma.screenOwner.findUnique({
-        where: { userId: session?.user.id },
-        include: {
-            screens: true,
-            _count: {
-                select: { screens: true }
+    let owner: any = null;
+    try {
+        owner = await prisma.screenOwner.findUnique({
+            where: { userId: session?.user.id },
+            include: {
+                screens: true,
+                _count: {
+                    select: { screens: true }
+                }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error("Error fetching owner data:", error);
+    }
 
-    const activeScreens = owner?.screens.filter(s => s.active).length || 0;
+    const activeScreens = owner?.screens.filter((s: any) => s.active).length || 0;
     const totalScreens = owner?._count.screens || 0;
 
     return (

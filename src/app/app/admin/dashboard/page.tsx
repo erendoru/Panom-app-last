@@ -4,19 +4,27 @@ import prisma from "@/lib/prisma";
 import { Check, X } from "lucide-react";
 import { revalidatePath } from "next/cache";
 
-export default async function AdminDashboard() {
-    // Fetch pending items
-    const pendingScreens = await prisma.screen.findMany({
-        where: { active: false },
-        include: { owner: true },
-        orderBy: { createdAt: "desc" },
-    });
+export const dynamic = 'force-dynamic';
 
-    const pendingCampaigns = await prisma.campaign.findMany({
-        where: { status: "PENDING_APPROVAL" },
-        include: { advertiser: true },
-        orderBy: { createdAt: "desc" },
-    });
+export default async function AdminDashboard() {
+    let pendingScreens: any[] = [];
+    let pendingCampaigns: any[] = [];
+
+    try {
+        pendingScreens = await prisma.screen.findMany({
+            where: { active: false },
+            include: { owner: true },
+            orderBy: { createdAt: "desc" },
+        });
+
+        pendingCampaigns = await prisma.campaign.findMany({
+            where: { status: "PENDING_APPROVAL" },
+            include: { advertiser: true },
+            orderBy: { createdAt: "desc" },
+        });
+    } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+    }
 
     async function approveScreen(id: string) {
         "use server";

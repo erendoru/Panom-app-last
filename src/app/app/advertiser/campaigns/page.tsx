@@ -5,22 +5,29 @@ import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CampaignsPage() {
     const session = await getSession();
 
-    const advertiser = await prisma.advertiser.findUnique({
-        where: { userId: session?.user.id },
-    });
+    let campaigns: any[] = [];
+    try {
+        const advertiser = await prisma.advertiser.findUnique({
+            where: { userId: session?.user.id },
+        });
 
-    const campaigns = await prisma.campaign.findMany({
-        where: { advertiserId: advertiser?.id },
-        orderBy: { createdAt: "desc" },
-        include: {
-            _count: {
-                select: { campaignScreens: true }
+        campaigns = await prisma.campaign.findMany({
+            where: { advertiserId: advertiser?.id },
+            orderBy: { createdAt: "desc" },
+            include: {
+                _count: {
+                    select: { campaignScreens: true }
+                }
             }
-        }
-    });
+        });
+    } catch (error) {
+        console.error("Error fetching campaigns:", error);
+    }
 
     return (
         <div>

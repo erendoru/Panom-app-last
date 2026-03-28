@@ -2,14 +2,21 @@ import prisma from "@/lib/prisma";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: "Kullanıcılar | Panobu Admin",
 };
 
 export default async function AdminUsersPage() {
-    const users = await prisma.user.findMany({
-        orderBy: { createdAt: "desc" },
-    });
+    let users: any[] = [];
+    try {
+        users = await prisma.user.findMany({
+            orderBy: { createdAt: "desc" },
+        });
+    } catch (error) {
+        console.error("Error fetching users:", error);
+    }
 
     return (
         <div className="container mx-auto">

@@ -1,8 +1,14 @@
 import { Resend } from 'resend';
 
-// Resend API anahtarı .env dosyasından alınır
-// RESEND_API_KEY=re_xxxxx şeklinde eklenmeli
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend(): Resend | null {
+    if (!process.env.RESEND_API_KEY) return null;
+    if (!_resend) {
+        _resend = new Resend(process.env.RESEND_API_KEY);
+    }
+    return _resend;
+}
 
 interface OrderItem {
     panel: {
@@ -198,7 +204,7 @@ export async function sendOrderNotificationEmail(order: OrderDetails): Promise<b
 
     try {
         console.log('[Email] Attempting to send email to destek@panobu.com...');
-        const { data, error } = await resend.emails.send({
+        const { data, error } = await getResend()!.emails.send({
             from: 'Panobu <bildirim@panobu.com>',
             to: ['destek@panobu.com'],
             subject: `🎉 Yeni Sipariş: ${order.orderNumber} - ${order.campaignName}`,
@@ -226,7 +232,7 @@ export async function sendOrderConfirmationToCustomer(order: OrderDetails): Prom
     }
 
     try {
-        const { error } = await resend.emails.send({
+        const { error } = await getResend()!.emails.send({
             from: 'Panobu <bildirim@panobu.com>',
             to: [order.contactEmail],
             subject: `Siparişiniz Alındı - ${order.orderNumber}`,

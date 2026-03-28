@@ -5,21 +5,28 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus, Monitor, MapPin } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
     title: "Ekranlar | Panobu Admin",
 };
 
 export default async function AdminScreensPage() {
-    const screens = await prisma.screen.findMany({
-        include: {
-            owner: {
-                include: {
-                    user: true,
+    let screens: any[] = [];
+    try {
+        screens = await prisma.screen.findMany({
+            include: {
+                owner: {
+                    include: {
+                        user: true,
+                    },
                 },
             },
-        },
-        orderBy: { createdAt: "desc" },
-    });
+            orderBy: { createdAt: "desc" },
+        });
+    } catch (error) {
+        console.error("Error fetching screens:", error);
+    }
 
     return (
         <div className="container mx-auto">

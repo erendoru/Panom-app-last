@@ -3,6 +3,8 @@ import { getSession } from "@/lib/auth";
 import AdvertiserDashboardClient from "@/components/dashboard/advertiser/AdvertiserDashboardClient";
 import { subDays, format } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdvertiserDashboard() {
     const session = await getSession();
 
@@ -10,8 +12,9 @@ export default async function AdvertiserDashboard() {
         return <div>Giriş yapmanız gerekiyor.</div>;
     }
 
-    // Fetch Advertiser with related Campaigns and StaticRentals
-    const advertiser = await prisma.advertiser.findUnique({
+    let advertiser: any = null;
+    try {
+        advertiser = await prisma.advertiser.findUnique({
         where: { userId: session.userId },
         include: {
             campaigns: {
@@ -34,6 +37,9 @@ export default async function AdvertiserDashboard() {
             }
         }
     });
+    } catch (error) {
+        console.error("Error fetching advertiser data:", error);
+    }
 
     if (!advertiser) {
         return (
@@ -53,14 +59,12 @@ export default async function AdvertiserDashboard() {
     }
 
     // 1. Calculate KPI Data
-    const campaigns = advertiser.campaigns || [];
-    const rentals = advertiser.staticRentals || [];
+    const campaigns: any[] = advertiser.campaigns || [];
+    const rentals: any[] = advertiser.staticRentals || [];
 
     const activeDigital = campaigns.filter(c => c.status === 'ACTIVE').length;
     const activeStatic = rentals.filter(r => r.status === 'ACTIVE').length;
 
-    // Total Spend Logic (Simplified: Sum of totalBudget and totalPrice)
-    // Note: In a real app, calculate from actual transactions or daily spend
     const digitalSpend = campaigns.reduce((sum, c) => sum + Number(c.totalBudget), 0);
     const staticSpend = rentals.reduce((sum, r) => sum + Number(r.totalPrice), 0);
     const totalSpend = digitalSpend + staticSpend;
