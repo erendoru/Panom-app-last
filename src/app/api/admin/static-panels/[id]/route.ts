@@ -112,7 +112,6 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Check if regional admin can access this panel
         if (session.assignedCity) {
             const canAccess = await canAccessPanel(session, params.id);
             if (!canAccess) {
@@ -120,9 +119,23 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
             }
         }
 
-        await prisma.staticPanel.delete({
-            where: { id: params.id }
+        const panel = await prisma.staticPanel.findUnique({
+            where: { id: params.id },
+            include: { rentals: { where: { status: "ACTIVE" } } }
         });
+
+        if (!panel) {
+            return NextResponse.json({ error: "Panel not found" }, { status: 404 });
+        }
+
+        if (panel.rentals.length > 0) {
+            return NextResponse.json({ error: "Aktif kiralaması olan pano silinemez" }, { status: 400 });
+        }
+
+        await prisma.cartItem.deleteMany({ where: { panelId: params.id } });
+        await prisma.orderItem.deleteMany({ where: { panelId: params.id } });
+        await prisma.staticRental.deleteMany({ where: { panelId: params.id } });
+        await prisma.staticPanel.delete({ where: { id: params.id } });
 
         return NextResponse.json({ success: true });
     } catch (error) {

@@ -41,13 +41,13 @@ export default async function StaticBillboardsPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col">
-            <header className="bg-white border-b shadow-sm py-4 z-10">
-                <div className="container mx-auto px-4 flex justify-between items-center">
+            <header className="bg-white border-b shadow-sm z-10">
+                <div className="container mx-auto px-4 flex justify-between items-center min-h-0 h-14">
                     <Link href="/" className="flex items-center text-slate-500 hover:text-slate-900 font-medium transition-colors">
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Ana Sayfa
                     </Link>
-                    <h1 className="text-xl font-bold text-slate-900">Klasik Panolar</h1>
+                    <h1 className="text-lg font-bold text-slate-900">REKLAM PANOLARI</h1>
                     <HeaderCartIcon />
                 </div>
             </header>

@@ -54,6 +54,9 @@ export default function AdminPanelsPage() {
     // Bulk update state
     const [showBulkUpdate, setShowBulkUpdate] = useState(false);
     const [bulkPrice, setBulkPrice] = useState('');
+    const [showBulkRename, setShowBulkRename] = useState(false);
+    const [bulkName, setBulkName] = useState('');
+    const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
     // Filters
     const [selectedCity, setSelectedCity] = useState('');
@@ -178,7 +181,6 @@ export default function AdminPanelsPage() {
         }
     };
 
-    // Bulk update price
     const applyBulkPrice = () => {
         const price = parseFloat(bulkPrice);
         if (isNaN(price)) {
@@ -195,6 +197,66 @@ export default function AdminPanelsPage() {
         });
 
         setEditedPanels(prev => ({ ...prev, ...updates }));
+        setShowBulkUpdate(false);
+        setBulkPrice('');
+    };
+
+    const executeBulkAction = async (action: string, value?: any) => {
+        setBulkActionLoading(true);
+        try {
+            const res = await fetch('/api/admin/panels/bulk', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action,
+                    panelIds: Array.from(selectedPanels),
+                    value
+                })
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert(data.message || 'İşlem başarılı');
+                setSelectedPanels(new Set());
+                await fetchPanels();
+            } else {
+                alert(data.error || 'İşlem başarısız');
+            }
+        } catch (error) {
+            console.error('Bulk action error:', error);
+            alert('Bir hata oluştu');
+        } finally {
+            setBulkActionLoading(false);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`${selectedPanels.size} panoyu silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return;
+        await executeBulkAction('delete');
+    };
+
+    const handleBulkStatus = async (active: boolean) => {
+        const label = active ? 'aktif' : 'pasif';
+        if (!confirm(`${selectedPanels.size} panoyu ${label} yapmak istediğinize emin misiniz?`)) return;
+        await executeBulkAction('updateStatus', active);
+    };
+
+    const handleBulkRename = async () => {
+        if (!bulkName.trim()) {
+            alert('Ad boş olamaz');
+            return;
+        }
+        await executeBulkAction('rename', bulkName.trim());
+        setShowBulkRename(false);
+        setBulkName('');
+    };
+
+    const handleBulkPriceServer = async () => {
+        const price = parseFloat(bulkPrice);
+        if (isNaN(price) || price < 0) {
+            alert('Geçerli bir fiyat girin');
+            return;
+        }
+        await executeBulkAction('updatePrice', price);
         setShowBulkUpdate(false);
         setBulkPrice('');
     };
@@ -292,10 +354,55 @@ export default function AdminPanelsPage() {
                             {selectedPanels.size} pano seçildi
                         </span>
                         <div className="flex gap-2 flex-wrap">
-                            <Button onClick={() => setShowBulkUpdate(true)} variant="outline" size="sm">
-                                Toplu Fiyat Güncelle
+                            <Button
+                                onClick={() => setShowBulkUpdate(true)}
+                                variant="outline"
+                                size="sm"
+                                disabled={bulkActionLoading}
+                            >
+                                💰 Toplu Fiyat Güncelle
                             </Button>
-                            <Button onClick={() => setSelectedPanels(new Set())} variant="outline" size="sm">
+                            <Button
+                                onClick={() => setShowBulkRename(true)}
+                                variant="outline"
+                                size="sm"
+                                disabled={bulkActionLoading}
+                            >
+                                ✏️ Toplu Ad Değiştir
+                            </Button>
+                            <Button
+                                onClick={() => handleBulkStatus(true)}
+                                variant="outline"
+                                size="sm"
+                                className="border-green-400 text-green-700 hover:bg-green-50"
+                                disabled={bulkActionLoading}
+                            >
+                                ✅ Aktif Yap
+                            </Button>
+                            <Button
+                                onClick={() => handleBulkStatus(false)}
+                                variant="outline"
+                                size="sm"
+                                className="border-orange-400 text-orange-700 hover:bg-orange-50"
+                                disabled={bulkActionLoading}
+                            >
+                                ⏸️ Pasif Yap
+                            </Button>
+                            <Button
+                                onClick={handleBulkDelete}
+                                variant="outline"
+                                size="sm"
+                                className="border-red-400 text-red-700 hover:bg-red-50"
+                                disabled={bulkActionLoading}
+                            >
+                                🗑️ Toplu Sil
+                            </Button>
+                            <Button
+                                onClick={() => setSelectedPanels(new Set())}
+                                variant="outline"
+                                size="sm"
+                                disabled={bulkActionLoading}
+                            >
                                 Seçimi Temizle
                             </Button>
                         </div>
@@ -318,11 +425,41 @@ export default function AdminPanelsPage() {
                                 className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-4"
                             />
                             <div className="flex gap-2 justify-end">
-                                <Button onClick={() => setShowBulkUpdate(false)} variant="outline">
+                                <Button onClick={() => { setShowBulkUpdate(false); setBulkPrice(''); }} variant="outline">
                                     İptal
                                 </Button>
-                                <Button onClick={applyBulkPrice} className="bg-blue-600 hover:bg-blue-700">
-                                    Uygula
+                                <Button onClick={handleBulkPriceServer} disabled={bulkActionLoading} className="bg-blue-600 hover:bg-blue-700">
+                                    {bulkActionLoading ? 'Kaydediliyor...' : 'Kaydet & Uygula'}
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Bulk Rename Modal */}
+                {showBulkRename && (
+                    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+                            <h3 className="text-lg font-semibold mb-4">Toplu Ad Değiştir</h3>
+                            <p className="text-slate-600 mb-4">
+                                {selectedPanels.size} pano için yeni ad (birden fazla pano seçildiyse sıra numarası eklenir):
+                            </p>
+                            <input
+                                type="text"
+                                value={bulkName}
+                                onChange={(e) => setBulkName(e.target.value)}
+                                placeholder="Örn: Körfez Billboard"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-2"
+                            />
+                            <p className="text-xs text-slate-500 mb-4">
+                                Sonuç: &quot;{bulkName || 'Körfez Billboard'} 1&quot;, &quot;{bulkName || 'Körfez Billboard'} 2&quot;, ...
+                            </p>
+                            <div className="flex gap-2 justify-end">
+                                <Button onClick={() => { setShowBulkRename(false); setBulkName(''); }} variant="outline">
+                                    İptal
+                                </Button>
+                                <Button onClick={handleBulkRename} disabled={bulkActionLoading} className="bg-blue-600 hover:bg-blue-700">
+                                    {bulkActionLoading ? 'Kaydediliyor...' : 'Kaydet & Uygula'}
                                 </Button>
                             </div>
                         </div>

@@ -112,20 +112,12 @@ export default function Map({
                     chunkedLoading
                     iconCreateFunction={createClusterCustomIcon}
                     maxClusterRadius={50}
-                    spiderfyOnMaxZoom={false}
+                    spiderfyOnMaxZoom={true}
                     showCoverageOnHover={false}
-                    zoomToBoundsOnClick={false}
-                    disableClusteringAtZoom={16}
-                    spiderLegPolylineOptions={{ weight: 1.5, color: '#3b82f6', opacity: 0.5 }}
+                    zoomToBoundsOnClick={true}
+                    disableClusteringAtZoom={17}
                     animate={true}
                     removeOutsideVisibleBounds={false}
-                    spiderfyDistanceMultiplier={2}
-                    onClick={(e: any) => {
-                        // Force spiderfy on any cluster click
-                        if (e.layer && e.layer.spiderfy) {
-                            e.layer.spiderfy();
-                        }
-                    }}
                 >
                     {panels.map((panel) => (
                         <Marker

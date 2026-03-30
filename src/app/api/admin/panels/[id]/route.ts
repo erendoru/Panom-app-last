@@ -215,44 +215,32 @@ export async function DELETE(
     }
 
     try {
-        // Check if panel has active rentals
         const panel = await prisma.staticPanel.findUnique({
             where: { id: params.id },
             include: {
-                rentals: {
-                    where: {
-                        status: 'ACTIVE'
-                    }
-                }
+                rentals: { where: { status: 'ACTIVE' } }
             }
         });
 
-        if (panel && panel.rentals.length > 0) {
+        if (!panel) {
+            return NextResponse.json({ error: 'Panel not found' }, { status: 404 });
+        }
+
+        if (panel.rentals.length > 0) {
             return NextResponse.json(
-                { error: 'Cannot delete panel with active rentals' },
+                { error: 'Aktif kiralaması olan pano silinemez' },
                 { status: 400 }
             );
         }
 
-        // Delete related cart items first
-        await prisma.cartItem.deleteMany({
-            where: { panelId: params.id }
-        });
-
-        // Delete related order items first
-        await prisma.orderItem.deleteMany({
-            where: { panelId: params.id }
-        });
-
-        // Now delete the panel
-        await prisma.staticPanel.delete({
-            where: { id: params.id }
-        });
+        await prisma.cartItem.deleteMany({ where: { panelId: params.id } });
+        await prisma.orderItem.deleteMany({ where: { panelId: params.id } });
+        await prisma.staticRental.deleteMany({ where: { panelId: params.id } });
+        await prisma.staticPanel.delete({ where: { id: params.id } });
 
         return NextResponse.json({ success: true });
     } catch (error: any) {
         console.error('Error deleting panel:', error);
-        console.error('Error details:', error.message);
         return NextResponse.json(
             { error: 'Failed to delete panel', details: error.message },
             { status: 500 }
