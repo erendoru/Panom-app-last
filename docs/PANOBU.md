@@ -12,7 +12,7 @@
 | **Marka Adı** | Panobu |
 | **Domain** | https://panobu.com |
 | **Slogan** | Türkiye'nin Dijital Açıkhava Reklam Platformu |
-| **Kuruluş** | 2024, Kocaeli |
+| **Kuruluş** | 2026, Kocaeli |
 | **Hedef Kitle** | KOBİ'ler, ajanslar, yerel işletmeler |
 
 ### Marka Renkleri
