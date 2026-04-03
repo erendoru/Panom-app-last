@@ -223,7 +223,6 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
         setIsSubmitting(true);
         try {
-            // 1. Create Rental Record first
             const rentalRes = await fetch("/api/static-rentals", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -234,7 +233,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                     totalPrice: calculateTotal(),
                     creativeUrl: uploadedFileUrl,
                     designRequested,
-                    willSendLater, // Pass this new field to backend if supported, otherwise it's just frontend logic
+                    willSendLater,
                 }),
             });
 
@@ -249,7 +248,6 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
             const rentalData = await rentalRes.json();
 
-            // 2. Init Payment with the new Rental ID
             const res = await fetch("/api/payment/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -262,30 +260,11 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
 
             if (res.ok) {
                 const data = await res.json();
-                if (data.checkoutFormContent) {
-                    setCheckoutFormContent(data.checkoutFormContent);
-
-                    // Parse and execute script from Iyzico content
-                    setTimeout(() => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(data.checkoutFormContent, 'text/html');
-                        const scripts = doc.querySelectorAll('script');
-
-                        scripts.forEach(oldScript => {
-                            const newScript = document.createElement('script');
-                            Array.from(oldScript.attributes).forEach(attr => {
-                                newScript.setAttribute(attr.name, attr.value);
-                            });
-                            newScript.id = 'iyzico-checkout-script'; // Tag for cleanup
-                            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                            document.body.appendChild(newScript);
-                        });
-                    }, 100);
-
-                    // We can clear localStorage now, or wait for success
+                if (data.url) {
                     localStorage.removeItem('pendingRental');
+                    window.location.href = data.url;
                 } else {
-                    alert("Ödeme formu alınamadı.");
+                    alert("Ödeme URL'i alınamadı.");
                 }
             } else {
                 const errorData = await res.json().catch(() => ({}));

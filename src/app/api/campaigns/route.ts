@@ -103,14 +103,14 @@ export async function POST(request: Request) {
                 },
             });
 
-            // 4. Create Transaction (Mock Payment)
+            // 4. Create pending transaction (will be completed after Stripe payment)
             await tx.transaction.create({
                 data: {
                     userId: session.user.id,
                     campaignId: newCampaign.id,
                     amount: data.totalBudget,
-                    status: "SUCCESS",
-                    provider: "MOCK_PROVIDER",
+                    status: "PENDING",
+                    provider: "STRIPE",
                 },
             });
 

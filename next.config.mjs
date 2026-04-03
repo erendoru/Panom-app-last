@@ -7,7 +7,7 @@ const nextConfig = {
         ],
     },
     experimental: {
-        serverComponentsExternalPackages: ['iyzipay'],
+        serverComponentsExternalPackages: ['iyzipay', 'stripe'],
     },
     eslint: {
         ignoreDuringBuilds: true,

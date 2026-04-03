@@ -177,7 +177,6 @@ export default function CheckoutPage() {
         try {
             const sessionId = getSessionId();
 
-            // Get first item's dates as campaign dates
             const firstItem = cartItems[0];
             const startDate = firstItem?.startDate || new Date().toISOString();
             const endDate = firstItem?.endDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -204,11 +203,24 @@ export default function CheckoutPage() {
 
             const data = await res.json();
 
-            if (res.ok) {
+            if (!res.ok) {
+                alert(data.error || 'Bir hata oluştu');
+                return;
+            }
+
+            const payRes = await fetch('/api/orders/pay', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId: data.order.id })
+            });
+
+            const payData = await payRes.json();
+
+            if (payRes.ok && payData.url) {
+                window.location.href = payData.url;
+            } else {
                 setOrderNumber(data.order.orderNumber);
                 setCurrentStep(4);
-            } else {
-                alert(data.error || 'Bir hata oluştu');
             }
         } catch (error) {
             console.error('Error submitting order:', error);

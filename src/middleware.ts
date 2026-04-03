@@ -33,14 +33,15 @@ export async function middleware(req: NextRequest) {
     if (
         publicExact.some((p) => pathname === p) ||
         publicPrefixes.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
-        pathname.startsWith("/api/auth")
+        pathname.startsWith("/api/auth") ||
+        pathname.startsWith("/api/webhooks")
     ) {
         return res;
     }
 
     // Protected routes
     if (!session) {
-        if (pathname.startsWith("/app") || pathname.startsWith("/admin")) {
+        if (pathname.startsWith("/app")) {
             return NextResponse.redirect(new URL("/auth/login", req.url));
         }
     }
