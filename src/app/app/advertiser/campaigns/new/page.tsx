@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,17 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, ChevronRight, ChevronLeft, Upload, Monitor, CreditCard } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { MIN_CAMPAIGN_START_LEAD_DAYS } from "@/lib/campaign-dates";
+import { addDays, format, parse, startOfDay, isBefore, isAfter } from "date-fns";
+import { tr } from "date-fns/locale";
+
+function parseFormDate(value: string): Date {
+    return startOfDay(parse(value, "yyyy-MM-dd", new Date()));
+}
+
+function toInputDateString(d: Date): string {
+    return format(d, "yyyy-MM-dd");
+}
 
 // Mock template for creative
 const TEMPLATES = [
@@ -34,6 +45,24 @@ export default function NewCampaignWizard() {
         creativeType: "IMAGE" as "IMAGE" | "VIDEO",
     });
 
+    const minStartDate = useMemo(
+        () => startOfDay(addDays(new Date(), MIN_CAMPAIGN_START_LEAD_DAYS)),
+        []
+    );
+    const minStartStr = useMemo(() => toInputDateString(minStartDate), [minStartDate]);
+
+    const minEndStr = useMemo(() => {
+        if (formData.startDate) {
+            try {
+                const start = parseFormDate(formData.startDate);
+                return toInputDateString(addDays(start, 1));
+            } catch {
+                return toInputDateString(addDays(minStartDate, 1));
+            }
+        }
+        return toInputDateString(addDays(minStartDate, 1));
+    }, [formData.startDate, minStartDate]);
+
     // Fetch screens on mount
     useEffect(() => {
         fetch("/api/screens")
@@ -41,7 +70,38 @@ export default function NewCampaignWizard() {
             .then(data => setScreens(data.screens || []));
     }, []);
 
+    const step1DatesValid = useMemo(() => {
+        if (!formData.startDate || !formData.endDate) return false;
+        try {
+            const start = parseFormDate(formData.startDate);
+            const end = parseFormDate(formData.endDate);
+            if (isBefore(start, minStartDate)) return false;
+            if (!isAfter(end, start)) return false;
+            return true;
+        } catch {
+            return false;
+        }
+    }, [formData.startDate, formData.endDate, minStartDate]);
+
     const handleNext = () => setStep(s => s + 1);
+
+    const handleStartDateChange = (value: string) => {
+        setFormData((prev) => {
+            let next = { ...prev, startDate: value };
+            if (prev.endDate && value) {
+                try {
+                    const start = parseFormDate(value);
+                    const end = parseFormDate(prev.endDate);
+                    if (!isAfter(end, start)) {
+                        next.endDate = toInputDateString(addDays(start, 1));
+                    }
+                } catch {
+                    /* ignore */
+                }
+            }
+            return next;
+        });
+    };
     const handleBack = () => setStep(s => s - 1);
 
     const handleSubmit = async () => {
@@ -79,11 +139,11 @@ export default function NewCampaignWizard() {
             {/* Progress Bar */}
             <div className="mb-8">
                 <div className="flex items-center justify-between mb-2">
-                    <span className={`text - sm font - medium ${step >= 1 ? "text-blue-600" : "text-slate-400"}`}>1. Bilgiler</span>
-                    <span className={`text - sm font - medium ${step >= 2 ? "text-blue-600" : "text-slate-400"} `}>2. Ekranlar</span>
-                    <span className={`text - sm font - medium ${step >= 3 ? "text-blue-600" : "text-slate-400"} `}>3. Bütçe</span>
-                    <span className={`text - sm font - medium ${step >= 4 ? "text-blue-600" : "text-slate-400"} `}>4. Kreatif</span>
-                    <span className={`text - sm font - medium ${step >= 5 ? "text-blue-600" : "text-slate-400"} `}>5. Onay</span>
+                    <span className={`text-sm font-medium ${step >= 1 ? "text-blue-600" : "text-slate-400"}`}>1. Bilgiler</span>
+                    <span className={`text-sm font-medium ${step >= 2 ? "text-blue-600" : "text-slate-400"}`}>2. Ekranlar</span>
+                    <span className={`text-sm font-medium ${step >= 3 ? "text-blue-600" : "text-slate-400"}`}>3. Bütçe</span>
+                    <span className={`text-sm font-medium ${step >= 4 ? "text-blue-600" : "text-slate-400"}`}>4. Kreatif</span>
+                    <span className={`text-sm font-medium ${step >= 5 ? "text-blue-600" : "text-slate-400"}`}>5. Onay</span>
                 </div>
                 <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                     <div
@@ -116,27 +176,47 @@ export default function NewCampaignWizard() {
                                         placeholder="Örn: Şirketim A.Ş."
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <Label>Başlangıç Tarihi</Label>
                                         <Input
                                             type="date"
+                                            min={minStartStr}
                                             value={formData.startDate}
-                                            onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                                            onChange={(e) => handleStartDateChange(e.target.value)}
                                         />
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            Baskı ve hazırlık süreci için en erken{" "}
+                                            {format(minStartDate, "d MMMM yyyy", { locale: tr })} tarihini
+                                            seçebilirsiniz (bugünden en az {MIN_CAMPAIGN_START_LEAD_DAYS} gün sonra).
+                                        </p>
                                     </div>
                                     <div>
                                         <Label>Bitiş Tarihi</Label>
                                         <Input
                                             type="date"
+                                            min={minEndStr}
                                             value={formData.endDate}
-                                            onChange={e => setFormData({ ...formData, endDate: e.target.value })}
+                                            onChange={(e) =>
+                                                setFormData({ ...formData, endDate: e.target.value })
+                                            }
+                                            disabled={!formData.startDate}
                                         />
+                                        <p className="text-xs text-slate-500 mt-1">
+                                            Bitiş, başlangıçtan en az bir gün sonra olmalıdır.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                             <div className="flex justify-end">
-                                <Button onClick={handleNext} disabled={!formData.name || !formData.startDate}>
+                                <Button
+                                    onClick={handleNext}
+                                    disabled={
+                                        !formData.name?.trim() ||
+                                        !formData.brandName?.trim() ||
+                                        !step1DatesValid
+                                    }
+                                >
                                     İleri <ChevronRight className="w-4 h-4 ml-2" />
                                 </Button>
                             </div>
@@ -152,10 +232,10 @@ export default function NewCampaignWizard() {
                                     <div
                                         key={screen.id}
                                         onClick={() => toggleScreen(screen.id)}
-                                        className={`p - 4 border rounded - lg cursor - pointer transition - all ${formData.screenIds.includes(screen.id)
+                                        className={`p-4 border rounded-lg cursor-pointer transition-all ${formData.screenIds.includes(screen.id)
                                                 ? "border-blue-600 bg-blue-50 ring-1 ring-blue-600"
                                                 : "hover:border-slate-300"
-                                            } `}
+                                            }`}
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
@@ -220,8 +300,8 @@ export default function NewCampaignWizard() {
                                     <div
                                         key={template.id}
                                         onClick={() => setFormData({ ...formData, creativeUrl: template.url })}
-                                        className={`border rounded - lg overflow - hidden cursor - pointer ${formData.creativeUrl === template.url ? "ring-2 ring-blue-600" : ""
-                                            } `}
+                                        className={`border rounded-lg overflow-hidden cursor-pointer ${formData.creativeUrl === template.url ? "ring-2 ring-blue-600" : ""
+                                            }`}
                                     >
                                         <img src={template.url} alt={template.name} className="w-full h-32 object-cover" />
                                         <div className="p-2 text-sm font-medium text-center">{template.name}</div>

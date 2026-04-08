@@ -34,9 +34,6 @@ export default function OwnerLayout({
 
     return (
         <div className="min-h-screen flex flex-col bg-slate-50">
-            {/* Email Verification Banner */}
-            <EmailVerificationBanner />
-
             <div className="flex flex-1">
                 {/* Sidebar */}
                 <aside className="w-64 bg-white border-r border-slate-200 fixed h-full z-10">
@@ -75,9 +72,9 @@ export default function OwnerLayout({
                     </div>
                 </aside>
 
-                {/* Main Content */}
-                <main className="flex-1 ml-64 p-8">
-                    {children}
+                <main className="flex-1 ml-64 flex flex-col min-w-0">
+                    <EmailVerificationBanner />
+                    <div className="p-8 flex-1 min-w-0">{children}</div>
                 </main>
             </div>
         </div>

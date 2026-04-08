@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic';
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { z } from "zod";
-import { addDays, format, differenceInDays } from "date-fns";
+import { addDays, differenceInDays, isAfter, isBefore, parse, startOfDay } from "date-fns";
+import { MIN_CAMPAIGN_START_LEAD_DAYS } from "@/lib/campaign-dates";
 
 const createCampaignSchema = z.object({
     name: z.string().min(3),
@@ -34,8 +35,32 @@ export async function POST(request: Request) {
         }
 
         const data = result.data;
-        const startDate = new Date(data.startDate);
-        const endDate = new Date(data.endDate);
+
+        const minStart = startOfDay(addDays(new Date(), MIN_CAMPAIGN_START_LEAD_DAYS));
+        let startDate: Date;
+        let endDate: Date;
+        try {
+            startDate = startOfDay(parse(data.startDate, "yyyy-MM-dd", new Date()));
+            endDate = startOfDay(parse(data.endDate, "yyyy-MM-dd", new Date()));
+        } catch {
+            return NextResponse.json({ error: "Geçersiz tarih formatı" }, { status: 400 });
+        }
+
+        if (isBefore(startDate, minStart)) {
+            return NextResponse.json(
+                {
+                    error: `Kampanya başlangıcı en erken ${minStart.toLocaleDateString("tr-TR")} olabilir (baskı ve hazırlık için en az ${MIN_CAMPAIGN_START_LEAD_DAYS} gün).`,
+                },
+                { status: 400 }
+            );
+        }
+
+        if (!isAfter(endDate, startDate)) {
+            return NextResponse.json(
+                { error: "Bitiş tarihi, başlangıçtan sonra olmalıdır." },
+                { status: 400 }
+            );
+        }
 
         // Get Advertiser
         const advertiser = await prisma.advertiser.findUnique({
