@@ -190,7 +190,7 @@ export default function PanelTypePage({ params }: { params: { type: string } }) 
                             {data.description}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                            <Button asChild size="lg" className="bg-[#11b981] hover:bg-[#0ea472]">
                                 <Link href="/static-billboards">
                                     {data.name} Panolarını İncele <ArrowRight className="w-4 h-4 ml-2" />
                                 </Link>

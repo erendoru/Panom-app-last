@@ -156,7 +156,7 @@ export default function CampaignGuidePage() {
                         <p className="text-slate-400 mb-8">
                             Türkiye genelinde binlerce pano arasından seçim yapın ve kampanyanızı dakikalar içinde oluşturun.
                         </p>
-                        <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                        <Button asChild size="lg" className="bg-[#11b981] hover:bg-[#0ea472]">
                             <Link href="/static-billboards">
                                 Panoları Keşfet
                                 <ArrowRight className="w-5 h-5 ml-2" />

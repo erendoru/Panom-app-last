@@ -105,3 +105,24 @@
 .leaflet-marker-icon.custom-panel-marker {
   margin: 0 !important;
 }
+
+/* Ana sayfa canlı şerit — kesintisiz kaydırma */
+@keyframes panobu-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.panobu-marquee-track {
+  animation: panobu-marquee 50s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panobu-marquee-track {
+    animation: none;
+    transform: none;
+  }
+}

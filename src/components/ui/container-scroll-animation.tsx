@@ -64,26 +64,32 @@ export const Header = ({ translate }: { translate: any }) => {
             }}
             className="max-w-5xl mx-auto text-center"
         >
-            <h1 className="text-4xl md:text-6xl font-semibold text-white mb-8">
-                Şehrin Ritmini <br />
-                <span className="text-5xl md:text-[6rem] font-bold mt-1 leading-none bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500">
-                    Panobu İle Yakala
+            <h1 className="text-4xl md:text-6xl font-semibold text-neutral-900 mb-4 md:mb-6 leading-tight">
+                Şehrin Ritmini
+                <br />
+                <span className="text-5xl md:text-[5.5rem] font-bold mt-2 md:mt-3 block leading-[1.1] text-[#11b981]">
+                    Panobu ile yakala
                 </span>
             </h1>
-            <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-12">
+            <p className="text-neutral-600 text-lg md:text-xl max-w-2xl mx-auto mb-12">
                 Markanızı şehrin en işlek noktalarındaki billboardlarda dakikalar içinde yayınlayın.
                 Sabit fiyatlar, direkt pano sahibinden, aracısız kiralama.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-                <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-white text-black hover:bg-slate-200 rounded-full transition-all hover:scale-105">
+                <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-[#11b981] text-white hover:bg-[#0ea472] rounded-full transition-all hover:scale-105 shadow-md shadow-[#11b981]/25">
                     <Link href="/static-billboards">
                         Panoları Gör <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                 </Button>
-                <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full backdrop-blur-sm">
-                    <Link href="https://calendly.com/erendoru/30dk" target="_blank">
-                        Demo Talep Et
+                <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-14 px-8 text-lg border-2 border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 hover:border-[#11b981] rounded-full transition-all"
+                >
+                    <Link href="/static-billboards">
+                        Tümünü İncele <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                 </Button>
             </div>

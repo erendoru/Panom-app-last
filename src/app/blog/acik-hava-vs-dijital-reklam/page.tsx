@@ -159,7 +159,7 @@ export default function AcikHavaVsDijitalPage() {
                                 Dijital kampanyalarınızı başlatmadan önce, hedef bölgenizde açık hava reklamla marka bilinirliği oluşturun.
                                 Bu, dijital reklamlarınızın tıklama oranını ve güvenilirliğini artıracaktır.
                             </p>
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                            <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                                 <Link href="/static-billboards">
                                     Billboard Lokasyonlarını İncele <ArrowRight className="w-4 h-4 ml-2" />
                                 </Link>

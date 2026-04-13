@@ -140,7 +140,7 @@ export default function BillboardFiyatlariPage() {
                             <p className="text-blue-800 mb-4">
                                 Tüm panoların güncel fiyatlarını görmek ve kampanyanızı planlamak için Panobu'yu ziyaret edin.
                             </p>
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                            <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                                 <Link href="/static-billboards">
                                     Panoları İncele <ArrowRight className="w-4 h-4 ml-2" />
                                 </Link>

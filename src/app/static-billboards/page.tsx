@@ -29,10 +29,7 @@ export default async function StaticBillboardsPage() {
     let panels: any[] = [];
     try {
         panels = await prisma.staticPanel.findMany({
-            where: {
-                active: true,
-                city: "Kocaeli"
-            },
+            where: { active: true },
             orderBy: { createdAt: "desc" },
         });
     } catch (error) {

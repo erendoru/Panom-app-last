@@ -51,7 +51,7 @@ function SuccessContent() {
                             SSS
                         </Link>
                     </Button>
-                    <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                         <Link href="/static-billboards">
                             <MapPin className="w-4 h-4 mr-2" />
                             Panoları Keşfet

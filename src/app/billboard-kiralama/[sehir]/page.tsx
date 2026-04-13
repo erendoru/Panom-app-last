@@ -230,39 +230,39 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
         <PublicLayout>
             {/* Breadcrumb Navigation */}
             <nav className="container mx-auto px-4 pt-6 pb-2" aria-label="Breadcrumb">
-                <ol className="flex items-center gap-2 text-sm text-slate-500">
-                    <li><Link href="/" className="hover:text-blue-400 transition-colors">Ana Sayfa</Link></li>
+                <ol className="flex items-center gap-2 text-sm text-neutral-500">
+                    <li><Link href="/" className="hover:text-blue-700 transition-colors">Ana Sayfa</Link></li>
                     <li>/</li>
-                    <li><Link href="/static-billboards" className="hover:text-blue-400 transition-colors">Billboard Kiralama</Link></li>
+                    <li><Link href="/static-billboards" className="hover:text-blue-700 transition-colors">Billboard Kiralama</Link></li>
                     <li>/</li>
-                    <li className="text-blue-400 font-medium">{cityName}</li>
+                    <li className="text-blue-700 font-medium">{cityName}</li>
                 </ol>
             </nav>
 
             {/* Hero Section */}
-            <section className="py-16 md:py-24 bg-gradient-to-b from-blue-900/20 to-transparent">
+            <section className="py-16 md:py-24 bg-gradient-to-b from-blue-50 to-transparent">
                 <div className="container mx-auto px-4">
                     <div className="max-w-4xl mx-auto text-center">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm mb-6">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm mb-6">
                             <MapPin className="w-4 h-4" />
                             {cityName}{region ? ` — ${region} Bölgesi` : ""}
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                            {cityName} <span className="text-blue-400">Billboard Kiralama</span>
+                        <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-neutral-900">
+                            {cityName} <span className="text-blue-800">Billboard Kiralama</span>
                         </h1>
-                        <p className="text-lg md:text-xl text-slate-400 mb-4 max-w-3xl mx-auto">
+                        <p className="text-lg md:text-xl text-neutral-600 mb-4 max-w-3xl mx-auto">
                             {cityName}&apos;de açık hava reklam alanları kiralayın. Billboard, CLP, raket pano ve dijital ekran seçenekleri ile markanızı {population ? `${population} kişiye` : "tüm şehre"} duyurun.
                         </p>
-                        <p className="text-sm text-slate-500 mb-8">
+                        <p className="text-sm text-neutral-500 mb-8">
                             Aracısız, şeffaf fiyatlar • Online karşılaştırma • Hızlı kiralama
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg h-14 px-8">
+                            <Button asChild size="lg" className="bg-neutral-900 hover:bg-neutral-800 text-white text-lg h-14 px-8">
                                 <Link href="/static-billboards">
                                     {cityName} Panolarını İncele <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="bg-transparent border-2 border-white/20 text-white hover:bg-white/10 transition-all h-14 px-8">
+                            <Button asChild size="lg" variant="outline" className="border-2 border-neutral-300 text-neutral-900 hover:bg-neutral-50 h-14 px-8">
                                 <Link href="/how-it-works">
                                     Nasıl Çalışır?
                                 </Link>
@@ -274,24 +274,24 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
 
             {/* Stats Bar */}
             {population && (
-                <section className="py-8 border-y border-white/5">
+                <section className="py-8 border-y border-neutral-200">
                     <div className="container mx-auto px-4">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto text-center">
                             <div>
-                                <div className="text-2xl md:text-3xl font-bold text-blue-400">{population}</div>
-                                <div className="text-xs text-slate-500 mt-1">Nüfus</div>
+                                <div className="text-2xl md:text-3xl font-bold text-blue-800">{population}</div>
+                                <div className="text-xs text-neutral-500 mt-1">Nüfus</div>
                             </div>
                             <div>
-                                <div className="text-2xl md:text-3xl font-bold text-emerald-400">5+</div>
-                                <div className="text-xs text-slate-500 mt-1">Pano Türü</div>
+                                <div className="text-2xl md:text-3xl font-bold text-emerald-700">5+</div>
+                                <div className="text-xs text-neutral-500 mt-1">Pano Türü</div>
                             </div>
                             <div>
-                                <div className="text-2xl md:text-3xl font-bold text-purple-400">%0</div>
-                                <div className="text-xs text-slate-500 mt-1">Komisyon</div>
+                                <div className="text-2xl md:text-3xl font-bold text-neutral-800">%0</div>
+                                <div className="text-xs text-neutral-500 mt-1">Komisyon</div>
                             </div>
                             <div>
-                                <div className="text-2xl md:text-3xl font-bold text-amber-400">7/24</div>
-                                <div className="text-xs text-slate-500 mt-1">Görünürlük</div>
+                                <div className="text-2xl md:text-3xl font-bold text-amber-800">7/24</div>
+                                <div className="text-xs text-neutral-500 mt-1">Görünürlük</div>
                             </div>
                         </div>
                     </div>
@@ -302,10 +302,10 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             <section className="py-16">
                 <div className="container mx-auto px-4">
                     <div className="max-w-4xl mx-auto">
-                        <h2 className="text-3xl font-bold mb-6">
+                        <h2 className="text-3xl font-bold mb-6 text-neutral-900">
                             {cityName}&apos;de Açık Hava Reklamcılığı
                         </h2>
-                        <div className="text-slate-400 leading-relaxed space-y-4">
+                        <div className="text-neutral-600 leading-relaxed space-y-4">
                             <p>
                                 {cityName}{population ? `, ${population} nüfusuyla` : ""}{region ? ` ${region} Bölgesi&apos;nin önemli şehirlerinden biridir` : " Türkiye&apos;nin önemli şehirlerinden biridir"}. 
                                 Açık hava reklamcılığı, {cityName}&apos;de markaların geniş kitlelere ulaşmasının en etkili yollarından biridir. 
@@ -313,7 +313,7 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
                                 şehrin yoğun trafik noktalarında 7/24 görünürlük sağlar.
                             </p>
                             <p>
-                                <strong className="text-white">Panobu</strong>, {cityName}&apos;de açık hava reklam alanı kiralama sürecini tamamen dijitalleştiren 
+                                <strong className="text-neutral-900">Panobu</strong>, {cityName}&apos;de açık hava reklam alanı kiralama sürecini tamamen dijitalleştiren 
                                 Türkiye&apos;nin ilk aracısız OOH (Out-of-Home) platformudur. Ajans komisyonu ödemeden, tüm pano fiyatlarını 
                                 şeffaf şekilde karşılaştırabilir, online rezervasyon yapabilir ve kampanyanızı dakikalar içinde başlatabilirsiniz.
                             </p>
@@ -329,34 +329,34 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             </section>
 
             {/* Panel Types */}
-            <section className="py-16 bg-slate-900/30">
+            <section className="py-16 bg-neutral-50 border-y border-neutral-200">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center text-white mb-4">
+                    <h2 className="text-3xl font-bold text-center text-neutral-900 mb-4">
                         {cityName}&apos;de Kiralayabileceğiniz Pano Türleri
                     </h2>
-                    <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+                    <p className="text-neutral-600 text-center mb-12 max-w-2xl mx-auto">
                         Her bütçe ve hedefe uygun açık hava reklam formatları
                     </p>
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                         {panelTypes.map((type, i) => {
                             const Icon = type.icon;
                             return (
-                                <div key={i} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 hover:bg-white/[0.06] transition-all group">
-                                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/30 transition-colors">
-                                        <Icon className="w-6 h-6 text-blue-400" />
+                                <div key={i} className="bg-white border border-neutral-200 rounded-xl p-6 hover:border-neutral-300 transition-all group shadow-sm">
+                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-200 transition-colors">
+                                        <Icon className="w-6 h-6 text-blue-800" />
                                     </div>
-                                    <h3 className="font-bold text-lg text-white mb-2">{type.name}</h3>
-                                    <p className="text-sm text-slate-400 leading-relaxed">{type.desc}</p>
+                                    <h3 className="font-bold text-lg text-neutral-900 mb-2">{type.name}</h3>
+                                    <p className="text-sm text-neutral-600 leading-relaxed">{type.desc}</p>
                                 </div>
                             );
                         })}
                         <Link
                             href="/pano-turleri/billboard"
-                            className="bg-blue-600/10 border border-blue-500/20 rounded-xl p-6 hover:bg-blue-600/20 transition-all flex flex-col items-center justify-center text-center"
+                            className="bg-blue-50 border border-blue-200 rounded-xl p-6 hover:bg-blue-100 transition-all flex flex-col items-center justify-center text-center"
                         >
-                            <ArrowRight className="w-8 h-8 text-blue-400 mb-3" />
-                            <span className="font-semibold text-blue-400">Tüm Pano Türlerini İncele</span>
-                            <span className="text-xs text-slate-500 mt-1">Detaylı karşılaştırma</span>
+                            <ArrowRight className="w-8 h-8 text-blue-800 mb-3" />
+                            <span className="font-semibold text-blue-800">Tüm Pano Türlerini İncele</span>
+                            <span className="text-xs text-neutral-500 mt-1">Detaylı karşılaştırma</span>
                         </Link>
                     </div>
                 </div>
@@ -366,17 +366,17 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             {districts.length > 0 && (
                 <section className="py-16">
                     <div className="container mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center mb-4">
+                        <h2 className="text-3xl font-bold text-center mb-4 text-neutral-900">
                             {cityName} İlçelerinde Billboard Kiralama
                         </h2>
-                        <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+                        <p className="text-neutral-600 text-center mb-12 max-w-2xl mx-auto">
                             {cityName}&apos;in {districts.length} ilçesinde açık hava reklam alanları ile hedef kitlenize doğrudan ulaşın
                         </p>
                         <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
                             {districts.map((district, i) => (
                                 <span
                                     key={i}
-                                    className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm hover:bg-blue-500/10 hover:border-blue-500/20 hover:text-blue-400 transition-all cursor-default"
+                                    className="px-4 py-2 bg-neutral-50 border border-neutral-200 rounded-full text-sm text-neutral-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-800 transition-all cursor-default"
                                 >
                                     {district}
                                 </span>
@@ -387,12 +387,12 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             )}
 
             {/* Why Panobu */}
-            <section className="py-16 bg-slate-900/50">
+            <section className="py-16 bg-neutral-100 border-y border-neutral-200">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-4">
+                    <h2 className="text-3xl font-bold text-center mb-4 text-neutral-900">
                         Neden Panobu ile {cityName}&apos;de Reklam Vermelisiniz?
                     </h2>
-                    <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+                    <p className="text-neutral-600 text-center mb-12 max-w-2xl mx-auto">
                         Türkiye&apos;nin ilk aracısız açık hava reklam platformunun avantajları
                     </p>
                     <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -400,19 +400,19 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
                             const Icon = item.icon;
                             return (
                                 <div key={i} className="flex gap-4">
-                                    <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center shrink-0">
-                                        <Icon className="w-6 h-6 text-blue-400" />
+                                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shrink-0">
+                                        <Icon className="w-6 h-6 text-blue-800" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-lg mb-2 text-white">{item.title}</h3>
-                                        <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                                        <h3 className="font-bold text-lg mb-2 text-neutral-900">{item.title}</h3>
+                                        <p className="text-neutral-600 text-sm leading-relaxed">{item.desc}</p>
                                     </div>
                                 </div>
                             );
                         })}
                     </div>
                     <div className="text-center mt-10">
-                        <Link href="/platform/why-panobu" className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                        <Link href="/platform/why-panobu" className="inline-flex items-center text-sm font-medium text-blue-700 hover:text-blue-900 transition-colors">
                             Panobu hakkında daha fazla bilgi <ArrowRight className="w-4 h-4 ml-1" />
                         </Link>
                     </div>
@@ -422,21 +422,21 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             {/* FAQ Section */}
             <section className="py-16">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-4">
+                    <h2 className="text-3xl font-bold text-center mb-4 text-neutral-900">
                         {cityName} Billboard Kiralama Hakkında Sık Sorulan Sorular
                     </h2>
-                    <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+                    <p className="text-neutral-600 text-center mb-12 max-w-2xl mx-auto">
                         {cityName}&apos;de açık hava reklamcılığı hakkında merak edilenler
                     </p>
                     <div className="max-w-3xl mx-auto space-y-4">
                         {faqs.map((faq, i) => (
-                            <details key={i} className="group bg-white/[0.03] border border-white/[0.06] rounded-xl overflow-hidden">
-                                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-white/[0.03] transition-colors">
-                                    <h3 className="font-semibold text-white pr-4">{faq.q}</h3>
-                                    <span className="text-blue-400 shrink-0 text-xl group-open:rotate-45 transition-transform">+</span>
+                            <details key={i} className="group bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm">
+                                <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-neutral-50 transition-colors">
+                                    <h3 className="font-semibold text-neutral-900 pr-4">{faq.q}</h3>
+                                    <span className="text-blue-700 shrink-0 text-xl group-open:rotate-45 transition-transform">+</span>
                                 </summary>
                                 <div className="px-6 pb-6">
-                                    <p className="text-slate-400 leading-relaxed">{faq.a}</p>
+                                    <p className="text-neutral-600 leading-relaxed">{faq.a}</p>
                                 </div>
                             </details>
                         ))}
@@ -446,12 +446,12 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
 
             {/* Nearby Cities — Internal Linking */}
             {nearbyCities.length > 0 && (
-                <section className="py-16 bg-slate-900/30">
+                <section className="py-16 bg-neutral-50 border-y border-neutral-200">
                     <div className="container mx-auto px-4">
-                        <h2 className="text-3xl font-bold text-center mb-4">
+                        <h2 className="text-3xl font-bold text-center mb-4 text-neutral-900">
                             Yakın Şehirlerde Billboard Kiralama
                         </h2>
-                        <p className="text-slate-400 text-center mb-12 max-w-2xl mx-auto">
+                        <p className="text-neutral-600 text-center mb-12 max-w-2xl mx-auto">
                             {region} Bölgesi&apos;ndeki diğer şehirlerde de açık hava reklam alanlarını keşfedin
                         </p>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
@@ -459,13 +459,13 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
                                 <Link
                                     key={i}
                                     href={`/billboard-kiralama/${cityToSlug(city)}`}
-                                    className="flex items-center gap-3 p-4 bg-white/[0.03] border border-white/[0.06] rounded-xl hover:bg-blue-500/10 hover:border-blue-500/20 transition-all group"
+                                    className="flex items-center gap-3 p-4 bg-white border border-neutral-200 rounded-xl hover:bg-blue-50 hover:border-blue-200 transition-all group shadow-sm"
                                 >
-                                    <MapPin className="w-4 h-4 text-slate-500 group-hover:text-blue-400 transition-colors" />
+                                    <MapPin className="w-4 h-4 text-neutral-500 group-hover:text-blue-700 transition-colors" />
                                     <div>
-                                        <span className="font-medium text-white group-hover:text-blue-400 transition-colors">{city}</span>
+                                        <span className="font-medium text-neutral-900 group-hover:text-blue-800 transition-colors">{city}</span>
                                         {CITY_POPULATIONS[city] && (
-                                            <span className="block text-xs text-slate-500">{CITY_POPULATIONS[city]} nüfus</span>
+                                            <span className="block text-xs text-neutral-500">{CITY_POPULATIONS[city]} nüfus</span>
                                         )}
                                     </div>
                                 </Link>
@@ -476,21 +476,21 @@ export default function CityBillboardPage({ params }: { params: { sehir: string 
             )}
 
             {/* CTA */}
-            <section className="py-20 bg-gradient-to-r from-blue-900 to-indigo-900">
+            <section className="py-20 bg-neutral-100 border-t border-neutral-200">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-neutral-900">
                         {cityName}&apos;de Reklam Vermeye Başlayın
                     </h2>
-                    <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
+                    <p className="text-xl text-neutral-600 mb-8 max-w-2xl mx-auto">
                         Panobu ile {cityName}&apos;deki tüm panoları ücretsiz karşılaştırın ve dakikalar içinde kiralayın.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button asChild size="lg" className="bg-white text-black hover:bg-slate-200 h-14 px-8 text-lg">
+                        <Button asChild size="lg" className="bg-neutral-900 text-white hover:bg-neutral-800 h-14 px-8 text-lg">
                             <Link href="/static-billboards">
                                 Panoları Keşfet <ArrowRight className="w-5 h-5 ml-2" />
                             </Link>
                         </Button>
-                        <Button asChild size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-black transition-all h-14 px-8">
+                        <Button asChild size="lg" variant="outline" className="border-2 border-neutral-300 text-neutral-900 hover:bg-white h-14 px-8">
                             <Link href="https://calendly.com/erendoru/30dk" target="_blank">
                                 Ücretsiz Demo Al
                             </Link>

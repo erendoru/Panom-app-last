@@ -38,7 +38,7 @@ export default function HeaderCartIcon() {
     return (
         <Link
             href="/cart"
-            className="relative flex items-center justify-center w-10 h-10 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+            className="relative flex items-center justify-center w-10 h-10 bg-[#11b981] hover:bg-[#0ea472] rounded-full transition-colors shadow-sm"
             title="Sepetim"
         >
             <ShoppingCart className="w-5 h-5 text-white" />
@@ -48,7 +48,7 @@ export default function HeaderCartIcon() {
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md border-2 border-white"
+                        className="absolute -top-1 -right-1 bg-neutral-900 text-white text-xs font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shadow-md border-2 border-white"
                     >
                         {count > 99 ? '99+' : count}
                     </motion.span>

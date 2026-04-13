@@ -24,7 +24,7 @@ export default function NotFound() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-                    <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                    <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                         <Link href="/">
                             <Home className="w-4 h-4 mr-2" /> Ana Sayfa
                         </Link>

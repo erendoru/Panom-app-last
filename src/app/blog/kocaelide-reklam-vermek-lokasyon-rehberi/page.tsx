@@ -112,7 +112,7 @@ export default function KocaeliReklamRehberiPage() {
                             <p className="text-sm text-slate-400 italic mb-4">
                                 Bu lokasyonlar herkese açık değildir. Panobu ekibi ile özel görüşme yaparak bu fırsatlardan yararlanabilirsiniz.
                             </p>
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                            <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">
                                     Özel Strateji Görüşmesi Ayarla <ArrowRight className="w-4 h-4 ml-2" />
                                 </Link>
@@ -157,12 +157,12 @@ export default function KocaeliReklamRehberiPage() {
                         </ul>
 
                         <div className="bg-white/[0.04] border border-white/10 rounded-lg p-6 my-8 not-prose">
-                            <h3 className="text-xl font-bold text-white mb-3">Kocaeli'de Panolarımızı İnceleyin</h3>
+                            <h3 className="text-xl font-bold text-neutral-900 mb-3">Kocaeli'de Panolarımızı İnceleyin</h3>
                             <p className="text-slate-400 mb-4">
                                 Tüm Kocaeli lokasyonlarını harita üzerinde görüntüleyin ve kampanyanızı bugün başlatın.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-3">
-                                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                                <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                                     <Link href="/static-billboards">
                                         Panoları Görüntüle <ArrowRight className="w-4 h-4 ml-2" />
                                     </Link>

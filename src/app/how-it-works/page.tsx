@@ -21,7 +21,7 @@ export default function HowItWorksPage() {
         <PublicLayout activeLink="nasil">
             {/* Hero Section */}
             <section className="py-24 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-blue-50 to-transparent" />
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <motion.div
                         initial="initial"
@@ -29,16 +29,16 @@ export default function HowItWorksPage() {
                         variants={fadeInUp}
                         className="max-w-3xl mx-auto"
                     >
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                            Panobu <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">Nasıl Çalışır?</span>
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6 text-neutral-900">
+                            Panobu <span className="text-blue-800">Nasıl Çalışır?</span>
                         </h1>
-                        <p className="text-xl text-slate-400 mb-8">
+                        <p className="text-xl text-neutral-600 mb-8">
                             Outdoor reklam vermek hiç bu kadar kolay olmamıştı.
                             4 basit adımda markanızı şehrin en görünür noktalarına taşıyın.
                         </p>
                         <Link
                             href="/kampanya-rehberi"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#11b981] hover:bg-[#0ea472] text-white font-medium rounded-full transition-colors"
                         >
                             📸 Görsel Adım Adım Rehber
                             <ArrowRight className="w-4 h-4" />
@@ -74,7 +74,7 @@ export default function HowItWorksPage() {
                                     "Esnek tarihlendirme seçenekleri",
                                     "Toplam maliyeti anında hesaplıyoruz"
                                 ],
-                                gradient: "from-purple-500 to-purple-600"
+                                gradient: "from-slate-600 to-slate-700"
                             },
                             {
                                 step: "3",
@@ -115,16 +115,16 @@ export default function HowItWorksPage() {
                                     </div>
                                 </div>
                                 <div className="flex-1">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.06] text-slate-300 text-xs font-semibold mb-3">
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-semibold mb-3 border border-neutral-200">
                                         <item.icon className="w-4 h-4" />
                                         <span>Adım {item.step}</span>
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white mb-3">{item.title}</h3>
-                                    <p className="text-slate-400 mb-4 leading-relaxed">{item.description}</p>
+                                    <h3 className="text-2xl font-bold text-neutral-900 mb-3">{item.title}</h3>
+                                    <p className="text-neutral-600 mb-4 leading-relaxed">{item.description}</p>
                                     <ul className="space-y-2">
                                         {item.details.map((detail, idx) => (
-                                            <li key={idx} className="flex items-start gap-2 text-sm text-slate-500">
-                                                <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
+                                            <li key={idx} className="flex items-start gap-2 text-sm text-neutral-600">
+                                                <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                                                 <span>{detail}</span>
                                             </li>
                                         ))}
@@ -137,7 +137,7 @@ export default function HowItWorksPage() {
             </section>
 
             {/* Avantajlar - Why Panobu is Better */}
-            <section className="py-24 bg-white/[0.02] border-y border-white/5">
+            <section className="py-24 bg-neutral-50 border-y border-neutral-200">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -145,8 +145,8 @@ export default function HowItWorksPage() {
                         viewport={{ once: true }}
                         className="text-center mb-16"
                     >
-                        <h2 className="text-4xl font-bold mb-4">Neden Panobu Daha İyi?</h2>
-                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                        <h2 className="text-4xl font-bold mb-4 text-neutral-900">Neden Panobu Daha İyi?</h2>
+                        <p className="text-neutral-600 text-lg max-w-2xl mx-auto">
                             Geleneksel outdoor reklam ajanslarıyla uğraşmayın. Panobu ile her şey daha hızlı, şeffaf ve uygun maliyetli.
                         </p>
                     </motion.div>
@@ -180,13 +180,13 @@ export default function HowItWorksPage() {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all"
+                                className="bg-white border border-neutral-200 rounded-2xl p-6 hover:border-neutral-300 transition-all shadow-sm"
                             >
-                                <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mb-4">
-                                    <advantage.icon className="w-6 h-6 text-blue-400" />
+                                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                                    <advantage.icon className="w-6 h-6 text-blue-800" />
                                 </div>
-                                <h3 className="text-lg font-bold mb-2">{advantage.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed">{advantage.desc}</p>
+                                <h3 className="text-lg font-bold mb-2 text-neutral-900">{advantage.title}</h3>
+                                <p className="text-neutral-600 text-sm leading-relaxed">{advantage.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -202,8 +202,8 @@ export default function HowItWorksPage() {
                         viewport={{ once: true }}
                         className="text-center mb-16"
                     >
-                        <h2 className="text-4xl font-bold text-white mb-4">Tüm Reklam Formatları</h2>
-                        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+                        <h2 className="text-4xl font-bold text-neutral-900 mb-4">Tüm Reklam Formatları</h2>
+                        <p className="text-neutral-600 text-lg max-w-2xl mx-auto">
                             Dijital ekranlardan klasik billboardlara, durak panolarından bina kaplamalarına - hepsi tek platformda.
                         </p>
                     </motion.div>
@@ -232,15 +232,15 @@ export default function HowItWorksPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-white/[0.03] rounded-2xl p-8 border border-white/[0.06] hover:bg-white/[0.06] transition-all"
+                                className="bg-neutral-50 rounded-2xl p-8 border border-neutral-200 hover:bg-white transition-all shadow-sm"
                             >
-                                <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                                    <category.icon className="w-7 h-7 text-blue-400" />
+                                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6">
+                                    <category.icon className="w-7 h-7 text-blue-800" />
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-4">{category.title}</h3>
+                                <h3 className="text-xl font-bold text-neutral-900 mb-4">{category.title}</h3>
                                 <ul className="space-y-2">
                                     {category.formats.map((format, idx) => (
-                                        <li key={idx} className="flex items-center gap-2 text-sm text-slate-400">
+                                        <li key={idx} className="flex items-center gap-2 text-sm text-neutral-600">
                                             <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
                                             {format}
                                         </li>
@@ -253,8 +253,7 @@ export default function HowItWorksPage() {
             </section>
 
             {/* CTA */}
-            <section className="py-32 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 text-white relative overflow-hidden border-t border-white/5">
-                <div className="absolute inset-0 bg-[#0B1120]/50" />
+            <section className="py-32 bg-neutral-100 border-t border-neutral-200 relative overflow-hidden">
                 <div className="container mx-auto px-4 relative z-10 text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -262,19 +261,19 @@ export default function HowItWorksPage() {
                         viewport={{ once: true }}
                         className="max-w-3xl mx-auto"
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                        <h2 className="text-4xl md:text-5xl font-bold mb-6 text-neutral-900">
                             Hemen Başlayın
                         </h2>
-                        <p className="text-xl text-slate-200 mb-10">
+                        <p className="text-xl text-neutral-600 mb-10">
                             Ücretsiz hesap oluşturun. Panoları inceleyin. İlk kampanyanızı bugün başlatın.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-white text-black hover:bg-slate-200 rounded-full">
+                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-neutral-900 text-white hover:bg-neutral-800 rounded-full">
                                 <Link href="/auth/register">
                                     Ücretsiz Hesap Aç <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-transparent border-2 border-white text-white hover:bg-white hover:text-black rounded-full transition-all">
+                            <Button asChild size="lg" variant="outline" className="h-14 px-8 text-lg border-2 border-neutral-300 text-neutral-900 hover:bg-white rounded-full">
                                 <Link href="/static-billboards">
                                     Panoları İncele
                                 </Link>

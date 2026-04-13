@@ -198,7 +198,7 @@ export default function KobiStratejileriPage() {
                                 <li>✓ Şeffaf fiyatlandırma (gizli maliyet yok)</li>
                                 <li>✓ Online rezervasyon (aracı yok)</li>
                             </ul>
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                            <Button asChild className="bg-[#11b981] hover:bg-[#0ea472]">
                                 <Link href="/static-billboards">
                                     Uygun Fiyatlı Panoları Görüntüle <ArrowRight className="w-4 h-4 ml-2" />
                                 </Link>

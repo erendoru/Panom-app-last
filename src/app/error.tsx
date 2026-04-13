@@ -17,24 +17,24 @@ export default function GlobalError({
     }, [error]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center px-4">
+        <div className="min-h-screen bg-neutral-50 flex items-center justify-center px-4">
             <div className="max-w-md w-full text-center">
                 <div className="mb-6">
-                    <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <AlertTriangle className="w-8 h-8 text-red-400" />
+                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <AlertTriangle className="w-8 h-8 text-red-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Bir Hata Oluştu</h2>
-                    <p className="text-slate-400">
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-2">Bir Hata Oluştu</h2>
+                    <p className="text-neutral-600">
                         Beklenmeyen bir hata meydana geldi. Lütfen tekrar deneyin veya ana sayfaya dönün.
                     </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button onClick={reset} className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={reset} className="bg-neutral-900 hover:bg-neutral-800 text-white">
                         <RefreshCcw className="w-4 h-4 mr-2" />
                         Tekrar Dene
                     </Button>
-                    <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10">
+                    <Button asChild variant="outline" className="border-neutral-300 text-neutral-900 hover:bg-neutral-100">
                         <Link href="/">
                             <Home className="w-4 h-4 mr-2" />
                             Ana Sayfa

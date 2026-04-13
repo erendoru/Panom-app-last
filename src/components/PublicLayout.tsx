@@ -26,21 +26,24 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
     ];
 
     return (
-        <div className="min-h-screen flex flex-col bg-[#0B1120] text-white">
-            {/* Navigation */}
-            <header className="fixed top-0 w-full z-50 bg-[#0B1120]/80 backdrop-blur-xl border-b border-white/5">
+        <CartProvider>
+        <div className="min-h-screen flex flex-col bg-white text-neutral-900">
+            <header className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-xl border-b border-neutral-200 shadow-sm">
                 <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-600">
+                    <Link href="/" className="text-2xl font-bold text-neutral-900 tracking-tight">
                         Panobu
                     </Link>
 
-                    {/* Desktop Nav */}
                     <nav className="hidden lg:flex items-center gap-6">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.key}
                                 href={link.href}
-                                className={`text-sm font-medium transition-colors ${activeLink === link.key ? "text-white" : "text-slate-300 hover:text-white"}`}
+                                className={`text-sm font-medium transition-colors ${
+                                    activeLink === link.key
+                                        ? "text-neutral-900"
+                                        : "text-neutral-600 hover:text-neutral-900"
+                                }`}
                             >
                                 {link.label}
                             </Link>
@@ -49,17 +52,19 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
 
                     <div className="flex items-center gap-3 md:gap-4">
                         <CartIcon />
-                        <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-white hover:text-blue-400 transition-colors">
+                        <Link
+                            href="/auth/login"
+                            className="hidden sm:block text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
+                        >
                             Giriş Yap
                         </Link>
-                        <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-4 md:px-6 text-sm">
+                        <Button asChild className="bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full px-4 md:px-6 text-sm shadow-sm shadow-[#11b981]/20">
                             <Link href="/auth/register">Hemen Başla</Link>
                         </Button>
 
-                        {/* Mobile Menu Button */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+                            className="lg:hidden p-2 text-neutral-800 hover:bg-neutral-100 rounded-lg transition-colors"
                             aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -67,30 +72,33 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                     </div>
                 </div>
 
-                {/* Mobile Menu Dropdown */}
                 <AnimatePresence>
                     {isMobileMenuOpen && (
                         <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
                             exit={{ opacity: 0, height: 0 }}
-                            className="lg:hidden bg-[#0B1120]/95 backdrop-blur-xl border-t border-white/5"
+                            className="lg:hidden bg-white border-t border-neutral-200 shadow-md"
                         >
                             <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
                                 {navLinks.map((link) => (
                                     <Link
                                         key={link.key}
                                         href={link.href}
-                                        className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${activeLink === link.key ? "text-white bg-white/10" : "text-slate-300 hover:text-white hover:bg-white/10"}`}
+                                        className={`text-base font-medium py-3 px-4 rounded-lg transition-colors ${
+                                            activeLink === link.key
+                                                ? "text-neutral-900 bg-neutral-100"
+                                                : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50"
+                                        }`}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         {link.label}
                                     </Link>
                                 ))}
-                                <div className="border-t border-white/10 mt-2 pt-4">
+                                <div className="border-t border-neutral-200 mt-2 pt-4">
                                     <Link
                                         href="/auth/login"
-                                        className="text-base font-medium text-slate-300 hover:text-white py-3 px-4 rounded-lg hover:bg-white/10 transition-colors block"
+                                        className="text-base font-medium text-neutral-600 hover:text-neutral-900 py-3 px-4 rounded-lg hover:bg-neutral-50 transition-colors block"
                                         onClick={() => setIsMobileMenuOpen(false)}
                                     >
                                         Giriş Yap
@@ -102,24 +110,45 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                 </AnimatePresence>
             </header>
 
-            {/* Main Content */}
-            <main className="flex-1 pt-16 md:pt-20">
-                {children}
-            </main>
+            <main className="flex-1 pt-16 md:pt-20">{children}</main>
 
-            {/* Footer */}
-            <footer className="bg-[#060a14] text-white py-16 border-t border-white/5">
+            <footer className="bg-neutral-50 text-neutral-900 py-16 border-t border-neutral-200">
                 <div className="container mx-auto px-4">
                     <div className="grid md:grid-cols-4 gap-12 mb-16">
                         <div className="space-y-6">
-                            <Link href="/" className="text-3xl font-bold block tracking-tight">PANOBU</Link>
+                            <Link href="/" className="text-3xl font-bold block tracking-tight text-neutral-900">
+                                PANOBU
+                            </Link>
                             <div className="flex gap-4">
-                                <Link href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"><Globe className="w-5 h-5" /></Link>
-                                <Link href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"><Twitter className="w-5 h-5" /></Link>
-                                <Link href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"><Instagram className="w-5 h-5" /></Link>
-                                <Link href="#" className="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-colors"><Linkedin className="w-5 h-5" /></Link>
+                                <Link
+                                    href="#"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                >
+                                    <Globe className="w-5 h-5" />
+                                </Link>
+                                <Link
+                                    href="#"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                >
+                                    <Twitter className="w-5 h-5" />
+                                </Link>
+                                <Link
+                                    href="#"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                >
+                                    <Instagram className="w-5 h-5" />
+                                </Link>
+                                <Link
+                                    href="#"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                >
+                                    <Linkedin className="w-5 h-5" />
+                                </Link>
                             </div>
-                            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 py-6 font-bold text-lg shadow-lg shadow-blue-900/20 w-full md:w-auto">
+                            <Button
+                                asChild
+                                className="bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full px-6 py-6 font-bold text-lg w-full md:w-auto shadow-md shadow-[#11b981]/25"
+                            >
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">
                                     Demo Rezervasyon
                                 </Link>
@@ -127,62 +156,129 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-lg mb-6">Ürünler</h4>
-                            <ul className="space-y-4 text-slate-400">
-                                <li><Link href="/screens" className="hover:text-white transition-colors">Açık Hava Reklamcılığı</Link></li>
-                                <li><Link href="/screens" className="hover:text-white transition-colors">Dijital Panolar</Link></li>
-                                <li><Link href="/static-billboards" className="hover:text-white transition-colors">Billboard Kiralama</Link></li>
+                            <h4 className="font-bold text-xs uppercase tracking-widest text-neutral-500 mb-6">Ürünler</h4>
+                            <ul className="space-y-4 text-neutral-600">
+                                <li>
+                                    <Link href="/screens" className="hover:text-neutral-900 transition-colors">
+                                        Açık Hava Reklamcılığı
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/screens" className="hover:text-neutral-900 transition-colors">
+                                        Dijital Panolar
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/static-billboards" className="hover:text-neutral-900 transition-colors">
+                                        Billboard Kiralama
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-lg mb-6">Platform</h4>
-                            <ul className="space-y-4 text-slate-400">
-                                <li><Link href="/platform/why-panobu" className="hover:text-white transition-colors">Neden Panobu Platformu?</Link></li>
-                                <li><Link href="/platform/advantages" className="hover:text-white transition-colors">Panobu Avantajları</Link></li>
-                                <li><Link href="/platform/advertisers" className="hover:text-white transition-colors">Reklam Verenler İçin</Link></li>
-                                <li><Link href="/platform/publishers" className="hover:text-white transition-colors">Reklam Alanları İçin</Link></li>
+                            <h4 className="font-bold text-xs uppercase tracking-widest text-neutral-500 mb-6">Platform</h4>
+                            <ul className="space-y-4 text-neutral-600">
+                                <li>
+                                    <Link href="/platform/why-panobu" className="hover:text-neutral-900 transition-colors">
+                                        Neden Panobu Platformu?
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/platform/advantages" className="hover:text-neutral-900 transition-colors">
+                                        Panobu Avantajları
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/platform/advertisers" className="hover:text-neutral-900 transition-colors">
+                                        Reklam Verenler İçin
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/platform/publishers" className="hover:text-neutral-900 transition-colors">
+                                        Reklam Alanları İçin
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-lg mb-6">Şirket</h4>
-                            <ul className="space-y-4 text-slate-400">
-                                <li><Link href="/company/about" className="hover:text-white transition-colors">Hakkımızda</Link></li>
-                                <li><Link href="/company/careers" className="hover:text-white transition-colors">Kariyer</Link></li>
-                                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                                <li><Link href="/updates" className="hover:text-white transition-colors">Yenilikler</Link></li>
-                                <li><Link href="/company/help" className="hover:text-white transition-colors">Yardım Merkezi</Link></li>
-                                <li><Link href="/legal/contact" className="hover:text-white transition-colors">İletişim</Link></li>
+                            <h4 className="font-bold text-xs uppercase tracking-widest text-neutral-500 mb-6">Şirket</h4>
+                            <ul className="space-y-4 text-neutral-600">
+                                <li>
+                                    <Link href="/company/about" className="hover:text-neutral-900 transition-colors">
+                                        Hakkımızda
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/company/careers" className="hover:text-neutral-900 transition-colors">
+                                        Kariyer
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/blog" className="hover:text-neutral-900 transition-colors">
+                                        Blog
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/updates" className="hover:text-neutral-900 transition-colors">
+                                        Yenilikler
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/company/help" className="hover:text-neutral-900 transition-colors">
+                                        Yardım Merkezi
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/legal/contact" className="hover:text-neutral-900 transition-colors">
+                                        İletişim
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                     </div>
 
-                    {/* Payment Icons */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 py-6 border-t border-b border-white/10 mb-6">
-                        <img src="/images/payment-methods.png" alt="Ödeme Yöntemleri - iyzico, Mastercard, Visa, American Express, Troy" className="h-8" />
+                    <div className="flex flex-wrap items-center justify-center gap-4 py-6 border-t border-b border-neutral-200 mb-6">
+                        <img
+                            src="/images/payment-methods.png"
+                            alt="Ödeme Yöntemleri - iyzico, Mastercard, Visa, American Express, Troy"
+                            className="h-8"
+                        />
                     </div>
 
-                    {/* Legal Links */}
-                    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-slate-400 mb-6">
-                        <Link href="/legal/privacy" className="hover:text-white transition-colors">Gizlilik Politikası</Link>
-                        <span className="text-slate-600">•</span>
-                        <Link href="/legal/refund" className="hover:text-white transition-colors">İade Politikası</Link>
-                        <span className="text-slate-600">•</span>
-                        <Link href="/legal/terms" className="hover:text-white transition-colors">Hizmet Şartları</Link>
-                        <span className="text-slate-600">•</span>
-                        <Link href="/legal/distance-sales" className="hover:text-white transition-colors">Mesafeli Satış Sözleşmesi</Link>
-                        <span className="text-slate-600">•</span>
-                        <Link href="/legal/delivery" className="hover:text-white transition-colors">Teslimat Koşulları</Link>
-                        <span className="text-slate-600">•</span>
-                        <Link href="/legal/contact" className="hover:text-white transition-colors">İletişim</Link>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-neutral-500 mb-6">
+                        <Link href="/legal/privacy" className="hover:text-neutral-900 transition-colors">
+                            Gizlilik Politikası
+                        </Link>
+                        <span className="text-neutral-300">•</span>
+                        <Link href="/legal/refund" className="hover:text-neutral-900 transition-colors">
+                            İade Politikası
+                        </Link>
+                        <span className="text-neutral-300">•</span>
+                        <Link href="/legal/terms" className="hover:text-neutral-900 transition-colors">
+                            Hizmet Şartları
+                        </Link>
+                        <span className="text-neutral-300">•</span>
+                        <Link href="/legal/distance-sales" className="hover:text-neutral-900 transition-colors">
+                            Mesafeli Satış Sözleşmesi
+                        </Link>
+                        <span className="text-neutral-300">•</span>
+                        <Link href="/legal/delivery" className="hover:text-neutral-900 transition-colors">
+                            Teslimat Koşulları
+                        </Link>
+                        <span className="text-neutral-300">•</span>
+                        <Link href="/legal/contact" className="hover:text-neutral-900 transition-colors">
+                            İletişim
+                        </Link>
                     </div>
 
-                    <div className="text-center text-slate-500 text-sm">
+                    <div className="text-center text-neutral-500 text-sm">
                         <p>&copy; 2026 Panobu. Tüm hakları saklıdır.</p>
                     </div>
                 </div>
             </footer>
         </div>
+        </CartProvider>
     );
 }

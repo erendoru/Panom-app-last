@@ -114,16 +114,16 @@ export default function ForPublishersPage() {
 
                 <div className="container mx-auto px-4 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-6">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-sm font-medium mb-6">
                             Reklam Ünitesi Sahipleri İçin
                         </span>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-neutral-900 mb-6 leading-tight">
                             Panolarınızı <br className="hidden md:block" />
                             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-400">
                                 Gelire Dönüştürün
                             </span>
                         </h1>
-                        <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
+                        <p className="text-neutral-600 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
                             Boş kalan reklam ünitelerinizi Panobu ağına ekleyin, Türkiye&apos;nin dört bir yanındaki reklam verenlerle buluşun.
                             Satış operasyonu yok, komisyon yok — sadece kazanç.
                         </p>
@@ -133,7 +133,7 @@ export default function ForPublishersPage() {
                                     Ücretsiz Başvur <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="h-14 px-8 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full">
+                            <Button asChild size="lg" className="h-14 px-8 text-lg border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 rounded-full">
                                 <Link href="#nasil-calisir">
                                     Nasıl Çalışır?
                                 </Link>
@@ -144,7 +144,7 @@ export default function ForPublishersPage() {
             </section>
 
             {/* Stats */}
-            <section className="py-16 border-y border-white/5 bg-[#0f1829]">
+            <section className="py-16 border-y border-neutral-200 bg-neutral-50">
                 <div className="container mx-auto px-4">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                         {STATS.map((s, i) => (
@@ -156,7 +156,7 @@ export default function ForPublishersPage() {
                                 transition={{ delay: i * 0.1 }}
                                 className="text-center"
                             >
-                                <div className="text-3xl md:text-4xl font-bold text-white mb-1">{s.value}</div>
+                                <div className="text-3xl md:text-4xl font-bold text-neutral-900 mb-1">{s.value}</div>
                                 <div className="text-sm text-slate-500">{s.label}</div>
                             </motion.div>
                         ))}
@@ -165,12 +165,12 @@ export default function ForPublishersPage() {
             </section>
 
             {/* Advantages */}
-            <section className="py-24 bg-[#0B1120]">
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">Avantajlar</span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Neden Panobu Partner Olmalısınız?</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-700 text-sm font-medium mb-4">Avantajlar</span>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Neden Panobu Partner Olmalısınız?</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Reklam ünitelerinizin potansiyelini tam kapasiteye çıkarın.
                         </p>
                     </motion.div>
@@ -183,17 +183,17 @@ export default function ForPublishersPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.08 }}
-                                className="bg-[#111827] border border-white/5 rounded-2xl p-7 hover:border-white/10 transition-all group"
+                                className="bg-neutral-50 border border-neutral-200 rounded-2xl p-7 hover:border-neutral-300 transition-all group"
                             >
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${
                                     item.color === "emerald" ? "bg-emerald-500/15" : item.color === "blue" ? "bg-blue-500/15" : item.color === "amber" ? "bg-amber-500/15" : "bg-indigo-500/15"
                                 }`}>
                                     <item.icon className={`w-6 h-6 ${
-                                        item.color === "emerald" ? "text-emerald-400" : item.color === "blue" ? "text-blue-400" : item.color === "amber" ? "text-amber-400" : "text-indigo-400"
+                                        item.color === "emerald" ? "text-emerald-700" : item.color === "blue" ? "text-blue-700" : item.color === "amber" ? "text-amber-400" : "text-indigo-800"
                                     }`} />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                                <h3 className="text-lg font-bold text-neutral-900 mb-2">{item.title}</h3>
+                                <p className="text-neutral-600 text-sm leading-relaxed">{item.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -201,13 +201,13 @@ export default function ForPublishersPage() {
             </section>
 
             {/* How It Works */}
-            <section id="nasil-calisir" className="py-24 bg-[#0f1829] relative">
+            <section id="nasil-calisir" className="py-24 bg-neutral-50 relative">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">Süreç</span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">4 Adımda Kazanmaya Başlayın</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-sm font-medium mb-4">Süreç</span>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">4 Adımda Kazanmaya Başlayın</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Başvurudan ilk ödemeye kadar her şey hızlı ve basit.
                         </p>
                     </motion.div>
@@ -221,15 +221,15 @@ export default function ForPublishersPage() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: i * 0.1 }}
-                                    className="relative bg-[#111827] border border-white/5 rounded-2xl p-7 hover:border-emerald-500/20 transition-all"
+                                    className="relative bg-neutral-50 border border-neutral-200 rounded-2xl p-7 hover:border-emerald-500/20 transition-all"
                                 >
                                     <div className="flex items-start gap-5">
                                         <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                                            <span className="text-lg font-bold text-emerald-400">{item.step}</span>
+                                            <span className="text-lg font-bold text-emerald-700">{item.step}</span>
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                                            <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                                            <h3 className="text-lg font-bold text-neutral-900 mb-2">{item.title}</h3>
+                                            <p className="text-neutral-600 text-sm leading-relaxed">{item.desc}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -240,21 +240,21 @@ export default function ForPublishersPage() {
             </section>
 
             {/* Comparison */}
-            <section className="py-24 bg-[#0B1120]">
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Panobu vs Geleneksel Yöntem</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Panobu vs Geleneksel Yöntem</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Neden yüzlerce pano sahibi Panobu&apos;yu tercih ediyor?
                         </p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-3xl mx-auto">
-                        <div className="bg-[#111827] border border-white/5 rounded-2xl overflow-hidden">
-                            <div className="grid grid-cols-3 bg-white/[0.03] border-b border-white/5">
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden">
+                            <div className="grid grid-cols-3 bg-white/[0.03] border-b border-neutral-200">
                                 <div className="p-4 text-sm font-medium text-slate-500"></div>
-                                <div className="p-4 text-center text-sm font-bold text-red-400 border-x border-white/5">Geleneksel</div>
-                                <div className="p-4 text-center text-sm font-bold text-emerald-400">Panobu</div>
+                                <div className="p-4 text-center text-sm font-bold text-red-600 border-x border-neutral-200">Geleneksel</div>
+                                <div className="p-4 text-center text-sm font-bold text-emerald-700">Panobu</div>
                             </div>
                             {[
                                 { label: "Müşteri Bulma", old: "Kendiniz ararsınız", new: "Otomatik eşleşme" },
@@ -265,10 +265,10 @@ export default function ForPublishersPage() {
                                 { label: "Görünürlük", old: "Yerel ağ", new: "Tüm Türkiye" },
                                 { label: "Destek", old: "Sınırlı", new: "7/24 partner desteği" },
                             ].map((row, i) => (
-                                <div key={i} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-white/[0.01]" : ""} border-b border-white/5 last:border-b-0`}>
-                                    <div className="p-4 text-sm font-medium text-slate-300">{row.label}</div>
-                                    <div className="p-4 text-center text-sm text-slate-500 border-x border-white/5">{row.old}</div>
-                                    <div className="p-4 text-center text-sm text-emerald-400 font-medium">{row.new}</div>
+                                <div key={i} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-white/[0.01]" : ""} border-b border-neutral-200 last:border-b-0`}>
+                                    <div className="p-4 text-sm font-medium text-neutral-600">{row.label}</div>
+                                    <div className="p-4 text-center text-sm text-slate-500 border-x border-neutral-200">{row.old}</div>
+                                    <div className="p-4 text-center text-sm text-emerald-700 font-medium">{row.new}</div>
                                 </div>
                             ))}
                         </div>
@@ -277,11 +277,11 @@ export default function ForPublishersPage() {
             </section>
 
             {/* Testimonials */}
-            <section className="py-24 bg-[#0f1829] relative">
+            <section className="py-24 bg-neutral-50 relative">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Partnerlerimiz Ne Diyor?</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Partnerlerimiz Ne Diyor?</h2>
                     </motion.div>
 
                     <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -292,16 +292,16 @@ export default function ForPublishersPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-[#111827] border border-white/5 rounded-2xl p-7"
+                                className="bg-neutral-50 border border-neutral-200 rounded-2xl p-7"
                             >
                                 <div className="flex gap-1 mb-4">
                                     {[...Array(5)].map((_, j) => (
                                         <Star key={j} className="w-4 h-4 text-amber-400 fill-amber-400" />
                                     ))}
                                 </div>
-                                <p className="text-slate-300 text-sm leading-relaxed mb-5 italic">&ldquo;{t.quote}&rdquo;</p>
+                                <p className="text-neutral-600 text-sm leading-relaxed mb-5 italic">&ldquo;{t.quote}&rdquo;</p>
                                 <div>
-                                    <div className="text-white font-semibold text-sm">{t.name}</div>
+                                    <div className="text-neutral-900 font-semibold text-sm">{t.name}</div>
                                     <div className="text-slate-500 text-xs">{t.role}</div>
                                 </div>
                             </motion.div>
@@ -311,11 +311,11 @@ export default function ForPublishersPage() {
             </section>
 
             {/* Accepted Panel Types */}
-            <section className="py-24 bg-[#0B1120]">
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Hangi Üniteler Kabul Ediliyor?</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Hangi Üniteler Kabul Ediliyor?</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Tüm açık hava reklam formatları platformumuza dahil edilebilir.
                         </p>
                     </motion.div>
@@ -335,10 +335,10 @@ export default function ForPublishersPage() {
                                 whileInView={{ opacity: 1, scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
-                                className="bg-[#111827] border border-white/5 rounded-xl p-5 text-center hover:border-emerald-500/20 transition-all"
+                                className="bg-neutral-50 border border-neutral-200 rounded-xl p-5 text-center hover:border-emerald-500/20 transition-all"
                             >
                                 <div className="text-3xl mb-2">{t.icon}</div>
-                                <div className="text-sm font-medium text-white">{t.name}</div>
+                                <div className="text-sm font-medium text-neutral-900">{t.name}</div>
                             </motion.div>
                         ))}
                     </div>
@@ -346,11 +346,11 @@ export default function ForPublishersPage() {
             </section>
 
             {/* FAQ */}
-            <section className="py-24 bg-[#0f1829] relative">
+            <section className="py-24 bg-neutral-50 relative">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Sıkça Sorulan Sorular</h2>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Sıkça Sorulan Sorular</h2>
                     </motion.div>
 
                     <div className="max-w-3xl mx-auto space-y-4">
@@ -361,10 +361,10 @@ export default function ForPublishersPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
-                                className="bg-[#111827] border border-white/5 rounded-xl p-6"
+                                className="bg-neutral-50 border border-neutral-200 rounded-xl p-6"
                             >
-                                <h3 className="text-white font-semibold mb-2">{item.q}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed">{item.a}</p>
+                                <h3 className="text-neutral-900 font-semibold mb-2">{item.q}</h3>
+                                <p className="text-neutral-600 text-sm leading-relaxed">{item.a}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -372,7 +372,7 @@ export default function ForPublishersPage() {
             </section>
 
             {/* CTA */}
-            <section className="py-24 bg-[#0B1120] relative">
+            <section className="py-24 bg-white relative">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -380,8 +380,8 @@ export default function ForPublishersPage() {
                         viewport={{ once: true }}
                         className="max-w-4xl mx-auto text-center bg-gradient-to-br from-emerald-600/20 to-teal-600/10 border border-emerald-500/20 rounded-3xl p-10 md:p-16"
                     >
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Hemen Başlayın</h2>
-                        <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Hemen Başlayın</h2>
+                        <p className="text-neutral-600 text-lg mb-8 max-w-2xl mx-auto">
                             Ücretsiz başvurunuzu yapın, panolarınızı platformumuza ekleyin ve kazanmaya başlayın.
                             Tek bir üniteniz bile olsa, Panobu ailesine katılabilirsiniz.
                         </p>
@@ -391,7 +391,7 @@ export default function ForPublishersPage() {
                                     Ücretsiz Başvur <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="h-14 px-10 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full">
+                            <Button asChild size="lg" className="h-14 px-10 text-lg border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 rounded-full">
                                 <Link href="/faq">
                                     Daha Fazla Bilgi
                                 </Link>

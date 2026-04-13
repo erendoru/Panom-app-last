@@ -41,7 +41,7 @@ export default function BillboardKiralamaIndexPage() {
                                 <Link
                                     key={city}
                                     href={`/billboard-kiralama/${slug}`}
-                                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.06] text-sm text-slate-300 hover:bg-blue-500/10 hover:border-blue-500/25 hover:text-white transition-colors"
+                                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-neutral-50 border border-neutral-200 text-sm text-neutral-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-900 transition-colors"
                                 >
                                     <MapPin className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                                     <span className="truncate">{city}</span>

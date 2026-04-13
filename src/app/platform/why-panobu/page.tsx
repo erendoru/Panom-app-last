@@ -22,9 +22,9 @@ const COMPARISON_ROWS = [
 ];
 
 function StatusIcon({ status }: { status: boolean | string }) {
-    if (status === true) return <CheckCircle2 className="w-4 h-4 text-emerald-400" />;
+    if (status === true) return <CheckCircle2 className="w-4 h-4 text-emerald-700" />;
     if (status === "partial") return <MinusCircle className="w-4 h-4 text-amber-400" />;
-    return <XCircle className="w-4 h-4 text-red-400" />;
+    return <XCircle className="w-4 h-4 text-red-600" />;
 }
 
 const DIFFERENTIATORS = [
@@ -63,23 +63,23 @@ export default function WhyPanobuPage() {
 
                 <div className="container mx-auto px-4 text-center">
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-6">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-700 text-sm font-medium mb-6">
                             Türkiye&apos;nin İlk Aracısız OOH Platformu
                         </span>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-neutral-900 mb-6 leading-tight">
                             Neden <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">Panobu?</span>
                         </h1>
-                        <p className="text-slate-400 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
+                        <p className="text-neutral-600 text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
                             Geleneksel ajansların komisyonlarına, belirsiz fiyatlarına ve haftalarca süren süreçlerine son verin.
                             Panobu ile açık hava reklamcılığı şeffaf, hızlı ve herkes için erişilebilir.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all hover:scale-105">
+                            <Button asChild size="lg" className="h-14 px-8 text-lg bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full transition-all hover:scale-105">
                                 <Link href="/static-billboards">
                                     Panoları Gör <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="h-14 px-8 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full">
+                            <Button asChild size="lg" className="h-14 px-8 text-lg border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 rounded-full">
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">
                                     Demo Talep Et
                                 </Link>
@@ -90,47 +90,47 @@ export default function WhyPanobuPage() {
             </section>
 
             {/* Comparison Table */}
-            <section className="py-24 bg-[#0f1829] relative">
+            <section className="py-24 bg-neutral-50 relative">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-4">Karşılaştırma</span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Panobu vs Rakipler</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-800 text-sm font-medium mb-4">Karşılaştırma</span>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Panobu vs Rakipler</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Geleneksel ajanslar ve online rakiplerle madde madde karşılaştırın.
                         </p>
                     </motion.div>
 
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-5xl mx-auto">
-                        <div className="bg-[#111827] border border-white/5 rounded-2xl overflow-hidden">
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-2xl overflow-hidden">
                             {/* Header */}
-                            <div className="grid grid-cols-4 bg-white/[0.03] border-b border-white/5">
+                            <div className="grid grid-cols-4 bg-white/[0.03] border-b border-neutral-200">
                                 <div className="p-4 md:p-5 text-sm font-medium text-slate-500"></div>
                                 <div className="p-4 md:p-5 text-center">
-                                    <div className="text-sm font-bold text-emerald-400">Panobu</div>
-                                    <div className="text-[10px] text-emerald-400/60 mt-0.5">Aracısız Platform</div>
+                                    <div className="text-sm font-bold text-emerald-700">Panobu</div>
+                                    <div className="text-[10px] text-emerald-700/60 mt-0.5">Aracısız Platform</div>
                                 </div>
-                                <div className="p-4 md:p-5 text-center border-x border-white/5">
-                                    <div className="text-sm font-bold text-slate-400">Geleneksel Ajans</div>
+                                <div className="p-4 md:p-5 text-center border-x border-neutral-200">
+                                    <div className="text-sm font-bold text-neutral-600">Geleneksel Ajans</div>
                                     <div className="text-[10px] text-slate-500 mt-0.5">Komisyoncu</div>
                                 </div>
                                 <div className="p-4 md:p-5 text-center">
-                                    <div className="text-sm font-bold text-slate-400">Online Rakipler</div>
+                                    <div className="text-sm font-bold text-neutral-600">Online Rakipler</div>
                                     <div className="text-[10px] text-slate-500 mt-0.5">Dijital Platformlar</div>
                                 </div>
                             </div>
 
                             {/* Rows */}
                             {COMPARISON_ROWS.map((row, i) => (
-                                <div key={i} className={`grid grid-cols-4 ${i % 2 === 0 ? "bg-white/[0.01]" : ""} border-b border-white/5 last:border-b-0`}>
-                                    <div className="p-4 md:p-5 text-sm font-medium text-slate-300 flex items-center">{row.label}</div>
+                                <div key={i} className={`grid grid-cols-4 ${i % 2 === 0 ? "bg-white/[0.01]" : ""} border-b border-neutral-200 last:border-b-0`}>
+                                    <div className="p-4 md:p-5 text-sm font-medium text-neutral-600 flex items-center">{row.label}</div>
                                     <div className="p-4 md:p-5 text-center">
                                         <div className="flex items-center justify-center gap-2">
                                             <StatusIcon status={row.panobuOk} />
                                         </div>
-                                        <div className="text-xs text-emerald-400/80 mt-1 hidden md:block">{row.panobu}</div>
+                                        <div className="text-xs text-emerald-700/80 mt-1 hidden md:block">{row.panobu}</div>
                                     </div>
-                                    <div className="p-4 md:p-5 text-center border-x border-white/5">
+                                    <div className="p-4 md:p-5 text-center border-x border-neutral-200">
                                         <div className="flex items-center justify-center gap-2">
                                             <StatusIcon status={row.ajansOk} />
                                         </div>
@@ -150,12 +150,12 @@ export default function WhyPanobuPage() {
             </section>
 
             {/* 4 Key Differentiators */}
-            <section className="py-24 bg-[#0B1120]">
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">Farkımız</span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Bizi Farklı Kılan 4 Şey</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-sm font-medium mb-4">Farkımız</span>
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Bizi Farklı Kılan 4 Şey</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Panobu&apos;yu benzersiz yapan özellikler — hiçbir rakipte bu kombinasyonu bulamazsınız.
                         </p>
                     </motion.div>
@@ -168,17 +168,17 @@ export default function WhyPanobuPage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1 }}
-                                className="bg-[#111827] border border-white/5 rounded-2xl p-7 hover:border-white/10 transition-all"
+                                className="bg-neutral-50 border border-neutral-200 rounded-2xl p-7 hover:border-neutral-300 transition-all"
                             >
                                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 ${
                                     item.color === "emerald" ? "bg-emerald-500/15" : item.color === "blue" ? "bg-blue-500/15" : item.color === "indigo" ? "bg-indigo-500/15" : "bg-amber-500/15"
                                 }`}>
                                     <item.icon className={`w-6 h-6 ${
-                                        item.color === "emerald" ? "text-emerald-400" : item.color === "blue" ? "text-blue-400" : item.color === "indigo" ? "text-indigo-400" : "text-amber-400"
+                                        item.color === "emerald" ? "text-emerald-700" : item.color === "blue" ? "text-blue-700" : item.color === "indigo" ? "text-indigo-800" : "text-amber-400"
                                     }`} />
                                 </div>
-                                <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
-                                <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                                <h3 className="text-lg font-bold text-neutral-900 mb-2">{item.title}</h3>
+                                <p className="text-neutral-600 text-sm leading-relaxed">{item.desc}</p>
                             </motion.div>
                         ))}
                     </div>
@@ -186,15 +186,15 @@ export default function WhyPanobuPage() {
             </section>
 
             {/* Savings Comparison */}
-            <section className="py-24 bg-[#0f1829] relative">
+            <section className="py-24 bg-neutral-50 relative">
                 <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                 <div className="container mx-auto px-4">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium mb-4">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-700 text-sm font-medium mb-4">
                             <Calculator className="w-4 h-4 inline mr-1.5 -mt-0.5" />Tasarruf
                         </span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Ne Kadar Tasarruf Edersiniz?</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Ne Kadar Tasarruf Edersiniz?</h2>
+                        <p className="text-neutral-600 max-w-2xl mx-auto text-lg">
                             Panobu&apos;da pano sahibinden komisyonsuz kiralama yaparsınız. Aradaki fark cebinizde kalır.
                         </p>
                     </motion.div>
@@ -202,72 +202,72 @@ export default function WhyPanobuPage() {
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-4xl mx-auto">
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Ajans */}
-                            <div className="bg-[#111827] border border-red-500/10 rounded-2xl p-8">
+                            <div className="bg-neutral-50 border border-red-500/10 rounded-2xl p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                                        <Building2 className="w-5 h-5 text-red-400" />
+                                        <Building2 className="w-5 h-5 text-red-600" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-white">Geleneksel Ajans</h3>
+                                        <h3 className="text-lg font-bold text-neutral-900">Geleneksel Ajans</h3>
                                         <p className="text-xs text-slate-500">Aracı üzerinden kiralama</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Pano fiyatı (4 hafta)</span>
-                                        <span className="text-white font-medium">10.000 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Pano fiyatı (4 hafta)</span>
+                                        <span className="text-neutral-900 font-medium">10.000 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Ajans komisyonu (%20)</span>
-                                        <span className="text-red-400 font-medium">+2.000 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Ajans komisyonu (%20)</span>
+                                        <span className="text-red-600 font-medium">+2.000 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Operasyon / hizmet bedeli</span>
-                                        <span className="text-red-400 font-medium">+1.500 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Operasyon / hizmet bedeli</span>
+                                        <span className="text-red-600 font-medium">+1.500 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Bekleme süresi</span>
-                                        <span className="text-red-400 font-medium">1-4 hafta</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Bekleme süresi</span>
+                                        <span className="text-red-600 font-medium">1-4 hafta</span>
                                     </div>
                                     <div className="flex justify-between text-base font-bold pt-2">
-                                        <span className="text-white">Toplam</span>
-                                        <span className="text-red-400">13.500 ₺</span>
+                                        <span className="text-neutral-900">Toplam</span>
+                                        <span className="text-red-600">13.500 ₺</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Panobu */}
-                            <div className="bg-[#111827] border border-emerald-500/20 rounded-2xl p-8 relative">
+                            <div className="bg-neutral-50 border border-emerald-500/20 rounded-2xl p-8 relative">
                                 <div className="absolute -top-3 right-6 px-3 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">%26 TASARRUF</div>
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 rounded-lg bg-emerald-500/15 flex items-center justify-center">
-                                        <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                                        <ShieldCheck className="w-5 h-5 text-emerald-700" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg font-bold text-white">Panobu</h3>
-                                        <p className="text-xs text-emerald-400">Direkt pano sahibinden</p>
+                                        <h3 className="text-lg font-bold text-neutral-900">Panobu</h3>
+                                        <p className="text-xs text-emerald-700">Direkt pano sahibinden</p>
                                     </div>
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Pano fiyatı (4 hafta)</span>
-                                        <span className="text-white font-medium">10.000 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Pano fiyatı (4 hafta)</span>
+                                        <span className="text-neutral-900 font-medium">10.000 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Platform komisyonu</span>
-                                        <span className="text-emerald-400 font-medium">0 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Platform komisyonu</span>
+                                        <span className="text-emerald-700 font-medium">0 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Ekstra ücret</span>
-                                        <span className="text-emerald-400 font-medium">0 ₺</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Ekstra ücret</span>
+                                        <span className="text-emerald-700 font-medium">0 ₺</span>
                                     </div>
-                                    <div className="flex justify-between text-sm border-b border-white/5 pb-3">
-                                        <span className="text-slate-400">Başlangıç süresi</span>
-                                        <span className="text-emerald-400 font-medium">5 dakika</span>
+                                    <div className="flex justify-between text-sm border-b border-neutral-200 pb-3">
+                                        <span className="text-neutral-600">Başlangıç süresi</span>
+                                        <span className="text-emerald-700 font-medium">5 dakika</span>
                                     </div>
                                     <div className="flex justify-between text-base font-bold pt-2">
-                                        <span className="text-white">Toplam</span>
-                                        <span className="text-emerald-400">10.000 ₺</span>
+                                        <span className="text-neutral-900">Toplam</span>
+                                        <span className="text-emerald-700">10.000 ₺</span>
                                     </div>
                                 </div>
                             </div>
@@ -288,7 +288,7 @@ export default function WhyPanobuPage() {
             </section>
 
             {/* CTA */}
-            <section className="py-24 bg-[#0B1120]">
+            <section className="py-24 bg-white">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -296,18 +296,18 @@ export default function WhyPanobuPage() {
                         viewport={{ once: true }}
                         className="max-w-4xl mx-auto text-center bg-gradient-to-br from-blue-600/20 to-indigo-600/10 border border-blue-500/20 rounded-3xl p-10 md:p-16"
                     >
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">Farkı Kendiniz Görün</h2>
-                        <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+                        <h2 className="text-3xl md:text-5xl font-bold text-neutral-900 mb-4">Farkı Kendiniz Görün</h2>
+                        <p className="text-neutral-600 text-lg mb-8 max-w-2xl mx-auto">
                             Komisyonsuz, şeffaf ve hızlı açık hava reklamcılığını deneyimleyin.
                             Ücretsiz keşfedin, beğendiğiniz panoyu hemen kiralayın.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                            <Button asChild size="lg" className="h-14 px-10 text-lg bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all hover:scale-105">
+                            <Button asChild size="lg" className="h-14 px-10 text-lg bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full transition-all hover:scale-105">
                                 <Link href="/static-billboards">
                                     Panoları Keşfet <ArrowRight className="w-5 h-5 ml-2" />
                                 </Link>
                             </Button>
-                            <Button asChild size="lg" className="h-14 px-10 text-lg border border-white/20 bg-transparent text-white hover:bg-white/10 rounded-full">
+                            <Button asChild size="lg" className="h-14 px-10 text-lg border border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 rounded-full">
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">
                                     Demo Talep Et
                                 </Link>

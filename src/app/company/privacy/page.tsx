@@ -7,35 +7,35 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
     return (
-        <div className="min-h-screen bg-[#0B1120] text-white">
-        <div className="container mx-auto px-4 py-12 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-8 text-white">Gizlilik Politikası</h1>
-            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-li:text-slate-300">
-                <p className="mb-4">Son Güncelleme: {new Date().toLocaleDateString('tr-TR')}</p>
-                <p>
-                    Panobu olarak gizliliğinize önem veriyoruz. Bu Gizlilik Politikası, web sitemizi kullandığınızda
-                    kişisel verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.
-                </p>
+        <div className="min-h-screen bg-white text-neutral-900">
+            <div className="container mx-auto px-4 py-12 max-w-4xl">
+                <h1 className="text-3xl font-bold mb-8 text-neutral-900">Gizlilik Politikası</h1>
+                <div className="prose prose-neutral max-w-none prose-headings:text-neutral-900 prose-p:text-neutral-600 prose-li:text-neutral-600">
+                    <p className="mb-4">Son Güncelleme: {new Date().toLocaleDateString('tr-TR')}</p>
+                    <p>
+                        Panobu olarak gizliliğinize önem veriyoruz. Bu Gizlilik Politikası, web sitemizi kullandığınızda
+                        kişisel verilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.
+                    </p>
 
-                <h2 className="text-xl font-bold mt-6 mb-4">1. Toplanan Veriler</h2>
-                <p>
-                    Hizmetlerimizi kullanırken adınız, e-posta adresiniz, telefon numaranız ve fatura bilgileriniz
-                    gibi kişisel verileri toplayabiliriz.
-                </p>
+                    <h2 className="text-xl font-bold mt-6 mb-4">1. Toplanan Veriler</h2>
+                    <p>
+                        Hizmetlerimizi kullanırken adınız, e-posta adresiniz, telefon numaranız ve fatura bilgileriniz
+                        gibi kişisel verileri toplayabiliriz.
+                    </p>
 
-                <h2 className="text-xl font-bold mt-6 mb-4">2. Verilerin Kullanımı</h2>
-                <p>
-                    Toplanan veriler, rezervasyon işlemlerinizi gerçekleştirmek, sizinle iletişim kurmak ve
-                    hizmet kalitemizi artırmak amacıyla kullanılır.
-                </p>
+                    <h2 className="text-xl font-bold mt-6 mb-4">2. Verilerin Kullanımı</h2>
+                    <p>
+                        Toplanan veriler, rezervasyon işlemlerinizi gerçekleştirmek, sizinle iletişim kurmak ve
+                        hizmet kalitemizi artırmak amacıyla kullanılır.
+                    </p>
 
-                <h2 className="text-xl font-bold mt-6 mb-4">3. Veri Güvenliği</h2>
-                <p>
-                    Kişisel verilerinizin güvenliğini sağlamak için endüstri standardı güvenlik önlemleri
-                    uygulamaktayız.
-                </p>
+                    <h2 className="text-xl font-bold mt-6 mb-4">3. Veri Güvenliği</h2>
+                    <p>
+                        Kişisel verilerinizin güvenliğini sağlamak için endüstri standardı güvenlik önlemleri
+                        uygulamaktayız.
+                    </p>
+                </div>
             </div>
-        </div>
         </div>
     );
 }

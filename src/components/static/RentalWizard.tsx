@@ -632,7 +632,7 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
                         {step === 3 && (
                             <div className="flex gap-2 w-full justify-end">
                                 <Button variant="outline" onClick={() => setStep(2)}>Geri</Button>
-                                <Button onClick={handlePayment} disabled={isSubmitting} className="bg-gradient-to-r from-blue-600 to-indigo-600 border-0 text-white hover:from-blue-700 hover:to-indigo-700">
+                                <Button onClick={handlePayment} disabled={isSubmitting} className="bg-[#11b981] hover:bg-[#0ea472] border-0 text-white">
                                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                                     Ödeme Formuna Git
                                 </Button>

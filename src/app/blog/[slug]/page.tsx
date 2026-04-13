@@ -55,7 +55,7 @@ export default function BlogPostPage() {
                 <div className="container mx-auto px-4 py-20 text-center">
                     <div className="text-6xl mb-4">😔</div>
                     <h1 className="text-2xl font-bold mb-4">Yazı bulunamadı</h1>
-                    <Link href="/blog" className="text-blue-400 hover:underline">
+                    <Link href="/blog" className="text-blue-700 hover:underline">
                         ← Blog'a dön
                     </Link>
                 </div>
@@ -69,7 +69,7 @@ export default function BlogPostPage() {
                 {/* Back Link */}
                 <Link
                     href="/blog"
-                    className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors"
+                    className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 mb-8 transition-colors"
                 >
                     <ArrowLeft className="w-4 h-4" />
                     Blog'a dön
@@ -88,7 +88,7 @@ export default function BlogPostPage() {
 
                 {/* Header */}
                 <header className="mb-8">
-                    <div className="flex items-center gap-2 text-slate-400 text-sm mb-4">
+                    <div className="flex items-center gap-2 text-neutral-500 text-sm mb-4">
                         <Calendar className="w-4 h-4" />
                         {new Date(post.createdAt).toLocaleDateString("tr-TR", {
                             year: "numeric",
@@ -96,20 +96,20 @@ export default function BlogPostPage() {
                             day: "numeric",
                         })}
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-bold">{post.title}</h1>
+                    <h1 className="text-4xl md:text-5xl font-bold text-neutral-900">{post.title}</h1>
                 </header>
 
                 {/* Content */}
                 <div
-                    className="prose prose-invert prose-lg max-w-none 
-                        prose-headings:text-white prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
+                    className="prose prose-neutral prose-lg max-w-none
+                        prose-headings:text-neutral-900 prose-headings:font-bold prose-headings:mt-10 prose-headings:mb-4
                         prose-h2:text-2xl prose-h3:text-xl
-                        prose-p:text-slate-300 prose-p:leading-8 prose-p:mb-6
-                        prose-strong:text-white prose-strong:font-semibold
-                        prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-                        prose-li:text-slate-300 prose-li:leading-7
+                        prose-p:text-neutral-600 prose-p:leading-8 prose-p:mb-6
+                        prose-strong:text-neutral-900 prose-strong:font-semibold
+                        prose-a:text-blue-700 prose-a:no-underline hover:prose-a:underline
+                        prose-li:text-neutral-600 prose-li:leading-7
                         prose-ul:my-6 prose-ol:my-6
-                        prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-800/50 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg"
+                        prose-blockquote:border-l-blue-600 prose-blockquote:bg-neutral-100 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:rounded-r-lg"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
             </article>

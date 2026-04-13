@@ -25,7 +25,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     // Client component for static billboards page
     const searchParams = useSearchParams();
     const { count: cartCount } = useCart();
-    const [selectedCity, setSelectedCity] = useState("Kocaeli"); // Default to Kocaeli
+    const [selectedCity, setSelectedCity] = useState("Tümü");
     const [panels, setPanels] = useState<any[]>(initialPanels);
     const [isLoadingPanels, setIsLoadingPanels] = useState(false);
     const [selectedPanel, setSelectedPanel] = useState<any | null>(null);
@@ -82,12 +82,18 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         fetchPanels();
     }, [selectedCity]);
 
+    // Türkiye geneli (Tümü) — yaklaşık merkez ve ülke görünümü zoom
+    const turkeyOverview: { center: [number, number]; zoom: number } = {
+        center: [39.0, 35.2],
+        zoom: 6,
+    };
+
     // Get center and zoom based on selected city
     const getMapConfig = () => {
         if (selectedCity !== "Tümü" && cityCoordinates[selectedCity]) {
             return { center: cityCoordinates[selectedCity], zoom: 12 };
         }
-        return { center: [40.7654, 29.9404] as [number, number], zoom: 10 }; // Default to Kocaeli
+        return turkeyOverview;
     };
 
     const mapConfig = getMapConfig();
@@ -226,7 +232,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                             handleCityClick(city);
                                         }}
                                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${selectedCity === city
-                                            ? 'bg-blue-600 text-white shadow-md'
+                                            ? 'bg-[#11b981] text-white shadow-md'
                                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                             }`}
                                     >
@@ -246,7 +252,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                     <SlidersHorizontal className="w-3.5 h-3.5" />
                                     <span>Pano Tipi</span>
                                     {filters.panelTypes.length > 0 && (
-                                        <span className="bg-blue-600 text-white text-[10px] px-1 rounded-full">
+                                        <span className="bg-[#11b981] text-white text-[10px] px-1 rounded-full">
                                             {filters.panelTypes.length}
                                         </span>
                                     )}
@@ -285,7 +291,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                         key={city}
                                         onClick={() => handleCityClick(city)}
                                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${selectedCity === city
-                                            ? 'bg-blue-600 text-white shadow-md'
+                                            ? 'bg-[#11b981] text-white shadow-md'
                                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                             }`}
                                     >
@@ -306,7 +312,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 >
                                     <span>Pano Tipi</span>
                                     {filters.panelTypes.length > 0 && (
-                                        <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                                        <span className="bg-[#11b981] text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                                             {filters.panelTypes.length}
                                         </span>
                                     )}
@@ -371,7 +377,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 >
                                     <span>Konum</span>
                                     {filters.isAVM !== null && (
-                                        <span className="bg-blue-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                                        <span className="bg-[#11b981] text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                                             1
                                         </span>
                                     )}

@@ -85,195 +85,192 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
 
     return (
         <div
-            className={`absolute top-0 left-0 bottom-0 w-full sm:w-[400px] bg-white shadow-2xl z-30 transform transition-transform duration-300 ease-in-out border-r border-slate-200 flex flex-col ${isOpen ? "translate-x-0" : "-translate-x-full"
+            className={`absolute top-0 left-0 bottom-0 z-30 flex min-w-0 w-full max-w-full flex-col overflow-hidden border-r border-slate-200/80 bg-white shadow-[4px_0_24px_-4px_rgba(15,23,42,0.12)] transition-transform duration-300 ease-in-out sm:w-[22rem] sm:max-w-[22rem] sm:rounded-r-2xl ${isOpen ? "translate-x-0" : "-translate-x-full"
                 }`}
         >
-            {/* Header / Image */}
-            <div className="relative h-64 bg-slate-100 shrink-0">
+            {/* Kompakt görsel — yüksekliği sınırlı, haritaya daha çok alan */}
+            <div className="relative aspect-[5/3] max-h-[9.5rem] w-full shrink-0 bg-slate-100">
                 <img
                     src={panel.imageUrl || "https://images.unsplash.com/photo-1637606346315-d353ec6d3c81?q=80&w=2000&auto=format&fit=crop"}
                     alt={panel.name}
-                    className="w-full h-full object-cover"
+                    className="h-full w-full object-cover"
                 />
                 <button
+                    type="button"
                     onClick={onClose}
-                    className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors backdrop-blur-sm"
+                    className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900/55 text-white backdrop-blur-sm transition-colors hover:bg-neutral-900/75"
+                    aria-label="Kapat"
                 >
-                    <X className="w-5 h-5" />
+                    <X className="h-4 w-4" />
                 </button>
-                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-2">
-                    <PanelTypeIcon type={panel.type} size={18} />
-                    <span className="text-sm font-semibold">{PANEL_TYPE_LABELS[panel.type] || panel.type}</span>
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-md bg-white/92 px-2 py-1 shadow-sm backdrop-blur-sm">
+                    <PanelTypeIcon type={panel.type} size={14} />
+                    <span className="text-xs font-semibold text-slate-800">{PANEL_TYPE_LABELS[panel.type] || panel.type}</span>
                 </div>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
-                <div>
-                    <h2 className="text-2xl font-bold text-slate-900 mb-1">{panel.name}</h2>
-                    <div className="flex items-center text-slate-500 text-sm mb-4">
-                        <MapPin className="w-4 h-4 mr-1 shrink-0" />
-                        <span>{panel.district}, {panel.city}</span>
-                    </div>
+            {/* İçerik — dar sütun, sıkı aralıklar */}
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+                <h2 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight text-slate-900 sm:text-lg">{panel.name}</h2>
+                <div className="mt-1 flex items-center gap-1 text-xs text-slate-500">
+                    <MapPin className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">{panel.district}, {panel.city}</span>
+                </div>
 
-                    <div className="flex items-center gap-2 mb-6 flex-wrap">
-                        {panel.isAVM ? (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
-                                🏬 AVM İçi
-                            </span>
-                        ) : (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                🏙️ Açık Alan
-                            </span>
-                        )}
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            <CheckCircle2 className="w-3 h-3 mr-1" />
-                            Müsait
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                    {panel.isAVM ? (
+                        <span className="inline-flex items-center rounded-md bg-pink-50 px-2 py-0.5 text-[10px] font-medium text-pink-800 ring-1 ring-inset ring-pink-100">
+                            AVM
                         </span>
-                        {/* CLP double-sided badge */}
-                        {panel.type === 'CLP' && (
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                                📋 Çift Yüzlü
-                            </span>
-                        )}
-                    </div>
-
-                    {/* CLP Info Box */}
-                    {panel.type === 'CLP' && (
-                        <div className="bg-purple-50 border border-purple-200 rounded-xl p-3 mb-4">
-                            <p className="text-sm text-purple-800 mb-1">
-                                <strong>Çift Yüzlü Panel:</strong> Gösterilen fiyat tek yüz içindir.
-                            </p>
-                            <p className="text-xs text-purple-600">
-                                Her iki yüzü kullanmak için sepette "Çift Yüz" seçeneğini işaretleyebilirsiniz.
-                            </p>
-                            {panel.city === 'Kocaeli' && (
-                                <p className="text-xs text-orange-600 font-medium mt-2">
-                                    🔥 Kampanya: 20+ CLP alımında her biri 1.500₺/hafta
-                                </p>
-                            )}
-                        </div>
+                    ) : (
+                        <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-800 ring-1 ring-inset ring-sky-100">
+                            Açık alan
+                        </span>
                     )}
+                    <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-800 ring-1 ring-inset ring-emerald-100">
+                        <CheckCircle2 className="h-3 w-3" />
+                        Müsait
+                    </span>
+                    {panel.type === "CLP" && (
+                        <span className="inline-flex items-center rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-800 ring-1 ring-inset ring-violet-100">
+                            Çift yüz
+                        </span>
+                    )}
+                </div>
 
-                    {/* Price Box */}
-                    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 mb-6">
-                        <div className="text-sm text-slate-500 mb-1">Haftalık Kiralama Bedeli</div>
-                        <div className="text-3xl font-bold text-slate-900">{formatCurrency(Number(panel.priceWeekly))}</div>
-                        <div className="text-xs text-slate-400 mt-1">+ KDV</div>
-                    </div>
-
-                    {/* Detailed Stats / Analytics */}
-                    <div className="mb-6">
-                        <h3 className="font-semibold text-slate-900 mb-3">Görünürlük & Etki Analizi</h3>
-
-                        <div className="grid grid-cols-2 gap-3 mb-3">
-                            {/* Social Grade Card */}
-                            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 border border-blue-100 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                                <div className="text-xs text-blue-600 font-medium mb-1 uppercase tracking-wide">Sosyal Sınıf</div>
-                                <div className="text-4xl font-black text-blue-700 tracking-tight">
-                                    {panel.socialGrade ? panel.socialGrade.replace('_PLUS', '+') : (
-                                        // Fallback for old records
-                                        panel.trafficLevel === 'VERY_HIGH' ? 'A+' :
-                                            panel.trafficLevel === 'HIGH' ? 'A' :
-                                                panel.trafficLevel === 'MEDIUM' ? 'B' : 'C'
-                                    )}
-                                </div>
-                                <div className="text-[10px] text-blue-400 mt-1 font-medium">
-                                    {panel.locationType ? LOCATION_TYPE_LABELS[panel.locationType] || panel.locationType : "Lokasyon"}
-                                </div>
+                <div className="mt-3">
+                    <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Görünürlük</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                        <div className="rounded-lg border border-blue-100 bg-gradient-to-br from-indigo-50/90 to-blue-50/80 p-2.5 text-center">
+                            <div className="text-[9px] font-medium uppercase tracking-wide text-blue-600/90">Sınıf</div>
+                            <div className="text-2xl font-black leading-none tracking-tight text-blue-700">
+                                {panel.socialGrade
+                                    ? panel.socialGrade.replace("_PLUS", "+")
+                                    : panel.trafficLevel === "VERY_HIGH"
+                                      ? "A+"
+                                      : panel.trafficLevel === "HIGH"
+                                        ? "A"
+                                        : panel.trafficLevel === "MEDIUM"
+                                          ? "B"
+                                          : "C"}
                             </div>
-
-                            {/* Impressions Card */}
-                            <div className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                                <div className="text-xs text-slate-500 font-medium mb-1 uppercase tracking-wide">Günlük Görüş</div>
-                                <div className="text-2xl font-bold text-slate-900">
-                                    {panel.estimatedDailyImpressions > 0
-                                        ? panel.estimatedDailyImpressions.toLocaleString('tr-TR')
-                                        : (panel.trafficLevel === 'VERY_HIGH' ? '50K+' :
-                                            panel.trafficLevel === 'HIGH' ? '30K+' :
-                                                panel.trafficLevel === 'MEDIUM' ? '15K+' : '5K+')}
-                                </div>
-                                <div className="text-[10px] text-green-600 mt-1 flex items-center font-medium">
-                                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-green-500 mr-1 animate-pulse"></span>
-                                    Aktif İzlenme
-                                </div>
+                            <div className="mt-0.5 truncate text-[9px] font-medium text-blue-500/90">
+                                {panel.locationType ? LOCATION_TYPE_LABELS[panel.locationType] || panel.locationType : "Lokasyon"}
                             </div>
                         </div>
-
-                        {/* Additional Metrics Row */}
-                        <div className="grid grid-cols-3 gap-2 text-center text-xs text-slate-600 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                            <div>
-                                <div className="font-semibold text-slate-900">OTS</div>
-                                <div>Yüksek</div>
+                        <div className="rounded-lg border border-slate-200 bg-white p-2.5 text-center">
+                            <div className="text-[9px] font-medium uppercase tracking-wide text-slate-500">Günlük</div>
+                            <div className="text-lg font-bold tabular-nums leading-tight text-slate-900">
+                                {panel.estimatedDailyImpressions > 0
+                                    ? panel.estimatedDailyImpressions.toLocaleString("tr-TR")
+                                    : panel.trafficLevel === "VERY_HIGH"
+                                      ? "50K+"
+                                      : panel.trafficLevel === "HIGH"
+                                        ? "30K+"
+                                        : panel.trafficLevel === "MEDIUM"
+                                          ? "15K+"
+                                          : "5K+"}
                             </div>
-                            <div className="border-l border-slate-200">
-                                <div className="font-semibold text-slate-900">Görüş Açısı</div>
-                                <div>Tam Karşı</div>
-                            </div>
-                            <div className="border-l border-slate-200">
-                                <div className="font-semibold text-slate-900">Süre</div>
-                                <div>7/24</div>
+                            <div className="mt-0.5 flex items-center justify-center gap-0.5 text-[9px] font-medium text-emerald-600">
+                                <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-emerald-500" />
+                                İzlenme
                             </div>
                         </div>
                     </div>
-
-                    {/* Specs List (Simplified) */}
-                    <h3 className="font-semibold text-slate-900 mb-3">Teknik Detaylar</h3>
-                    <div className="space-y-2 mb-6 text-sm">
-                        <div className="flex justify-between py-2 border-b border-slate-100">
-                            <span className="text-slate-500">Pano Boyutları</span>
-                            <span className="font-medium text-slate-900">{Number(panel.width)}m x {Number(panel.height)}m</span>
+                    <div className="mt-2 grid grid-cols-3 gap-px overflow-hidden rounded-md border border-slate-100 bg-slate-100 text-center text-[10px] text-slate-600">
+                        <div className="bg-slate-50/90 py-1.5">
+                            <div className="font-semibold text-slate-800">OTS</div>
+                            <div>Yüksek</div>
                         </div>
-                        <div className="flex justify-between py-2 border-b border-slate-100">
-                            <span className="text-slate-500">Toplam Yüzey</span>
-                            <span className="font-medium text-slate-900">{(Number(panel.width) * Number(panel.height)).toFixed(1)} m²</span>
+                        <div className="bg-slate-50/90 py-1.5">
+                            <div className="font-semibold text-slate-800">Açı</div>
+                            <div>Tam</div>
                         </div>
-                        <div className="flex justify-between py-2 border-b border-slate-100">
-                            <span className="text-slate-500">Minimum Kiralama</span>
-                            <span className="font-medium text-slate-900">{panel.minRentalDays || 7} Gün</span>
-                        </div>
-                        <div className="flex justify-between py-2 border-b border-slate-100">
-                            <span className="text-slate-500">Aydınlatma</span>
-                            <span className="font-medium text-slate-900">Var (LED)</span>
-                        </div>
-                    </div>
-
-                    <div className="space-y-3">
-                        <div className="flex items-center gap-3 text-sm text-slate-600">
-                            <Navigation className="w-4 h-4 text-slate-400" />
-                            <span>{panel.address}</span>
+                        <div className="bg-slate-50/90 py-1.5">
+                            <div className="font-semibold text-slate-800">Süre</div>
+                            <div>7/24</div>
                         </div>
                     </div>
                 </div>
+
+                <h3 className="mb-1.5 mt-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Teknik</h3>
+                <dl className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px]">
+                    <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
+                        <dt className="text-slate-500">Boyut</dt>
+                        <dd className="font-medium text-slate-900">
+                            {Number(panel.width)}×{Number(panel.height)} m
+                        </dd>
+                    </div>
+                    <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
+                        <dt className="text-slate-500">Alan</dt>
+                        <dd className="font-medium text-slate-900">{(Number(panel.width) * Number(panel.height)).toFixed(1)} m²</dd>
+                    </div>
+                    <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
+                        <dt className="text-slate-500">Min. kiralama</dt>
+                        <dd className="font-medium text-slate-900">{panel.minRentalDays || 7} gün</dd>
+                    </div>
+                    <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
+                        <dt className="text-slate-500">Aydınlatma</dt>
+                        <dd className="font-medium text-slate-900">LED</dd>
+                    </div>
+                </dl>
+
+                {panel.address && (
+                    <div className="mt-2.5 flex gap-2 rounded-md border border-slate-100 bg-slate-50/50 p-2 text-[11px] leading-snug text-slate-600">
+                        <Navigation className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-400" />
+                        <span className="line-clamp-3">{panel.address}</span>
+                    </div>
+                )}
+
+                {/* Duyuru + fiyat — altta, aksiyonların hemen üstünde */}
+                {panel.type === "CLP" && (
+                    <div className="mt-3 rounded-lg border border-violet-100 bg-violet-50/80 p-2.5 text-[11px] leading-relaxed text-violet-900">
+                        <p>
+                            <span className="font-semibold">Çift yüz:</span> Fiyat tek yüz içindir; çift yüz için sepette işaretleyin.
+                        </p>
+                        {panel.city === "Kocaeli" && (
+                            <p className="mt-1 font-medium text-orange-700">
+                                20+ CLP → 1.500₺/hafta
+                            </p>
+                        )}
+                    </div>
+                )}
+
+                <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
+                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Haftalık kiralama</div>
+                    <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">{formatCurrency(Number(panel.priceWeekly))}</div>
+                    <div className="text-[10px] text-slate-400">+ KDV</div>
+                </div>
             </div>
 
-            {/* Footer Actions */}
-            <div className="p-4 border-t bg-white safe-padding-bottom">
-                <div className="flex gap-2 mb-2">
+            <div className="shrink-0 border-t border-slate-100 bg-white/95 px-3 py-2.5 backdrop-blur-sm safe-padding-bottom">
+                <div className="flex gap-2">
                     <Button
+                        type="button"
                         onClick={handleAddToCart}
                         variant="outline"
-                        className={`flex-1 h-12 border-2 ${addedToCart ? 'border-green-500 text-green-600 bg-green-50' : 'border-blue-500 text-blue-600 hover:bg-blue-50'}`}
+                        className={`h-9 flex-1 border text-xs font-medium ${addedToCart ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-[#11b981] text-[#11b981] hover:bg-[#11b981]/8"}`}
                         disabled={cartLoading || addedToCart}
                     >
                         {cartLoading ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader2 className="h-4 w-4 animate-spin" />
                         ) : addedToCart ? (
-                            <><CheckCircle2 className="w-5 h-5 mr-2" /> Sepete Eklendi!</>
+                            <span className="flex items-center gap-1">
+                                <CheckCircle2 className="h-4 w-4" /> Eklendi
+                            </span>
                         ) : (
-                            <><ShoppingCart className="w-5 h-5 mr-2" /> Sepete Ekle</>
+                            <span className="flex items-center gap-1">
+                                <ShoppingCart className="h-4 w-4" /> Sepet
+                            </span>
                         )}
                     </Button>
-                    <Button onClick={onRent} className="flex-1 text-lg h-12" size="lg">
-                        📅 Hemen Kirala
+                    <Button type="button" onClick={onRent} className="h-9 flex-1 gap-1 bg-neutral-900 text-xs font-semibold hover:bg-neutral-800" size="sm">
+                        <Calendar className="h-3.5 w-3.5" />
+                        Kirala
                     </Button>
                 </div>
-                {cartError && (
-                    <p className="text-xs text-red-500 text-center mb-2">{cartError}</p>
-                )}
-                <p className="text-xs text-center text-slate-400">
-                    Toplu kiralama için sepete ekleyin • İndirim fırsatları sepette!
-                </p>
+                {cartError && <p className="mt-1.5 text-center text-[10px] text-red-500">{cartError}</p>}
+                <p className="mt-1.5 text-center text-[10px] leading-tight text-slate-400">Toplu kiralama: sepet • İndirimler sepette</p>
             </div>
         </div>
     );

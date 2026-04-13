@@ -42,17 +42,17 @@ export default function CartIcon() {
     return (
         <Link
             href="/cart"
-            className="relative p-2 hover:bg-white/10 rounded-lg transition-colors"
+            className="relative p-2 hover:bg-neutral-100 rounded-lg transition-colors"
             title="Sepetim"
         >
-            <ShoppingCart className="w-5 h-5 text-white" />
+            <ShoppingCart className="w-5 h-5 text-neutral-700" />
             <AnimatePresence>
                 {count > 0 && (
                     <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         exit={{ scale: 0 }}
-                        className="absolute -top-1 -right-1 bg-green-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
+                        className="absolute -top-1 -right-1 bg-[#11b981] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center"
                     >
                         {count > 99 ? '99+' : count}
                     </motion.span>

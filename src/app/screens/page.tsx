@@ -8,43 +8,37 @@ import PublicLayout from "@/components/PublicLayout";
 export default function DigitalBillboardsPage() {
     return (
         <PublicLayout activeLink="dijital">
-            <div className="container mx-auto px-4 py-16 md:py-24 relative">
-                {/* Background Glow */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] -z-10" />
+            <div className="container mx-auto px-4 py-16 md:py-24 relative bg-white">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100/40 rounded-full blur-[120px] -z-10" />
 
-                {/* Hero Section */}
                 <div className="text-center max-w-4xl mx-auto mb-16">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/30 rounded-full px-4 py-2 mb-8">
-                        <Sparkles className="w-4 h-4 text-blue-400" />
-                        <span className="text-sm font-medium text-blue-300">Çok Yakında</span>
+                    <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-full px-4 py-2 mb-8">
+                        <Sparkles className="w-4 h-4 text-blue-700" />
+                        <span className="text-sm font-medium text-blue-800">Çok Yakında</span>
                     </div>
 
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
-                            Dijital Billboard
-                        </span>
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight text-neutral-900">
+                        Dijital Billboard
                         <br />
-                        <span className="text-white">Reklamcılığı Geliyor</span>
+                        <span className="text-neutral-700">Reklamcılığı Geliyor</span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-                        AVM ekranları, dijital duraklar, LED billboard'lar ve daha fazlası...
-                        <strong className="text-white"> Anlık kiralama</strong> ve
-                        <strong className="text-white"> programatik reklam</strong> özellikleriyle
-                        dijital açık hava reklamcılığı çok yakında Panobu'da!
+                    <p className="text-lg md:text-xl text-neutral-600 mb-8 max-w-2xl mx-auto leading-relaxed">
+                        AVM ekranları, dijital duraklar, LED billboard&apos;lar ve daha fazlası...
+                        <strong className="text-neutral-900"> Anlık kiralama</strong> ve
+                        <strong className="text-neutral-900"> programatik reklam</strong> özellikleriyle
+                        dijital açık hava reklamcılığı çok yakında Panobu&apos;da!
                     </p>
 
-                    {/* CTA Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/static-billboards">
-                            <Button size="lg" className="bg-white text-slate-900 hover:bg-slate-100 rounded-full px-8 h-14 text-lg font-semibold">
+                            <Button size="lg" variant="outline" className="border-neutral-300 text-neutral-900 hover:bg-neutral-50 rounded-full px-8 h-14 text-lg font-semibold">
                                 Klasik Panolara Göz At
                                 <ArrowRight className="w-5 h-5 ml-2" />
                             </Button>
                         </Link>
                         <Link href="/auth/register">
-                            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8 h-14 text-lg">
+                            <Button size="lg" className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-8 h-14 text-lg">
                                 <Bell className="w-5 h-5 mr-2" />
                                 Haberdar Ol
                             </Button>
@@ -52,48 +46,42 @@ export default function DigitalBillboardsPage() {
                     </div>
                 </div>
 
-                {/* Preview Cards */}
                 <div className="relative max-w-5xl mx-auto mb-16">
-                    {/* Card Grid */}
                     <div className="relative grid md:grid-cols-3 gap-6">
-                        {/* Card 1 */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all group">
-                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                                <Monitor className="w-7 h-7 text-white" />
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-6 hover:border-neutral-300 transition-all group shadow-sm">
+                            <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                                <Monitor className="w-7 h-7 text-blue-800" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">LED Ekranlar</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
-                                AVM içi dev ekranlar, meydan LED'leri ve cadde kenarı dijital panolar ile markanızı milyonlara ulaştırın.
+                            <h3 className="text-xl font-bold mb-3 text-neutral-900">LED Ekranlar</h3>
+                            <p className="text-neutral-600 text-sm leading-relaxed">
+                                AVM içi dev ekranlar, meydan LED&apos;leri ve cadde kenarı dijital panolar ile markanızı milyonlara ulaştırın.
                             </p>
                         </div>
 
-                        {/* Card 2 */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all group">
-                            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                                <Zap className="w-7 h-7 text-white" />
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-6 hover:border-neutral-300 transition-all group shadow-sm">
+                            <div className="w-14 h-14 bg-neutral-200 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                                <Zap className="w-7 h-7 text-neutral-800" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Anlık Kiralama</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <h3 className="text-xl font-bold mb-3 text-neutral-900">Anlık Kiralama</h3>
+                            <p className="text-neutral-600 text-sm leading-relaxed">
                                 Günlük, saatlik veya dakikalık kiralama seçenekleri. İstediğiniz an, istediğiniz süre kadar reklam verin.
                             </p>
                         </div>
 
-                        {/* Card 3 */}
-                        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all group">
-                            <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                                <Clock className="w-7 h-7 text-white" />
+                        <div className="bg-neutral-50 border border-neutral-200 rounded-3xl p-6 hover:border-neutral-300 transition-all group shadow-sm">
+                            <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform">
+                                <Clock className="w-7 h-7 text-amber-900" />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">Gerçek Zamanlı</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
+                            <h3 className="text-xl font-bold mb-3 text-neutral-900">Gerçek Zamanlı</h3>
+                            <p className="text-neutral-600 text-sm leading-relaxed">
                                 Kampanya performansınızı canlı takip edin. Gösterim sayıları, erişim ve etkileşim verilerini anlık görün.
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Features List */}
                 <div className="max-w-3xl mx-auto">
-                    <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
+                    <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 text-neutral-900">
                         Dijital Billboard ile Neler Yapabileceksiniz?
                     </h2>
 
@@ -108,33 +96,32 @@ export default function DigitalBillboardsPage() {
                         ].map((feature, i) => (
                             <div
                                 key={i}
-                                className="flex items-start gap-4 bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-white/10 transition-all"
+                                className="flex items-start gap-4 bg-neutral-50 border border-neutral-200 rounded-2xl p-4 hover:border-neutral-300 transition-all"
                             >
-                                <div className="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <span className="text-green-400 font-bold text-sm">✓</span>
+                                <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-emerald-800 font-bold text-sm">✓</span>
                                 </div>
-                                <p className="text-slate-300">{feature}</p>
+                                <p className="text-neutral-700">{feature}</p>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="text-center mt-16 pt-16 border-t border-white/10">
-                    <h3 className="text-xl md:text-2xl font-bold mb-4">
+                <div className="text-center mt-16 pt-16 border-t border-neutral-200">
+                    <h3 className="text-xl md:text-2xl font-bold mb-4 text-neutral-900">
                         Dijital reklamcılık hakkında sorularınız mı var?
                     </h3>
-                    <p className="text-slate-400 mb-6">
-                        Şimdilik klasik billboard'larımızı inceleyebilir veya bize ulaşabilirsiniz.
+                    <p className="text-neutral-600 mb-6">
+                        Şimdilik klasik billboard&apos;larımızı inceleyebilir veya bize ulaşabilirsiniz.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/static-billboards">
-                            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8">
+                            <Button className="bg-neutral-900 hover:bg-neutral-800 text-white rounded-full px-8">
                                 Klasik Panolara Git
                             </Button>
                         </Link>
-                        <Link href="/company/contact">
-                            <Button className="bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-full px-8">
+                        <Link href="/legal/contact">
+                            <Button variant="outline" className="border-neutral-300 text-neutral-900 hover:bg-neutral-50 rounded-full px-8">
                                 İletişime Geç
                             </Button>
                         </Link>

@@ -49,14 +49,11 @@ export default function LoginForm() {
                     setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
                 }
             } else if (data.user) {
-                // Fetch user role from Prisma database
                 const res = await fetch(`/api/auth/user?email=${data.user.email}`);
 
                 if (!res.ok) {
-                    // User exists in Supabase but not in Prisma - sync issue
                     if (res.status === 404) {
                         setError("Hesabınız veritabanında bulunamadı. Lütfen destek@panobu.com ile iletişime geçin.");
-                        // Sign out from Supabase to clear invalid session
                         await supabase.auth.signOut();
                     } else {
                         throw new Error("Kullanıcı bilgileri alınamadı.");
@@ -65,23 +62,18 @@ export default function LoginForm() {
                 }
 
                 const userData = await res.json();
-
-                // Check if there's a pending rental in localStorage
                 const pendingRental = localStorage.getItem('pendingRental');
 
-                // Use redirect param if available, otherwise role-based redirect
                 let finalRedirect = redirectTo || (
                     (userData.role === 'ADMIN' || userData.role === 'REGIONAL_ADMIN') ? '/app/admin/panels' :
                         userData.role === 'SCREEN_OWNER' ? '/app/owner/dashboard' :
                             '/app/advertiser/dashboard'
                 );
 
-                // If coming from rental flow, add resumeRental param
                 if (redirectTo && resumeRental && pendingRental) {
                     finalRedirect = redirectTo + '?resumeRental=true';
                 }
 
-                // Use hard navigation to ensure cookies/middleware sync
                 window.location.href = finalRedirect;
             }
         } catch (err: any) {
@@ -95,19 +87,19 @@ export default function LoginForm() {
     return (
         <div className="space-y-6">
             {showRentalMessage && (
-                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-4 text-center">
-                    <p className="text-sm text-emerald-300">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+                    <p className="text-sm text-emerald-800">
                         ✨ Giriş yaptıktan sonra pano kiralama işleminize devam edebilirsiniz!
                     </p>
                 </div>
             )}
             <div className="space-y-2 text-center">
-                <h1 className="text-3xl font-bold text-white">Giriş Yap</h1>
-                <p className="text-slate-400">Hesabınıza erişmek için bilgilerinizi girin</p>
+                <h1 className="text-3xl font-bold text-neutral-900">Giriş Yap</h1>
+                <p className="text-neutral-600">Hesabınıza erişmek için bilgilerinizi girin</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email" className="text-slate-300">E-posta</Label>
+                    <Label htmlFor="email" className="text-neutral-700">E-posta</Label>
                     <Input
                         id="email"
                         placeholder="ornek@sirket.com"
@@ -115,33 +107,33 @@ export default function LoginForm() {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        className="bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-neutral-400"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="password" className="text-slate-300">Şifre</Label>
+                    <Label htmlFor="password" className="text-neutral-700">Şifre</Label>
                     <Input
                         id="password"
                         required
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="bg-white/[0.06] border-white/10 text-white placeholder:text-slate-500 focus-visible:ring-blue-500"
+                        className="bg-white border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-neutral-400"
                     />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" type="submit" disabled={loading}>
+                {error && <p className="text-sm text-red-600">{error}</p>}
+                <Button className="w-full bg-neutral-900 hover:bg-neutral-800 text-white" type="submit" disabled={loading}>
                     {loading ? "Giriş Yapılıyor..." : "Giriş Yap"}
                 </Button>
             </form>
             <div className="text-center text-sm">
-                <Link className="text-blue-400 hover:underline" href="/auth/forgot-password">
+                <Link className="text-blue-700 hover:underline" href="/auth/forgot-password">
                     Şifremi Unuttum
                 </Link>
             </div>
-            <div className="text-center text-sm text-slate-400">
+            <div className="text-center text-sm text-neutral-600">
                 Hesabınız yok mu?{" "}
-                <Link className="underline text-blue-400" href="/auth/register">
+                <Link className="underline text-blue-700" href="/auth/register">
                     Kayıt Ol
                 </Link>
             </div>
