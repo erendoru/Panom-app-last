@@ -47,7 +47,7 @@ const DURATION_OPTIONS = [
     { label: "3 Ay", value: 12, multiplier: 12 },
 ];
 
-const AVG_WEEKLY_PRICE = 2500;
+const AVG_WEEKLY_PRICE = 3000;
 const AVG_DAILY_IMPRESSIONS = 25000;
 
 function BudgetCalculator() {
@@ -277,9 +277,14 @@ export default function LandingPage() {
                     <div className="absolute top-40 right-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10" />
 
                     <ContainerScroll>
-                        <div className="relative w-full h-full">
-                            <img src="/images/dashboard-preview.jpeg" alt="Panobu Dashboard" className="w-full h-full object-cover rounded-2xl" />
-                            <motion.div
+                        {/* Önizleme görseli: dosyayı değiştirmek için public/images/dashboard-preview.jpeg (veya src'yi aşağıda güncelleyin) */}
+                        <div className="relative h-full w-full min-h-0 overflow-hidden rounded-2xl bg-neutral-200">
+                            <img
+                                src="/images/dashboard-preview.jpeg"
+                                alt="Panobu Dashboard önizlemesi"
+                                className="absolute inset-0 h-full w-full object-contain object-top p-1 md:p-2 rounded-2xl"
+                            />
+                            <motion.div 
                                 animate={{ y: [0, -10, 0] }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                                 className="hidden md:flex absolute -right-20 top-1/4 bg-white/95 backdrop-blur-md p-4 rounded-xl border border-neutral-200 shadow-2xl z-20"
