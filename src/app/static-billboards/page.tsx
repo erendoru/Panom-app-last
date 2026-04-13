@@ -44,7 +44,7 @@ export default async function StaticBillboardsPage() {
                         <ArrowLeft className="w-4 h-4 mr-2" />
                         Ana Sayfa
                     </Link>
-                    <h1 className="text-lg font-bold text-slate-900">REKLAM PANOLARI</h1>
+                    <h1 className="text-lg font-bold text-slate-900">REKLAM ÜNİTELERİ</h1>
                     <HeaderCartIcon />
                 </div>
             </header>

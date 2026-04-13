@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, Calendar, CheckCircle2, Navigation, ShoppingCart, Loader2 } from "lucide-react";
+import { X, MapPin, CheckCircle2, Navigation, ShoppingCart, Loader2 } from "lucide-react";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { formatCurrency } from "@/lib/utils";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
@@ -11,7 +11,6 @@ interface PanelDetailSidebarProps {
     panel: any;
     isOpen: boolean;
     onClose: () => void;
-    onRent: () => void;
 }
 
 // Location type Turkish labels
@@ -40,7 +39,7 @@ function getSessionId(): string {
     return sessionId;
 }
 
-export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: PanelDetailSidebarProps) {
+export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDetailSidebarProps) {
     const [cartLoading, setCartLoading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const [cartError, setCartError] = useState<string | null>(null);
@@ -244,33 +243,27 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose, onRent }: P
             </div>
 
             <div className="shrink-0 border-t border-slate-100 bg-white/95 px-3 py-2.5 backdrop-blur-sm safe-padding-bottom">
-                <div className="flex gap-2">
-                    <Button
-                        type="button"
-                        onClick={handleAddToCart}
-                        variant="outline"
-                        className={`h-9 flex-1 border text-xs font-medium ${addedToCart ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-[#11b981] text-[#11b981] hover:bg-[#11b981]/8"}`}
-                        disabled={cartLoading || addedToCart}
-                    >
-                        {cartLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : addedToCart ? (
-                            <span className="flex items-center gap-1">
-                                <CheckCircle2 className="h-4 w-4" /> Eklendi
-                            </span>
-                        ) : (
-                            <span className="flex items-center gap-1">
-                                <ShoppingCart className="h-4 w-4" /> Sepet
-                            </span>
-                        )}
-                    </Button>
-                    <Button type="button" onClick={onRent} className="h-9 flex-1 gap-1 bg-neutral-900 text-xs font-semibold hover:bg-neutral-800" size="sm">
-                        <Calendar className="h-3.5 w-3.5" />
-                        Kirala
-                    </Button>
-                </div>
+                <Button
+                    type="button"
+                    onClick={handleAddToCart}
+                    variant="outline"
+                    className={`h-10 w-full border text-sm font-medium ${addedToCart ? "border-emerald-500 bg-emerald-50 text-emerald-700" : "border-[#11b981] text-[#11b981] hover:bg-[#11b981]/8"}`}
+                    disabled={cartLoading || addedToCart}
+                >
+                    {cartLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : addedToCart ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <CheckCircle2 className="h-4 w-4" /> Sepete eklendi
+                        </span>
+                    ) : (
+                        <span className="flex items-center justify-center gap-2">
+                            <ShoppingCart className="h-4 w-4" /> Sepete ekle
+                        </span>
+                    )}
+                </Button>
                 {cartError && <p className="mt-1.5 text-center text-[10px] text-red-500">{cartError}</p>}
-                <p className="mt-1.5 text-center text-[10px] leading-tight text-slate-400">Toplu kiralama: sepet • İndirimler sepette</p>
+                <p className="mt-1.5 text-center text-[10px] leading-tight text-slate-400">Tarih ve ödeme: sepet → ödeme adımları</p>
             </div>
         </div>
     );

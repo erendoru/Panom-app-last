@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { ArrowLeft, ArrowRight, Check, Upload, MapPin, Calendar, User, Phone, Mail, Building2, FileText, HelpCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
@@ -65,6 +66,8 @@ export default function CheckoutPage() {
     const [submitting, setSubmitting] = useState(false);
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [creativeUrls, setCreativeUrls] = useState<Record<string, string>>({});
+    const [creativeUploading, setCreativeUploading] = useState<string | null>(null);
+    const [creativeUploadError, setCreativeUploadError] = useState<Record<string, string>>({});
     const [orderNumber, setOrderNumber] = useState<string>('');
 
     const [formData, setFormData] = useState<OrderData>({
@@ -120,6 +123,51 @@ export default function CheckoutPage() {
             setFormData(prev => ({ ...prev, [name]: checked }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
+        }
+    };
+
+    const handleCreativeFileForPanel = async (panelId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        e.target.value = '';
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) {
+            setCreativeUploadError((prev) => ({ ...prev, [panelId]: 'Dosya en fazla 10MB olabilir.' }));
+            return;
+        }
+        setCreativeUploadError((prev) => {
+            const next = { ...prev };
+            delete next[panelId];
+            return next;
+        });
+        setCreativeUploading(panelId);
+        const fd = new FormData();
+        fd.append('file', file);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: fd });
+            const data = await res.json().catch(() => ({}));
+            if (res.status === 401) {
+                setCreativeUploadError((prev) => ({
+                    ...prev,
+                    [panelId]: 'Yüklemek için giriş yapın.',
+                }));
+                return;
+            }
+            if (!res.ok || !data.url) {
+                throw new Error(data.error || 'Yükleme başarısız');
+            }
+            setCreativeUrls((prev) => ({ ...prev, [panelId]: data.url as string }));
+        } catch {
+            setCreativeUploadError((prev) => ({
+                ...prev,
+                [panelId]: 'Yüklenemedi. Tekrar deneyin.',
+            }));
+            setCreativeUrls((prev) => {
+                const next = { ...prev };
+                delete next[panelId];
+                return next;
+            });
+        } finally {
+            setCreativeUploading(null);
         }
     };
 
@@ -396,11 +444,16 @@ export default function CheckoutPage() {
                                             name="hasOwnCreatives"
                                             checked={formData.hasOwnCreatives}
                                             onChange={(e) => {
-                                                setFormData(prev => ({
+                                                const checked = e.target.checked;
+                                                setFormData((prev) => ({
                                                     ...prev,
-                                                    hasOwnCreatives: e.target.checked,
-                                                    needsDesignHelp: e.target.checked ? false : prev.needsDesignHelp
+                                                    hasOwnCreatives: checked,
+                                                    needsDesignHelp: checked ? false : prev.needsDesignHelp,
                                                 }));
+                                                if (!checked) {
+                                                    setCreativeUrls({});
+                                                    setCreativeUploadError({});
+                                                }
                                             }}
                                             className="hidden"
                                         />
@@ -427,11 +480,16 @@ export default function CheckoutPage() {
                                             name="needsDesignHelp"
                                             checked={formData.needsDesignHelp}
                                             onChange={(e) => {
-                                                setFormData(prev => ({
+                                                const checked = e.target.checked;
+                                                setFormData((prev) => ({
                                                     ...prev,
-                                                    needsDesignHelp: e.target.checked,
-                                                    hasOwnCreatives: e.target.checked ? false : prev.hasOwnCreatives
+                                                    needsDesignHelp: checked,
+                                                    hasOwnCreatives: checked ? false : prev.hasOwnCreatives,
                                                 }));
+                                                if (checked) {
+                                                    setCreativeUrls({});
+                                                    setCreativeUploadError({});
+                                                }
                                             }}
                                             className="hidden"
                                         />
@@ -452,10 +510,64 @@ export default function CheckoutPage() {
                                 </div>
 
                                 {formData.hasOwnCreatives && (
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                        <p className="text-sm text-blue-800">
-                                            <strong>Görsel Boyutları:</strong> Sipariş onaylandıktan sonra Panobu ekibi sizinle paylaştığınız telefon numarasıyla iletişime geçecek. Görselleriniz panolara yerleştirilecek ve fotoğrafları size mail ile iletilecek.
-                                        </p>
+                                    <div className="space-y-4">
+                                        <div className="rounded-lg border border-blue-100 bg-blue-50/90 p-3 text-sm text-blue-900">
+                                            <p className="font-medium">Dosyalarınızı buradan yükleyin</p>
+                                            <p className="mt-1 text-xs text-blue-800/90">
+                                                Her pano için ayrı dosya (JPEG, PNG, WebP, GIF veya MP4, en fazla 10MB). Giriş yapmış olmanız gerekir. Zorunlu değil; yüklemezseniz sipariş sonrası ekibimiz boyutları paylaşır, dosyayı e-posta ile de iletebilirsiniz.
+                                            </p>
+                                        </div>
+                                        <div className="space-y-3">
+                                            {cartItems.map((item) => {
+                                                const pid = item.panel.id;
+                                                const url = creativeUrls[pid];
+                                                const busy = creativeUploading === pid;
+                                                const err = creativeUploadError[pid];
+                                                return (
+                                                    <div
+                                                        key={item.id}
+                                                        className="rounded-xl border border-neutral-200 bg-neutral-50/50 p-3"
+                                                    >
+                                                        <p className="text-sm font-medium text-neutral-900 line-clamp-1">{item.panel.name}</p>
+                                                        <p className="text-xs text-neutral-500 mb-2">
+                                                            {item.panel.city} · {PANEL_TYPE_LABELS[item.panel.type as keyof typeof PANEL_TYPE_LABELS] ?? item.panel.type}
+                                                        </p>
+                                                        <div
+                                                            className={`relative flex min-h-[100px] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-3 py-4 transition-colors ${err ? 'border-red-200 bg-red-50/50' : 'border-neutral-200 hover:border-blue-300 hover:bg-white'}`}
+                                                        >
+                                                            <Input
+                                                                type="file"
+                                                                accept="image/jpeg,image/png,image/webp,image/gif,video/mp4"
+                                                                className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
+                                                                onChange={(ev) => handleCreativeFileForPanel(pid, ev)}
+                                                                disabled={busy}
+                                                            />
+                                                            {busy ? (
+                                                                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                                                            ) : url ? (
+                                                                <div className="flex w-full flex-col items-center gap-2 text-center">
+                                                                    {url.match(/\.mp4($|\?)/i) ? (
+                                                                        <FileText className="h-10 w-10 text-blue-600" />
+                                                                    ) : (
+                                                                        <div className="relative h-20 w-full max-w-[200px] overflow-hidden rounded-md border border-neutral-200">
+                                                                            <Image src={url} alt="" fill className="object-cover" unoptimized />
+                                                                        </div>
+                                                                    )}
+                                                                    <span className="text-xs font-medium text-emerald-700">Yüklendi — değiştirmek için tıklayın</span>
+                                                                </div>
+                                                            ) : (
+                                                                <div className="flex flex-col items-center gap-1 text-neutral-500">
+                                                                    <Upload className="h-8 w-8" />
+                                                                    <span className="text-sm">Sürükleyin veya tıklayın</span>
+                                                                    <span className="text-xs">Görsel veya MP4 · max 10MB</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        {err && <p className="mt-1 text-xs text-red-600">{err}</p>}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 )}
 
@@ -597,8 +709,12 @@ export default function CheckoutPage() {
                                     <div className="flex items-center gap-3">
                                         {formData.hasOwnCreatives ? (
                                             <>
-                                                <Upload className="w-5 h-5 text-blue-600" />
-                                                <span className="text-neutral-600">Görseller hazır - sipariş sonrası yüklenecek</span>
+                                                <Upload className="w-5 h-5 shrink-0 text-blue-600" />
+                                                <span className="text-neutral-600">
+                                                    {Object.keys(creativeUrls).length === 0
+                                                        ? 'Kreatifler sipariş sonrası veya e-posta ile iletilecek'
+                                                        : `${Object.keys(creativeUrls).length} pano için dosya yüklendi`}
+                                                </span>
                                             </>
                                         ) : (
                                             <>

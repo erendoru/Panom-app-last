@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
 const BRAND = "#11b981";
 
@@ -115,11 +114,9 @@ export default function LiveActivityTicker() {
 
                 <Link
                     href="/static-billboards"
-                    className="shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-white rounded-full px-4 py-2 transition-colors hover:opacity-95 shadow-sm"
-                    style={{ backgroundColor: BRAND }}
+                    className="shrink-0 text-sm font-semibold text-neutral-900 transition-colors hover:text-neutral-600 underline-offset-4 hover:underline pl-2"
                 >
-                    Panoları Gör
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    {"Panoları Gör ->"}
                 </Link>
             </div>
         </div>

@@ -5,12 +5,11 @@ import { Button } from "@/components/ui/button";
 import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2, ShoppingCart } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import dynamic from "next/dynamic";
-import RentalWizard from "@/components/static/RentalWizard";
 import FilterSidebar, { FilterState } from "@/components/static/FilterSidebar";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import PanelDetailSidebar from "@/components/static/PanelDetailSidebar";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import Link from "next/link";
 
@@ -24,12 +23,12 @@ const Map = dynamic(() => import("@/components/domain/Map"), {
 function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     // Client component for static billboards page
     const searchParams = useSearchParams();
+    const router = useRouter();
     const { count: cartCount } = useCart();
     const [selectedCity, setSelectedCity] = useState("Tümü");
     const [panels, setPanels] = useState<any[]>(initialPanels);
     const [isLoadingPanels, setIsLoadingPanels] = useState(false);
     const [selectedPanel, setSelectedPanel] = useState<any | null>(null);
-    const [isRentalWizardOpen, setIsRentalWizardOpen] = useState(false);
     const [showFiltersOverlay, setShowFiltersOverlay] = useState(false);
     const [showDetailSidebar, setShowDetailSidebar] = useState(false);
 
@@ -142,39 +141,21 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Check for resumeRental parameter and restore rental flow
+    // Eski "Kirala" sihirbazı giriş sonrası yönlendirmesi: artık tek akış sepet
     useEffect(() => {
-        const resumeRental = searchParams.get('resumeRental');
-        if (resumeRental === 'true') {
-            const pendingRentalStr = localStorage.getItem('pendingRental');
-            if (pendingRentalStr) {
-                try {
-                    const pendingRental = JSON.parse(pendingRentalStr);
-                    // Find the panel by ID
-                    const panel = initialPanels.find(p => p.id === pendingRental.panelId);
-                    if (panel) {
-                        setSelectedPanel(panel);
-                        setIsRentalWizardOpen(true);
-                        // Remove resumeRental from URL without reload
-                        const url = new URL(window.location.href);
-                        url.searchParams.delete('resumeRental');
-                        window.history.replaceState({}, '', url.toString());
-                    }
-                } catch (error) {
-                    console.error("Failed to restore rental:", error);
-                }
-            }
-        }
-    }, [searchParams, initialPanels]);
+        const resumeRental = searchParams.get("resumeRental");
+        if (resumeRental !== "true") return;
+        localStorage.removeItem("pendingRental");
+        const url = new URL(window.location.href);
+        url.searchParams.delete("resumeRental");
+        window.history.replaceState({}, "", url.toString());
+        router.push("/cart");
+    }, [searchParams, router]);
 
     const handlePanelSelect = (panel: any) => {
         setSelectedPanel(panel);
         setShowDetailSidebar(true);
         setShowFiltersOverlay(false);
-    };
-
-    const handleStartRental = () => {
-        setIsRentalWizardOpen(true);
     };
 
     // Mobile filter collapsed state
@@ -447,7 +428,6 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                     panel={selectedPanel}
                     isOpen={showDetailSidebar}
                     onClose={() => setShowDetailSidebar(false)}
-                    onRent={handleStartRental}
                 />
 
                 {/* Filter Overlay (Right) */}
@@ -487,14 +467,6 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                 </div>
             </div>
 
-            {/* Rental Wizard Modal */}
-            {selectedPanel && isRentalWizardOpen && (
-                <RentalWizard
-                    isOpen={isRentalWizardOpen}
-                    onClose={() => setIsRentalWizardOpen(false)}
-                    panel={selectedPanel}
-                />
-            )}
         </div>
     );
 }
