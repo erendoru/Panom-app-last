@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload } from 'lucide-react';
+import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload, Images, Loader2, Crop } from 'lucide-react';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -58,6 +58,13 @@ export default function AdminPanelsPage() {
     const [bulkName, setBulkName] = useState('');
     const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
+    const [mirrorPending, setMirrorPending] = useState<number | null>(null);
+    const [mirrorHasKey, setMirrorHasKey] = useState(true);
+    const [mirrorBusy, setMirrorBusy] = useState(false);
+
+    const [cropPending, setCropPending] = useState<number | null>(null);
+    const [cropBusy, setCropBusy] = useState(false);
+
     // Filters
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -67,6 +74,147 @@ export default function AdminPanelsPage() {
     useEffect(() => {
         fetchPanels();
     }, []);
+
+    const refreshMirrorPending = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/panels/mirror-images');
+            const data = await res.json();
+            if (res.ok && typeof data.pending === 'number') {
+                setMirrorPending(data.pending);
+                setMirrorHasKey(data.hasServiceKey !== false);
+            }
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
+    const refreshCropPending = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/panels/crop-images');
+            const data = await res.json();
+            if (res.ok && typeof data.pending === 'number') {
+                setCropPending(data.pending);
+            }
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
+    useEffect(() => {
+        refreshMirrorPending();
+        refreshCropPending();
+    }, [refreshMirrorPending, refreshCropPending, panels.length]);
+
+    const runMirrorExternalImages = async () => {
+        if (!mirrorHasKey) {
+            alert(
+                'SUPABASE_SERVICE_ROLE_KEY .env dosyasında tanımlı değil. Supabase → Project Settings → API → service_role anahtarını ekleyin; ardından sunucuyu yeniden başlatın.'
+            );
+            return;
+        }
+        if (
+            !confirm(
+                'Google / harici sunucudaki görsel bağlantıları indirip kendi Supabase depomuza yükleyeceğiz (tek seferde en fazla 100 pano). Devam edilsin mi?'
+            )
+        ) {
+            return;
+        }
+        setMirrorBusy(true);
+        try {
+            const res = await fetch('/api/admin/panels/mirror-images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit: 100 }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.error || 'İşlem başarısız');
+                return;
+            }
+            const failed = (data.results || []).filter((r: { ok: boolean }) => !r.ok) as { name: string; error?: string }[];
+            const lines = failed.slice(0, 8).map((r) => `• ${r.name}: ${r.error || 'bilinmeyen'}`);
+            alert([data.message, failed.length > 8 ? `…ve ${failed.length - 8} hata daha` : '', '', ...lines].filter(Boolean).join('\n'));
+            await fetchPanels();
+            await refreshMirrorPending();
+            await refreshCropPending();
+        } catch {
+            alert('Bağlantı hatası');
+        } finally {
+            setMirrorBusy(false);
+        }
+    };
+
+    const runCropPanelImages = async () => {
+        if (!mirrorHasKey) {
+            alert('SUPABASE_SERVICE_ROLE_KEY gerekli (görseller depoda olmalı).');
+            return;
+        }
+        if (
+            !confirm(
+                'Depodaki görsellerin dört kenarından eşit %30 kesilecek (ortada yaklaşık %40×%40 alan). Devam?'
+            )
+        ) {
+            return;
+        }
+        setCropBusy(true);
+        try {
+            const res = await fetch('/api/admin/panels/crop-images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ edgeFraction: 0.3, limit: 80 }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.error || 'Kırpma başarısız');
+                return;
+            }
+            const failed = (data.results || []).filter((r: { ok: boolean }) => !r.ok) as { name: string; error?: string }[];
+            const lines = failed.slice(0, 6).map((r) => `• ${r.name}: ${r.error || '?'}`);
+            alert([data.message, '', ...lines].filter(Boolean).join('\n'));
+            await fetchPanels();
+            await refreshCropPending();
+        } catch {
+            alert('Bağlantı hatası');
+        } finally {
+            setCropBusy(false);
+        }
+    };
+
+    const runCropHeavyRight = async () => {
+        if (!mirrorHasKey) {
+            alert('SUPABASE_SERVICE_ROLE_KEY gerekli.');
+            return;
+        }
+        if (
+            !confirm(
+                'Sağdan daha fazla kesim: sol ~%24, üst/alt ~%26, sağ ~%48 (medyapano şeridi vb. için). Orta alan daralır. Devam?'
+            )
+        ) {
+            return;
+        }
+        setCropBusy(true);
+        try {
+            const res = await fetch('/api/admin/panels/crop-images', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ preset: 'heavyRight', limit: 80 }),
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                alert(data.error || 'Kırpma başarısız');
+                return;
+            }
+            const failed = (data.results || []).filter((r: { ok: boolean }) => !r.ok) as { name: string; error?: string }[];
+            const lines = failed.slice(0, 6).map((r) => `• ${r.name}: ${r.error || '?'}`);
+            alert([data.message, '', ...lines].filter(Boolean).join('\n'));
+            await fetchPanels();
+            await refreshCropPending();
+        } catch {
+            alert('Bağlantı hatası');
+        } finally {
+            setCropBusy(false);
+        }
+    };
 
     const fetchPanels = async () => {
         setLoading(true);
@@ -305,6 +453,54 @@ export default function AdminPanelsPage() {
                         <p className="text-slate-600 mt-1 text-sm md:text-base">Tüm klasik panoları görüntüleyin ve yönetin</p>
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+                        {mirrorPending !== null && mirrorPending > 0 && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="border-amber-500 text-amber-800 hover:bg-amber-50 flex-1 sm:flex-none"
+                                disabled={mirrorBusy || !mirrorHasKey}
+                                onClick={runMirrorExternalImages}
+                            >
+                                {mirrorBusy ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                                ) : (
+                                    <Images className="w-4 h-4 mr-2 shrink-0" />
+                                )}
+                                Görselleri depoya taşı ({mirrorPending})
+                            </Button>
+                        )}
+                        {cropPending !== null && cropPending > 0 && (
+                            <>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-slate-600 text-slate-800 hover:bg-slate-100 flex-1 sm:flex-none"
+                                    disabled={cropBusy || !mirrorHasKey}
+                                    onClick={runCropPanelImages}
+                                >
+                                    {cropBusy ? (
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                                    ) : (
+                                        <Crop className="w-4 h-4 mr-2 shrink-0" />
+                                    )}
+                                    Eşit %30 ({cropPending})
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="border-blue-600 text-blue-800 hover:bg-blue-50 flex-1 sm:flex-none"
+                                    disabled={cropBusy || !mirrorHasKey}
+                                    onClick={runCropHeavyRight}
+                                >
+                                    {cropBusy ? (
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                                    ) : (
+                                        <Crop className="w-4 h-4 mr-2 shrink-0" />
+                                    )}
+                                    Sağ ağırlıklı kırp ({cropPending})
+                                </Button>
+                            </>
+                        )}
                         <Button asChild variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50 flex-1 sm:flex-none">
                             <Link href="/app/admin/panels/import">
                                 <Upload className="w-4 h-4 mr-2" />
@@ -325,6 +521,33 @@ export default function AdminPanelsPage() {
                         </Button>
                     </div>
                 </div>
+
+                {(mirrorPending !== null && mirrorPending > 0) || (cropPending !== null && cropPending > 0) ? (
+                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 space-y-2">
+                        {mirrorPending !== null && mirrorPending > 0 && (
+                            <p>
+                                <strong className="font-semibold">Harici görseller:</strong> {mirrorPending} pano — Google
+                                URL&apos;si.{' '}
+                                {!mirrorHasKey ? (
+                                    <span className="text-red-800">
+                                        <code className="rounded bg-white/80 px-1">SUPABASE_SERVICE_ROLE_KEY</code> ekleyin.
+                                    </span>
+                                ) : (
+                                    <span>«Görselleri depoya taşı» ile Supabase&apos;e alın.</span>
+                                )}
+                            </p>
+                        )}
+                        {cropPending !== null && cropPending > 0 && (
+                            <p>
+                                <strong className="font-semibold">Kenar markaları:</strong> {cropPending} pano — depoda
+                                ham görsel. <strong>«Eşit %30»</strong> dört kenarı aynı keser; sağdaki medyapano.com şeridi
+                                için <strong>«Sağ ağırlıklı kırp»</strong> (sağ ~%48, sol ~%24, üst/alt ~%26) daha uygundur.
+                                API ile özel oran: <code className="rounded bg-white/80 px-1">edges: {'{'} left, top, right, bottom {'}'}</code>.
+                                Henüz kırpılmamış kayıtlar sayılır; bir kez kırptıktan sonra aynı panoda tekrar kırpma yok.
+                            </p>
+                        )}
+                    </div>
+                ) : null}
 
                 {/* Unsaved Changes Bar */}
                 {unsavedCount > 0 && (

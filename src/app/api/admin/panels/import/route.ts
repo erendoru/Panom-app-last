@@ -46,6 +46,7 @@ interface ImportRow {
     estimatedDailyImpressions?: number | string;
     trafficLevel?: string;
     subType?: string;
+    imageUrl?: string;
 }
 
 interface ImportResult {
@@ -172,6 +173,7 @@ export async function POST(req: NextRequest) {
                         trafficLevel: (['LOW', 'MEDIUM', 'HIGH', 'VERY_HIGH'].includes(String(row.trafficLevel || '').toUpperCase()) ? String(row.trafficLevel).toUpperCase() : 'MEDIUM') as any,
                         ownerName: row.ownerName?.trim() || null,
                         ownerPhone: row.ownerPhone?.trim() || null,
+                        imageUrl: row.imageUrl?.trim() || null,
                         active: true,
                         blockedDates: [],
                     }

@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>MEGABOARD</name>
+    <description/>
+    <Style id="icon-1899-DB4436-normal">
+      <IconStyle>
+        <color>ff3644db</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0</scale>
+      </LabelStyle>
+    </Style>
+    <Style id="icon-1899-DB4436-highlight">
+      <IconStyle>
+        <color>ff3644db</color>
+        <scale>1</scale>
+        <Icon>
+          <href>https://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
+        </Icon>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
+      </IconStyle>
+      <LabelStyle>
+        <scale>1</scale>
+      </LabelStyle>
+    </Style>
+    <StyleMap id="icon-1899-DB4436">
+      <Pair>
+        <key>normal</key>
+        <styleUrl>#icon-1899-DB4436-normal</styleUrl>
+      </Pair>
+      <Pair>
+        <key>highlight</key>
+        <styleUrl>#icon-1899-DB4436-highlight</styleUrl>
+      </Pair>
+    </StyleMap>
+    <Folder>
+      <name>Adsız katman</name>
+      <Placemark>
+        <name>MGB-01 Avrupa - Edirne İstikameti İstanbul Havalimanı Giriş - Çıkışı - 01. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5455G3sbtJqQcDIE8DsyTRrrF9hv6WA3e2z2vrry6gnKh6TYpdrH3uvz-OnYqo2S99Io1o8p5UEiANsXs2jMd4MERWDi9-Dew5TBA5pf_0uUTY8UUnSLr5h31d-varrDDaXrHCM29qiS1OYONaEoNEXYSYnuKxiOwpmMQMPCLs-B1NBz-ZZ3b8Bkj3eVNKPgAYsuYnBPPLb-uFqpqRYg1JSrcztA9Mqeu4kMo0Y13h8Btcbo-kkB2hpuI?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5SuMWmZWcHkzQUaYsf31VOBqlR9i5BmT4D7LvL_dNGbE-mG4-vQQJVHk8YTZKBVQ0QzQgXbCodz-RYgc5MZWIio3OW-H9rYk7yCE9hhkWQe9XNckfxHFoeFYysUfUeIW1bOCJj-0Yal3bn9vSy2CwDhnOne6kAYMf4LadJOMaXRWBocnk3EOLS26lEchLqF0GFFfb7nGLvg4htvtJ6Ralyy9irjHL2F1sVXMrq5BVsGnnaXt4jd0V7mAg?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5455G3sbtJqQcDIE8DsyTRrrF9hv6WA3e2z2vrry6gnKh6TYpdrH3uvz-OnYqo2S99Io1o8p5UEiANsXs2jMd4MERWDi9-Dew5TBA5pf_0uUTY8UUnSLr5h31d-varrDDaXrHCM29qiS1OYONaEoNEXYSYnuKxiOwpmMQMPCLs-B1NBz-ZZ3b8Bkj3eVNKPgAYsuYnBPPLb-uFqpqRYg1JSrcztA9Mqeu4kMo0Y13h8Btcbo-kkB2hpuI?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5SuMWmZWcHkzQUaYsf31VOBqlR9i5BmT4D7LvL_dNGbE-mG4-vQQJVHk8YTZKBVQ0QzQgXbCodz-RYgc5MZWIio3OW-H9rYk7yCE9hhkWQe9XNckfxHFoeFYysUfUeIW1bOCJj-0Yal3bn9vSy2CwDhnOne6kAYMf4LadJOMaXRWBocnk3EOLS26lEchLqF0GFFfb7nGLvg4htvtJ6Ralyy9irjHL2F1sVXMrq5BVsGnnaXt4jd0V7mAg?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.799198,41.237416,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-02 Avrupa - Edirne İstikameti Kalyon Şantiye Önü - 06. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Rxepr70bPS4v8xfEvzsVLhirVeGIJuo3JBAuPVyVBDL-_MUvVnPf5nus7JMRUldssG410i0htEceNUMjictLbQQ4cSE5Agy99UEn0ztyCCE0_YrMNM0M9oolIqVZAh3y8gd2u3L7VJKi7IR4SUwWbOanoYJsOp-M0E96l0Y5UtFvt_sOuj8WkILzLouJaJ0FEwDcNwrcEjxeZuSNpLSa_fHkQkIz7Y5rvXfUX8_DJaVSUBfa27_xfQDs?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7sQXE2Mvre7XRLYkMH7VOAw3KzMuN-WINOSRYVSURXkKywaY94VO2HPH35OouGjVpgqap7aTnr0Fc68sIYNGmnr1FMTDsA9TbCl_ltBAky1Ogxm8cEAJb6RU6xXQOfgV30GWnIT5__k7jWw99XIkTzjMagM5E0t7z3SvG87u8nBl2U8_WZc46wLXFcUQN79XaTebcBI58lhNKcvfcOHCQWt9f7gTm_h8_M3HpjpO3lrMMEzk4laSiljuM?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Rxepr70bPS4v8xfEvzsVLhirVeGIJuo3JBAuPVyVBDL-_MUvVnPf5nus7JMRUldssG410i0htEceNUMjictLbQQ4cSE5Agy99UEn0ztyCCE0_YrMNM0M9oolIqVZAh3y8gd2u3L7VJKi7IR4SUwWbOanoYJsOp-M0E96l0Y5UtFvt_sOuj8WkILzLouJaJ0FEwDcNwrcEjxeZuSNpLSa_fHkQkIz7Y5rvXfUX8_DJaVSUBfa27_xfQDs?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7sQXE2Mvre7XRLYkMH7VOAw3KzMuN-WINOSRYVSURXkKywaY94VO2HPH35OouGjVpgqap7aTnr0Fc68sIYNGmnr1FMTDsA9TbCl_ltBAky1Ogxm8cEAJb6RU6xXQOfgV30GWnIT5__k7jWw99XIkTzjMagM5E0t7z3SvG87u8nBl2U8_WZc46wLXFcUQN79XaTebcBI58lhNKcvfcOHCQWt9f7gTm_h8_M3HpjpO3lrMMEzk4laSiljuM?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.729083,41.243684,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-03 Avrupa - Edirne İstikmeti Baklalı Mevki, Tayakadın Arnavutköy Giriş - Çıkış - 11. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6e9D1MWXxQj4g_OgcDoDcOC-aifFalhjyqd2CO7P-Vjgus9XG5tNtgJTogDNGXBddRxDaJzYZmRt5-iqa5PZPfpo7jOq6-VxiGjN76JjeaY_HXA4Z5BKmuhI6PEs3yrDCldKzbGxdWWmge5VIKoQRko4Z6ozRZ0wmqP_1X4OYEr52K9FLkSJnDb60YtP2V3TZOAWL6QRRc-KGql410vuOTY1himI2mHvKAg5S_AQd68RWIxzeDtIK-TLs?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5guYdTY1diAqAQPqGTCF0qBWnQOOvcS0_nhI56-Us0JU1Rv2VGOjD-uUlqx0WWasS5U52IgMiHRm-a1lQec4dH6PdBuRQOBDxnU9t1Pgd7O-v7MtYD-BP9kZNkbwThxS7RXZwf7gjK7V5hZlYx80qSptqbgb-0TT8kRhCQ4MUPOIkv8EDUyIuy6sWOZybAje3yF4mDaSVbdc5LpVFfb7Uxnu07vjri7DJ09drEO0-KDyPYAHSF6dlHsoA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6e9D1MWXxQj4g_OgcDoDcOC-aifFalhjyqd2CO7P-Vjgus9XG5tNtgJTogDNGXBddRxDaJzYZmRt5-iqa5PZPfpo7jOq6-VxiGjN76JjeaY_HXA4Z5BKmuhI6PEs3yrDCldKzbGxdWWmge5VIKoQRko4Z6ozRZ0wmqP_1X4OYEr52K9FLkSJnDb60YtP2V3TZOAWL6QRRc-KGql410vuOTY1himI2mHvKAg5S_AQd68RWIxzeDtIK-TLs?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5guYdTY1diAqAQPqGTCF0qBWnQOOvcS0_nhI56-Us0JU1Rv2VGOjD-uUlqx0WWasS5U52IgMiHRm-a1lQec4dH6PdBuRQOBDxnU9t1Pgd7O-v7MtYD-BP9kZNkbwThxS7RXZwf7gjK7V5hZlYx80qSptqbgb-0TT8kRhCQ4MUPOIkv8EDUyIuy6sWOZybAje3yF4mDaSVbdc5LpVFfb7Uxnu07vjri7DJ09drEO0-KDyPYAHSF6dlHsoA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.6721881,41.2471254,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-04 Avrupa - Edirne İstikmeti Atatürk Caddesi Üzeri, - 13. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7qQZvtBOhjkVSqzr102axGrkAnsOpj0koN31PdVkyJ4FfBi0bpYPBr_dJH1YTJF5tHe_8rqrQY77VDPuePWwkbPAFt5iApxTrI9te6aHVwK2wV-MkESMpP0HPMC7ZT0FrizdolSRh8Pu8pkcOsDTu74tAhlq9OE4tmr86c6YRPRy9VYkPyAMR6ppN0SnkTw6wH2y7UztAeQfTc0tTamhE2RUj090bHbC1ZDAf-ZdqxN6A9s0t2AtREcwg?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XCuyl632DwjKHhnXxWcmEqcrJBhPsCVA0NrGcERG8d6_yY72Z0Y1_AxHWJb7hBql5m_iZzKItqqEcgQZYtAc4V00eh9YKqyC_e4HfN_IZpG9I3no4iKq2UAAvnXjFd78oJMnYit9oKOwYLT-GhjY0B_bjrAUT9wMh7nrvPrqzADGoFdhAOH98E2DHGnVB4tfq_fpgXxeUD5ycP5jY-BE8WFIjQVoA8tjhakABdh_GK7ytc25fhPgKais?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7qQZvtBOhjkVSqzr102axGrkAnsOpj0koN31PdVkyJ4FfBi0bpYPBr_dJH1YTJF5tHe_8rqrQY77VDPuePWwkbPAFt5iApxTrI9te6aHVwK2wV-MkESMpP0HPMC7ZT0FrizdolSRh8Pu8pkcOsDTu74tAhlq9OE4tmr86c6YRPRy9VYkPyAMR6ppN0SnkTw6wH2y7UztAeQfTc0tTamhE2RUj090bHbC1ZDAf-ZdqxN6A9s0t2AtREcwg?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XCuyl632DwjKHhnXxWcmEqcrJBhPsCVA0NrGcERG8d6_yY72Z0Y1_AxHWJb7hBql5m_iZzKItqqEcgQZYtAc4V00eh9YKqyC_e4HfN_IZpG9I3no4iKq2UAAvnXjFd78oJMnYit9oKOwYLT-GhjY0B_bjrAUT9wMh7nrvPrqzADGoFdhAOH98E2DHGnVB4tfq_fpgXxeUD5ycP5jY-BE8WFIjQVoA8tjhakABdh_GK7ytc25fhPgKais?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.649302,41.244954,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-05 Avrupa - Edirne İstikameti Dursunköy Mevkii - 15. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X78i4vU-6gma8AxfKOSonXLMIullPsYNV3TouUOLPiw-_eWRGPlTVlKPQhQt-vIiUBvpJIoEeWbJVcaUZ_VQpNtVvWcYQ1phSoS6bfo085zw63mmimVxKUnT5JS6DVTxfsh6w2R-Lj5v-EvUWdkrAEwsIn0kU4lJxNpuOBIPta8sa3BsJxQlDMHZGpuDyqjNS6_E_yhwlScPe-JVWEt7CO8RPNsqvY-vg2P5DA5c8aaboE6C1mMcMmMrTA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7XD6oUAmt_Ui8ak6PXCKiKXoRpHfSKdfBUW4JZ-OOhDR-bDKoiE97ZQgHR65GFiuk3dUsSCJQORuPro4eVCtXAwPmHNttPdsr9llyRS197ITK7iY6pkbtggS_h99rtuGI8HVxsSFBt15X_WfPmw1mob_h2Qye8y4EzXNR7gmTkHlDEX_lLB22YpdDvoP3i9oOo_jgMJTpgEvYnlSzGHI15ZTjvfBympuHgAzQoJIZgFN6jMtwUjC9DDy0?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X78i4vU-6gma8AxfKOSonXLMIullPsYNV3TouUOLPiw-_eWRGPlTVlKPQhQt-vIiUBvpJIoEeWbJVcaUZ_VQpNtVvWcYQ1phSoS6bfo085zw63mmimVxKUnT5JS6DVTxfsh6w2R-Lj5v-EvUWdkrAEwsIn0kU4lJxNpuOBIPta8sa3BsJxQlDMHZGpuDyqjNS6_E_yhwlScPe-JVWEt7CO8RPNsqvY-vg2P5DA5c8aaboE6C1mMcMmMrTA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7XD6oUAmt_Ui8ak6PXCKiKXoRpHfSKdfBUW4JZ-OOhDR-bDKoiE97ZQgHR65GFiuk3dUsSCJQORuPro4eVCtXAwPmHNttPdsr9llyRS197ITK7iY6pkbtggS_h99rtuGI8HVxsSFBt15X_WfPmw1mob_h2Qye8y4EzXNR7gmTkHlDEX_lLB22YpdDvoP3i9oOo_jgMJTpgEvYnlSzGHI15ZTjvfBympuHgAzQoJIZgFN6jMtwUjC9DDy0?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.626114,41.239301,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-06 Avrupa - Edirne İstikameti Çatalca, Kumburgaz, Büyükçekmece Giriş - Çıkış - 31. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4bb8e7nJavbFu9iVyrp73IBZgoVszBjeKxtlxoCJH2R-zc9Olxr1tY0VLu7oIsSCxUNoTpLYp2nF1zx4RwCjhLgnXMzcbWNqBHffVINd7dZ91ny7kXS4u9PZFuX2sZLeDXubc0MkE6gDoCWm1hk-G7kmDNZMhTrVoWD3yOm3q520sx26qumwJyfHe8y4ZBumam_oHSeTRkgzCtmlHTQfRuEQtJkhLcyxT2cJxkhSvZoLPF4W_o-tnYkuA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4M1lpKDZumYCymFEidrxAihh8XEX3pNmoF6vaL4yuohbjdPHK3qZwHfLkQwuQqotCppw63ZkLfIhQO5eUBasdgrMXWToIw0pw7dUmIrTCKV5XoZwQEaTyKkZSgrRYOX0sCmpoOlN_vMkZYu4ka1hByGzsrwQSZucD6jHozbnR9VGTxxIXCjUxUHZ-o4DuGNIWKE_S6USjglh5WZR9DuDwkt5J_kZeoZtVvf9YYqoZMeDEKRWJpXA7iA4Y?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4bb8e7nJavbFu9iVyrp73IBZgoVszBjeKxtlxoCJH2R-zc9Olxr1tY0VLu7oIsSCxUNoTpLYp2nF1zx4RwCjhLgnXMzcbWNqBHffVINd7dZ91ny7kXS4u9PZFuX2sZLeDXubc0MkE6gDoCWm1hk-G7kmDNZMhTrVoWD3yOm3q520sx26qumwJyfHe8y4ZBumam_oHSeTRkgzCtmlHTQfRuEQtJkhLcyxT2cJxkhSvZoLPF4W_o-tnYkuA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4M1lpKDZumYCymFEidrxAihh8XEX3pNmoF6vaL4yuohbjdPHK3qZwHfLkQwuQqotCppw63ZkLfIhQO5eUBasdgrMXWToIw0pw7dUmIrTCKV5XoZwQEaTyKkZSgrRYOX0sCmpoOlN_vMkZYu4ka1hByGzsrwQSZucD6jHozbnR9VGTxxIXCjUxUHZ-o4DuGNIWKE_S6USjglh5WZR9DuDwkt5J_kZeoZtVvf9YYqoZMeDEKRWJpXA7iA4Y?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.48191,41.167959,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-07 Avrupa - Edirne İstikmeti Kara Murat Caddesi Öncesi, - 41.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5FJsJ9CDvOVtMqWu_BzDGTYNzx1uq3eGZmtFVcICo8Ni1qI7R0iLcXKxM-CBKLDSpcb8kwCHe75lK7EpAMRExTTiZeFwpTjxovXdURTAz9fG6IqBYjT03E0EDoVnR-7hV8uAI6yHwMGtWhwZRLX3ua6egHyS1KGvwfI1Oh-INt4K6c9Ay49BaP5iQpvE5flVJSN5V2ejVUWhQcdnoYfjTa1ivFUrsBf_UQspo-YRAIhTmpsifBvVoHK3M?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X50NnSxzKKCk0yr0S8r36zczgAqTBNvdteA-FrAZ_-0ddjtbEPwSWKLwFXC_TBNdOf2F8fW8aAtFdRVrwOvzouO5I-lkz2Y7wsy2afYHs27lN_07oUig4jVL3RpUyPz1DHIGDKfQOk_Q5L32Ukm39uQcCCmeC5rGwJ9FdxxLzSLMlF7zrHCcq3CakA-d3EwLHlefqRhP83AMdpEDZihh8Whzbu83up2ztUGYwYYsuNFmy1mMqBqQNn-iXs?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5FJsJ9CDvOVtMqWu_BzDGTYNzx1uq3eGZmtFVcICo8Ni1qI7R0iLcXKxM-CBKLDSpcb8kwCHe75lK7EpAMRExTTiZeFwpTjxovXdURTAz9fG6IqBYjT03E0EDoVnR-7hV8uAI6yHwMGtWhwZRLX3ua6egHyS1KGvwfI1Oh-INt4K6c9Ay49BaP5iQpvE5flVJSN5V2ejVUWhQcdnoYfjTa1ivFUrsBf_UQspo-YRAIhTmpsifBvVoHK3M?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X50NnSxzKKCk0yr0S8r36zczgAqTBNvdteA-FrAZ_-0ddjtbEPwSWKLwFXC_TBNdOf2F8fW8aAtFdRVrwOvzouO5I-lkz2Y7wsy2afYHs27lN_07oUig4jVL3RpUyPz1DHIGDKfQOk_Q5L32Ukm39uQcCCmeC5rGwJ9FdxxLzSLMlF7zrHCcq3CakA-d3EwLHlefqRhP83AMdpEDZihh8Whzbu83up2ztUGYwYYsuNFmy1mMqBqQNn-iXs?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.3596104,41.161314,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-08 Avrupa - Edirne İstikameti Silivri Giriş - Çıkış - 46. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4yth9L8lHKCMYNlPF-6GsUL7x3jKyyH26lYFJcN_Rak4MGY5lVN310HPEPQ9iv1VSMxOq02R92YqC9GEM3ioSRPZrFWHJ92KB3apEiBgPEGISzHFKRI5qH0hgopBlU95V4WuZBfD3VaeSsdXFwHEXGhyyEPuHGzvI1zXVrLZvkDnHSHHSPKgTdTNI8ZSe9SGbvkS_J5_Kp6g9b0szBfH0gDRiJHhxsrZnNaQzOFXDClQfdRhsXQ1cM0Ts?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X76vUmXtPAXmF0wZUWyIubPr9rQ-sr6Hwcz8oJpZrwKWdohn7qPDn8NJyPxnX3eCFMNegN8LB3S1mcg2uY8RWa8WbxZt8qdWnySdncSFjzqXGa-VcMl2HB-Z4t2cidE6gFY6ib2TLDxRLYZEth07RkL_Cl8aAUOhMF71R6xKU8qW7VkUbj-l5zeomIgYl9PQxe82bMyO7XD_zKBSNB0XlZgx-MEYzM6U5bdYPxFXZMBoTl_6AqMcGgXB7U?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4yth9L8lHKCMYNlPF-6GsUL7x3jKyyH26lYFJcN_Rak4MGY5lVN310HPEPQ9iv1VSMxOq02R92YqC9GEM3ioSRPZrFWHJ92KB3apEiBgPEGISzHFKRI5qH0hgopBlU95V4WuZBfD3VaeSsdXFwHEXGhyyEPuHGzvI1zXVrLZvkDnHSHHSPKgTdTNI8ZSe9SGbvkS_J5_Kp6g9b0szBfH0gDRiJHhxsrZnNaQzOFXDClQfdRhsXQ1cM0Ts?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X76vUmXtPAXmF0wZUWyIubPr9rQ-sr6Hwcz8oJpZrwKWdohn7qPDn8NJyPxnX3eCFMNegN8LB3S1mcg2uY8RWa8WbxZt8qdWnySdncSFjzqXGa-VcMl2HB-Z4t2cidE6gFY6ib2TLDxRLYZEth07RkL_Cl8aAUOhMF71R6xKU8qW7VkUbj-l5zeomIgYl9PQxe82bMyO7XD_zKBSNB0XlZgx-MEYzM6U5bdYPxFXZMBoTl_6AqMcGgXB7U?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.301078,41.143241,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-09 Avrupa - Edirne İstikmeti Küçük Kılıçlı Mevki, TEM Ayrımı - 56. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4zBETbTDzNThoBsGaxfq91LNbyxAnuhMoZ5DTAT2e4aEuBGnR3U_QgOVQ5zbPHHDuAYVs6DhxSvX_RTSLOX2cTOKXSSUAi3VAz5SCJVxHos-QLqS0G8SJmBTPWYukmc8lu8WL5BYcvkvmOKmm5ouk7H2flH9eR_sqr-s0ozVUSeNz-RFjVm7g5PuEBPFHNdlaChVWXcGR6gwlyXSgX_9YRKlphsCVVFs0ESZzedY9yQXBBGzZ7XxddxbM?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7k6GaQpAz4jzIrgtQYuO4Y3gvn9vLar9H_euA3IdmbW0J_lJm83aCWyAE4ulVEQXr7c2RDj0iq0qIA1YoX3L_F6dRdO7wmpkbSj32Wtu5WuUylyGQdtOuWn00OyQ0Nwr7kvceDQGHoUHiO_ce63zIiVhmaSFVM750kK6f_sPhC6FTZTXXz-q-CKtxHb0t7WgO2S7l2E4XqdTwT9qRPlsc6tp8mrBU6Jdegw7u4cXXKon4B4x9a99kb8RY?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4zBETbTDzNThoBsGaxfq91LNbyxAnuhMoZ5DTAT2e4aEuBGnR3U_QgOVQ5zbPHHDuAYVs6DhxSvX_RTSLOX2cTOKXSSUAi3VAz5SCJVxHos-QLqS0G8SJmBTPWYukmc8lu8WL5BYcvkvmOKmm5ouk7H2flH9eR_sqr-s0ozVUSeNz-RFjVm7g5PuEBPFHNdlaChVWXcGR6gwlyXSgX_9YRKlphsCVVFs0ESZzedY9yQXBBGzZ7XxddxbM?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7k6GaQpAz4jzIrgtQYuO4Y3gvn9vLar9H_euA3IdmbW0J_lJm83aCWyAE4ulVEQXr7c2RDj0iq0qIA1YoX3L_F6dRdO7wmpkbSj32Wtu5WuUylyGQdtOuWn00OyQ0Nwr7kvceDQGHoUHiO_ce63zIiVhmaSFVM750kK6f_sPhC6FTZTXXz-q-CKtxHb0t7WgO2S7l2E4XqdTwT9qRPlsc6tp8mrBU6Jdegw7u4cXXKon4B4x9a99kb8RY?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.191321,41.1238765,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-10 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Kınalı 2.Gişe Öncesi - 01. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Be8TeUDitS2eezRyGANYcjdLqhpRrJ68sXaY1rAjfy9RpRPvXV30ckfYNsaWfnRt6Cg5sGucXDsa2mRU7pcz9tej2IxV9ktCDI3M2UMzEV1npbtWrat0mcsUDcuAU66SdsHv-nCar50sHLXnCHNixCLuJtT2fvMejJCKjYXEYWtOL1GeNvljNkNibpb7K8tiy-V43z1ZSxkY6RAcnR8a48nbkvwiHczwFdlnpmmU9Zi7Jn-Jx_BctZc0?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4cJla1kVdjRcFB3V24eDExs8pHiZpgA-DgeT9TOiT6ToDTl1UPU0GevwZYy5WDbiz4lUD-BMVR9EhXfxBBkAGCVVM7Iic5UarF7xrYTYzDMyhxD--am_2xhobGJ-V4X7O7O4ARUMriRCYUztoeFATCMme-gRThtqMpkKVM2LNbXoNzEFRb4LIFiD65pTJHTqNSfXinZ9b1mE7isMJF2NBeICNBCMTcF5lzrNyDPg65DwbbdxuKPBSNa5Y?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Be8TeUDitS2eezRyGANYcjdLqhpRrJ68sXaY1rAjfy9RpRPvXV30ckfYNsaWfnRt6Cg5sGucXDsa2mRU7pcz9tej2IxV9ktCDI3M2UMzEV1npbtWrat0mcsUDcuAU66SdsHv-nCar50sHLXnCHNixCLuJtT2fvMejJCKjYXEYWtOL1GeNvljNkNibpb7K8tiy-V43z1ZSxkY6RAcnR8a48nbkvwiHczwFdlnpmmU9Zi7Jn-Jx_BctZc0?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4cJla1kVdjRcFB3V24eDExs8pHiZpgA-DgeT9TOiT6ToDTl1UPU0GevwZYy5WDbiz4lUD-BMVR9EhXfxBBkAGCVVM7Iic5UarF7xrYTYzDMyhxD--am_2xhobGJ-V4X7O7O4ARUMriRCYUztoeFATCMme-gRThtqMpkKVM2LNbXoNzEFRb4LIFiD65pTJHTqNSfXinZ9b1mE7isMJF2NBeICNBCMTcF5lzrNyDPg65DwbbdxuKPBSNa5Y?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.199483,41.125184,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-11 Avrupa - Yavuz Sultan Selim Köprüsü İstikmeti Fenerköy Mevkii - 04. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vNoZgVCGr4Ifv0Edsuu9qgE1HxNbqiDZedBgV0S8tnYh26J4jjSa6lM11RAGljVnDtZtXspW62WotPMBiEPWKJEjRy6dOEwDMk8GBuZVMqnXRMzl_9wEtQPE5-lhaqohtbzA0gWnuTU7Qrvl_eUxwQ0veBSTR5bMiEG5RZBIOa-jkZzdwZr_JON_54V6pnG-w0ttkD-9yuSsCIF3X_M0aP-pxAgZdS4rcovgTkqHFbkKJ9SakUmsMrR0?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5H5ra_qaxP2E6jiTT41GUMd0eyujmgtrR9QkpaHVgoye0FS9Y8OHrOOnWLJtK8Uon6dxyUKkaRqVrVU7Jv09o844Lq3xSmdoUHsM6MH1eNAjp8C-YCjhjFxHP5ELA40KZQ1KgGtoAVqqlJ8Cwe1JCX6r7mP3PddyzbRjTPxhvQ2YYsOUTzPhrYMiywe7YQbzzFvOQsANliQBduxIUAidnHAv3mYI1MboTlYV_x4aLcJueAMiJm6pujo9k?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vNoZgVCGr4Ifv0Edsuu9qgE1HxNbqiDZedBgV0S8tnYh26J4jjSa6lM11RAGljVnDtZtXspW62WotPMBiEPWKJEjRy6dOEwDMk8GBuZVMqnXRMzl_9wEtQPE5-lhaqohtbzA0gWnuTU7Qrvl_eUxwQ0veBSTR5bMiEG5RZBIOa-jkZzdwZr_JON_54V6pnG-w0ttkD-9yuSsCIF3X_M0aP-pxAgZdS4rcovgTkqHFbkKJ9SakUmsMrR0?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5H5ra_qaxP2E6jiTT41GUMd0eyujmgtrR9QkpaHVgoye0FS9Y8OHrOOnWLJtK8Uon6dxyUKkaRqVrVU7Jv09o844Lq3xSmdoUHsM6MH1eNAjp8C-YCjhjFxHP5ELA40KZQ1KgGtoAVqqlJ8Cwe1JCX6r7mP3PddyzbRjTPxhvQ2YYsOUTzPhrYMiywe7YQbzzFvOQsANliQBduxIUAidnHAv3mYI1MboTlYV_x4aLcJueAMiJm6pujo9k?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.2418419,41.1365629,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-12 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Silivri Girişi, -09.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7lfjod25tuErbXe4x4u2-TBd_ba2Ocwi_o_mnVpvhMNhIUSanE-vmBVWyQzQyI0fm9Opht-dCaHY4d6QKmSem21-SELmMiwJkedbW4prR9mLOWGuZRuzrQfFaquB-sUVa9-MKlb3nMorMS0RQH8uP365Ycd5Nk3vjghRfQ588-B4QT7z0VV7o6K5wagKB9By6v2h0ybdzDVndGguKi3SQ1vJYADsZGvOT2McuEHqFUDmPpfZZ53FqO6CU?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6MXWETlhBb6UcQGVodH_nRE2AEwU7YFAWYaju8bmf2Ij480ZVf7xjMDkr08adfc7niol3VdmrS0T1ZLRcjQ92grw04WDJsS_3ciiAg2OJhNZfYA8mCWQWUXTea_m71bVlEcYsXfesSxMW7_HGJTPitOjcNYoQkFzfuFmYOK_Z_Yb3_LiuwUaobntkVqFwK_ojWDJJYRFx-CwAnCmV-dcip2z4jTthx3LQrfPU5ARuzi8yGNOo_K101BUA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7lfjod25tuErbXe4x4u2-TBd_ba2Ocwi_o_mnVpvhMNhIUSanE-vmBVWyQzQyI0fm9Opht-dCaHY4d6QKmSem21-SELmMiwJkedbW4prR9mLOWGuZRuzrQfFaquB-sUVa9-MKlb3nMorMS0RQH8uP365Ycd5Nk3vjghRfQ588-B4QT7z0VV7o6K5wagKB9By6v2h0ybdzDVndGguKi3SQ1vJYADsZGvOT2McuEHqFUDmPpfZZ53FqO6CU?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6MXWETlhBb6UcQGVodH_nRE2AEwU7YFAWYaju8bmf2Ij480ZVf7xjMDkr08adfc7niol3VdmrS0T1ZLRcjQ92grw04WDJsS_3ciiAg2OJhNZfYA8mCWQWUXTea_m71bVlEcYsXfesSxMW7_HGJTPitOjcNYoQkFzfuFmYOK_Z_Yb3_LiuwUaobntkVqFwK_ojWDJJYRFx-CwAnCmV-dcip2z4jTthx3LQrfPU5ARuzi8yGNOo_K101BUA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.292321,41.1433114,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-13 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Kara Murat Caddesi Öncesi - 12. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5aSH4Qa9RMOxSx9EccgVNFyExkxl2SOYkK9IMlKYirwwUK-v3wo4tcmsL0tPCkn9npo1cEPliKAVeOBC56sSYwy3D39ZIso-M4gsn5ZqygQhjbAi9ynFAUb5KPQ2zIInQtGrY2lHUjEzPQqYZdEwvS3S1OlERIoPcisWBzdG41fCgUQgNy__rsHJ8LzTwpsh3_qGYIzeS-G2O6zIq18EsBHenhBBw62teKYSdOpw5t_1b7i6ZQrSEJfos?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Ihzko8gXd3vCvkDf1KTBDjWeXXibaP8UxA6yvTWl8F2zL2oA_3DxWj12VWzoV2cxAEVEA25tG34HaDiCMJYBhdsB76nu3QahM9l6giVJ8U-uCDNDa5GqImKmN5LKq9py7JHmEEVHo7bcikylD4wJQLugfNSuwed_Lrio5vueq3rLFWrleHak9PX9AMDoCkJ2pCTFpHAkEmNnmKRSZCClJaz8sVFRz5pvaxY_GrsWL_VH3rSXIS993K9I?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5aSH4Qa9RMOxSx9EccgVNFyExkxl2SOYkK9IMlKYirwwUK-v3wo4tcmsL0tPCkn9npo1cEPliKAVeOBC56sSYwy3D39ZIso-M4gsn5ZqygQhjbAi9ynFAUb5KPQ2zIInQtGrY2lHUjEzPQqYZdEwvS3S1OlERIoPcisWBzdG41fCgUQgNy__rsHJ8LzTwpsh3_qGYIzeS-G2O6zIq18EsBHenhBBw62teKYSdOpw5t_1b7i6ZQrSEJfos?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Ihzko8gXd3vCvkDf1KTBDjWeXXibaP8UxA6yvTWl8F2zL2oA_3DxWj12VWzoV2cxAEVEA25tG34HaDiCMJYBhdsB76nu3QahM9l6giVJ8U-uCDNDa5GqImKmN5LKq9py7JHmEEVHo7bcikylD4wJQLugfNSuwed_Lrio5vueq3rLFWrleHak9PX9AMDoCkJ2pCTFpHAkEmNnmKRSZCClJaz8sVFRz5pvaxY_GrsWL_VH3rSXIS993K9I?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.338766,41.15152,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-14 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Çatalca, Kumburgaz Giriş - Çıkışı - 24. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4WCuf-EryiPc0HSeYPOi5268SNlffaeWqZjJiSTmXrQNFhaz2AxuUjQAuoJZH-fRdR3daaXaI9eEquWVxTsvzM3ft0fm-WcBM1PdAaObRtQBJvjLo-_DA11ZigIaESocVdOfM-vXEjlpGik4n2PsEEHMWtM6MRrckSpouv8ze4FRCFwxs6bODwto_p6hI1QuXJGLAm9b0HLsnMP8twRDykvJsn2zMzOlh2qDddSxebUXvYBgCOdo5PUyI?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6H-9jEAXGQ-b6pBiMf_ynwLxmLJDNYIhRmqKimsqY5is8W2M29SXa-dhPMpeHx-kjSEjtT9GADAMffbBlIGX6IVDGXoqw3hI9QpNrSsFU52Zl4yKinXB4mzA3YmInUUbprbxcy--yuY48cqqlw6iiY72rHu2zYiOhDTZA0tHeFejATNVffWxEgiZx_BtKbJSFlqQUJGJTFWstzzkSPX9mojEi2TrLoJEYmBMv8bX1NN6FlAYlZxJB1H5c?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4WCuf-EryiPc0HSeYPOi5268SNlffaeWqZjJiSTmXrQNFhaz2AxuUjQAuoJZH-fRdR3daaXaI9eEquWVxTsvzM3ft0fm-WcBM1PdAaObRtQBJvjLo-_DA11ZigIaESocVdOfM-vXEjlpGik4n2PsEEHMWtM6MRrckSpouv8ze4FRCFwxs6bODwto_p6hI1QuXJGLAm9b0HLsnMP8twRDykvJsn2zMzOlh2qDddSxebUXvYBgCOdo5PUyI?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6H-9jEAXGQ-b6pBiMf_ynwLxmLJDNYIhRmqKimsqY5is8W2M29SXa-dhPMpeHx-kjSEjtT9GADAMffbBlIGX6IVDGXoqw3hI9QpNrSsFU52Zl4yKinXB4mzA3YmInUUbprbxcy--yuY48cqqlw6iiY72rHu2zYiOhDTZA0tHeFejATNVffWxEgiZx_BtKbJSFlqQUJGJTFWstzzkSPX9mojEi2TrLoJEYmBMv8bX1NN6FlAYlZxJB1H5c?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.473184,41.169538,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-15 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Nakkaş Yolu Öncesi, - 31.Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6u-HBARWMI-R5SJN70u_edtK5V5koDUY8uucjv3huvgA_VET2DLSP9jUkNSzCdvqWsfqjnv26BAH2nQX1bvOstF0bLe3K9Gi2knco-UHgKtcFBgSnUxXqJ7VIa7-ga2IncQWBO3vjFiR1suTmS50UbsanyOzPnLTBNhjv7LUm-JEb6Yq7DtibcrkB7aXToDbnB0klRFynoov_s7u9EobxRaR49TArSXRIcSR5-VJ6JfbzYi4WtSHG4XVM?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X621gQpMrSdl04nDhscF2EKuoR8aVsz1YOpeh9R-EO01anCe9rv1BwPyFX7BXBOLcV93-auOP2icN21CJq2nz8r34GOjUh7cnolkBl5SB-UTd9RJ3kpy7bYRdlfY6XaTQMTAd6aN_vPgzLFkk56MbEcLKKVRad6e6g-u6Q9y6ALP_t9nWx8yK_sbMt52-qco9y2mIDmDVfOre7OSVsrm3pUn0Ft91tw9Nytz34crA9nXGKz1VzuTGRaV80?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6u-HBARWMI-R5SJN70u_edtK5V5koDUY8uucjv3huvgA_VET2DLSP9jUkNSzCdvqWsfqjnv26BAH2nQX1bvOstF0bLe3K9Gi2knco-UHgKtcFBgSnUxXqJ7VIa7-ga2IncQWBO3vjFiR1suTmS50UbsanyOzPnLTBNhjv7LUm-JEb6Yq7DtibcrkB7aXToDbnB0klRFynoov_s7u9EobxRaR49TArSXRIcSR5-VJ6JfbzYi4WtSHG4XVM?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X621gQpMrSdl04nDhscF2EKuoR8aVsz1YOpeh9R-EO01anCe9rv1BwPyFX7BXBOLcV93-auOP2icN21CJq2nz8r34GOjUh7cnolkBl5SB-UTd9RJ3kpy7bYRdlfY6XaTQMTAd6aN_vPgzLFkk56MbEcLKKVRad6e6g-u6Q9y6ALP_t9nWx8yK_sbMt52-qco9y2mIDmDVfOre7OSVsrm3pUn0Ft91tw9Nytz34crA9nXGKz1VzuTGRaV80?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.5541362,41.1740794,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-16 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti Yassı Ören Girişi Sonrası - 39. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-xM9AHR2FTeeIWLG5iqg29MniYPVcE0bXQNWe5UnFBx58rqu54DBb_l5CAsmzByr-lWa8xNsCCJvsCqmeCn1uySma2xwEJkeeFmKIQ4oAcTDLmvjzOqS97waoxKNrwSszryYDt_KFLvg20flyFBXxyQW-LGuutgN2HYDh1BsE-1HalVI4aTjFQDY4jOQgAEzNss17a8j-i5-nkuNH94UTJAIsBwaI63FHs8ZyE04oSzlAHnawrsI2x2U?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X79H1jH4qj8Ybbfw8gWo_hpaK2hc2Lv9ovoEpCe2saZ84POsDC4lK9BdeexZh144xmG_crfs_Y3wLbyq4jAAm0_zEWCIBynluSr5hvoRI926uqeEMHSynzZOJFVJQctrko7yziVDsyvZZsmOSpZTg6Tt_gOZwbmuLyJdLhb92gMjwN7AfEgh0jMtHWs8Gw8I-zMX9Jz0JZUEpJW6Otd99EDwog8RlCdXoYGmNq1qAY6Teif9xhcLb2IUiY?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-xM9AHR2FTeeIWLG5iqg29MniYPVcE0bXQNWe5UnFBx58rqu54DBb_l5CAsmzByr-lWa8xNsCCJvsCqmeCn1uySma2xwEJkeeFmKIQ4oAcTDLmvjzOqS97waoxKNrwSszryYDt_KFLvg20flyFBXxyQW-LGuutgN2HYDh1BsE-1HalVI4aTjFQDY4jOQgAEzNss17a8j-i5-nkuNH94UTJAIsBwaI63FHs8ZyE04oSzlAHnawrsI2x2U?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X79H1jH4qj8Ybbfw8gWo_hpaK2hc2Lv9ovoEpCe2saZ84POsDC4lK9BdeexZh144xmG_crfs_Y3wLbyq4jAAm0_zEWCIBynluSr5hvoRI926uqeEMHSynzZOJFVJQctrko7yziVDsyvZZsmOSpZTg6Tt_gOZwbmuLyJdLhb92gMjwN7AfEgh0jMtHWs8Gw8I-zMX9Jz0JZUEpJW6Otd99EDwog8RlCdXoYGmNq1qAY6Teif9xhcLb2IUiY?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.614198,41.229209,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-17 Avrupa - Yavuz Sultan Selim Köprüsü İstikameti İstanbul Havalimanı Giriş - Çıkışı - 55. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4EFfbny63iPITcAATxMsVxrC8kp4vDrGwMK4gMRjnwT4UzUJZolV8fSpsN1YcCLh1p_IN0st_O6btQmt_dvD-i2sBJzq-wOxE0xu5j7sw-buN8ThYf7BJQ90n54qjUjWnUWuREWYucDbsv-k1vMPnGz0AY6ku97LbDq_jQY4aT-_gJ4-VNgwnx1E_gHCVXbQS1Zc_Qlap2MEJqOFVhwd6kuRTtL1ho6p47MWrdyuHNVyt1x_EqrGqDLD0?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7H_adohrccJq27w6Y41U1RLeuheigW_Q5j_b6K6RAgvmxbB1-IVMTqYhfcW-bBO64nRdNn7Vty6wPwwfOFjKLIADxYhnUV_RM53wfzjIGMWukBMe3Z1n9b9Z3Yn5iqp5Lrx4S7H0C9fXqyOituFULuluqqeFfmIv_3Dl8FMYhJJ6h8axCHHe_1K3G4gYI6BbH9AVpZO6DyzjsfWMyEyjRCkITAD73Lfo9w_O4hYkFE3wHHLWjNMtjwjuY?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4EFfbny63iPITcAATxMsVxrC8kp4vDrGwMK4gMRjnwT4UzUJZolV8fSpsN1YcCLh1p_IN0st_O6btQmt_dvD-i2sBJzq-wOxE0xu5j7sw-buN8ThYf7BJQ90n54qjUjWnUWuREWYucDbsv-k1vMPnGz0AY6ku97LbDq_jQY4aT-_gJ4-VNgwnx1E_gHCVXbQS1Zc_Qlap2MEJqOFVhwd6kuRTtL1ho6p47MWrdyuHNVyt1x_EqrGqDLD0?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7H_adohrccJq27w6Y41U1RLeuheigW_Q5j_b6K6RAgvmxbB1-IVMTqYhfcW-bBO64nRdNn7Vty6wPwwfOFjKLIADxYhnUV_RM53wfzjIGMWukBMe3Z1n9b9Z3Yn5iqp5Lrx4S7H0C9fXqyOituFULuluqqeFfmIv_3Dl8FMYhJJ6h8axCHHe_1K3G4gYI6BbH9AVpZO6DyzjsfWMyEyjRCkITAD73Lfo9w_O4hYkFE3wHHLWjNMtjwjuY?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            28.799068,41.236824,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-18 Anadolu - Kurnaköy Gişeleri Sonrası Akyazı ( Adapazarı ) İstikameti - 01. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7Ck7kkgxZtX1kb2bhnVBn5lQa6LXxzaNKoQyxh5qoHhxYv-jLOXOAg6xITrwVrbOzPuH5N_rA9CYQGkHYcoMB6EHibhYvO9U5pat9SWBG5X-yVs61ysPjJijZcZSSUpQrgXOQ4iH7S65eu6q3Aw6g3zhtRFNJHpYDTd1OGCSjztDwhz2ODwcDKzTl-pkS75pl8OeUG8sCBd89E_a1_aDdu1f2vWAyvz6emrxjNNK2jFctimLSRqzFhJ0k?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Ri6Xi2sAeRwD5EnTQ47rDf-WScKdgGWAQPaMZRfl3do3DW8DbViEaSXtnXz_oEhi9lrnrMYPl1vwfhL0Ua6LYCZJQeLVGV6K-O8Cdz-JrkgXqmVNR9W2vmV_O3Sf869SQ_YwrrjXjLddfXXthVOS7MRr8BMIbaiwR8QCMwL0hmOrqtbdTdP0AATwYl8AzF0-_m8ctcAdNayC9uxY9vT7IYmJMV0XvXIGIzq84ZaAkyQ-4bzmioRkBTfA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7Ck7kkgxZtX1kb2bhnVBn5lQa6LXxzaNKoQyxh5qoHhxYv-jLOXOAg6xITrwVrbOzPuH5N_rA9CYQGkHYcoMB6EHibhYvO9U5pat9SWBG5X-yVs61ysPjJijZcZSSUpQrgXOQ4iH7S65eu6q3Aw6g3zhtRFNJHpYDTd1OGCSjztDwhz2ODwcDKzTl-pkS75pl8OeUG8sCBd89E_a1_aDdu1f2vWAyvz6emrxjNNK2jFctimLSRqzFhJ0k?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Ri6Xi2sAeRwD5EnTQ47rDf-WScKdgGWAQPaMZRfl3do3DW8DbViEaSXtnXz_oEhi9lrnrMYPl1vwfhL0Ua6LYCZJQeLVGV6K-O8Cdz-JrkgXqmVNR9W2vmV_O3Sf869SQ_YwrrjXjLddfXXthVOS7MRr8BMIbaiwR8QCMwL0hmOrqtbdTdP0AATwYl8AzF0-_m8ctcAdNayC9uxY9vT7IYmJMV0XvXIGIzq84ZaAkyQ-4bzmioRkBTfA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.341588,40.947039,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name><![CDATA[MGB-19 Anadolu - Akyazı ( Adapazarı ) İstikameti 2'ci Kurnaköy Gişeleri İlerisi - 03. Km]]></name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7eSOElYLlw1rJ2mTTpZ93G0zjge6Erx9LqzLFbswVfZbR_ebZ_k6ps4r19n-_f_09DJL6bXodCLv09oNEk_hgLCFTtgC_nUyh41Rb-UKevdEuqh8s--bJ3dGW9xjX5Z6IeELs8mRUl-04OMzIy-44hEtUnZIQRSNh6uawBoAlnO--LPfXzhJe0gE0YCYQj2E4GcuTxPEdnlEIvfswhrgbdcuBDx9EmqZPZB23_Jzcx_sHMOrd7Y7ZKzbU?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4DG-ANaDa6RWHePvXhbb-ZvTJmWSUtZDalieYJRwB-GxqL8bpGmWEiQqMRJHRvObxRTrvQ8TY302WoR509W2TeMSLvfRkeH4CId6oTadgdU-igzgpQi9Msm93mVNTRXOvijm2IcHNI-SCsr49iInk4arog4iztzzJy66OEydP6XwKC7o5NB70s9_RUUBjmIDf-6s-nIlZudYHGX9f-SYzf66vdBvBTPOK_lcGsOs8yGIUYbxXJvIK1dUM?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7eSOElYLlw1rJ2mTTpZ93G0zjge6Erx9LqzLFbswVfZbR_ebZ_k6ps4r19n-_f_09DJL6bXodCLv09oNEk_hgLCFTtgC_nUyh41Rb-UKevdEuqh8s--bJ3dGW9xjX5Z6IeELs8mRUl-04OMzIy-44hEtUnZIQRSNh6uawBoAlnO--LPfXzhJe0gE0YCYQj2E4GcuTxPEdnlEIvfswhrgbdcuBDx9EmqZPZB23_Jzcx_sHMOrd7Y7ZKzbU?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4DG-ANaDa6RWHePvXhbb-ZvTJmWSUtZDalieYJRwB-GxqL8bpGmWEiQqMRJHRvObxRTrvQ8TY302WoR509W2TeMSLvfRkeH4CId6oTadgdU-igzgpQi9Msm93mVNTRXOvijm2IcHNI-SCsr49iInk4arog4iztzzJy66OEydP6XwKC7o5NB70s9_RUUBjmIDf-6s-nIlZudYHGX9f-SYzf66vdBvBTPOK_lcGsOs8yGIUYbxXJvIK1dUM?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.360155,40.939112,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-20 Anadolu - Akyazı ( Adapazarı ) İstikameti Medeniyet Bulvarı, İstanbul Park Girişi Öncesi - 06. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6VKcBiAhsMTA_-WCDJLqTByQRJO9dQU3y-YtvpktnYu6gqRSFMMHpThEdmT6Zk7M4YxTOGFiu3vpJPlSadgQ5-fq0ZUerR_cJ-BAU27hJEGgTwJEIAUjeHTKVN4KqtnrlJIb_E5_u2stQcVPfP-wWkmzaaY6dXB3QS_evLsgy_JBdpYuydm71BrDsmIV5Ni8xgTE-z8d7taXVOL-hxOcZhZhsCYvtpFuUKsYikrftYS-0aRLXSbGa0F2w?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4RpSXeF60LTLZbFrzki0bxMCHQBd6dLmsIV3EbCGeRuL24FxAmRQGMQWdE6zDhXoQeLoBvSCeB_BoFsx9kM2shNzaVINF0zbv42p38Yr4SKfMum4gOnHmdD0Lhe10DAMInaR7Y1q0akC1CULXOH9vofmYyrz1_dqvRew8hFAd-vWXUtubuTfvT31-Er2PxR8_C0DVV_FOq4vyi5sXLzlN0adB3tHJNPBUzKNoTp7aPz-ckZFSxwgJJHAE?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6VKcBiAhsMTA_-WCDJLqTByQRJO9dQU3y-YtvpktnYu6gqRSFMMHpThEdmT6Zk7M4YxTOGFiu3vpJPlSadgQ5-fq0ZUerR_cJ-BAU27hJEGgTwJEIAUjeHTKVN4KqtnrlJIb_E5_u2stQcVPfP-wWkmzaaY6dXB3QS_evLsgy_JBdpYuydm71BrDsmIV5Ni8xgTE-z8d7taXVOL-hxOcZhZhsCYvtpFuUKsYikrftYS-0aRLXSbGa0F2w?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4RpSXeF60LTLZbFrzki0bxMCHQBd6dLmsIV3EbCGeRuL24FxAmRQGMQWdE6zDhXoQeLoBvSCeB_BoFsx9kM2shNzaVINF0zbv42p38Yr4SKfMum4gOnHmdD0Lhe10DAMInaR7Y1q0akC1CULXOH9vofmYyrz1_dqvRew8hFAd-vWXUtubuTfvT31-Er2PxR8_C0DVV_FOq4vyi5sXLzlN0adB3tHJNPBUzKNoTp7aPz-ckZFSxwgJJHAE?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.394852,40.93124,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-21 Anadolu - Akyazı ( Adapazarı ) İstikameti Cuma Köy, Liman Kavşağı Dilovası OSB Girişi Öncesi - 16. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X54PCp3nGpG-sBpi6Efrcme8w_rneXagHY3ZsVt5yUlYWGuIOiY3copa2od1zp__K3m3YBJhUKJMYpsKkkfntRygpH2pfUTTMJIeztgcQ5aVpfeXW_FnqZbeoVKPHbcM4aUuZ8hGFGGYhTYmIylV3YhRTFHIso1OHimJmdkzUnMri0FQd5ataA88Jt_oN9UlB1111kL2U0UIgQLOsJ9dLcjxNONOusHAS5XmzFZOTgiIMf85f21GfWW0QE?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4Wk1OQ9oxTN5DDSsgtCRqnae1zjpCybUzOOPuJy50KK0ikqzCBhEZW2MpPnm0tErOhTCb4v3mgaCQgcMEY5DxTyu1dZO86NRLOjQaHMdX4ruTljFf1gzgwNh5eB52KQbkfLefZC_Ph0_YNGLYsU9psYyVVOlu_QAOfbh-mHAFi_c2tF8fqfn7wNq4xlVT3dY8KXIii9nxwHW-cHr1JhncOqMYxcLkHxfJHapadlgYQbL5mnkc4p7gtv_c?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X54PCp3nGpG-sBpi6Efrcme8w_rneXagHY3ZsVt5yUlYWGuIOiY3copa2od1zp__K3m3YBJhUKJMYpsKkkfntRygpH2pfUTTMJIeztgcQ5aVpfeXW_FnqZbeoVKPHbcM4aUuZ8hGFGGYhTYmIylV3YhRTFHIso1OHimJmdkzUnMri0FQd5ataA88Jt_oN9UlB1111kL2U0UIgQLOsJ9dLcjxNONOusHAS5XmzFZOTgiIMf85f21GfWW0QE?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4Wk1OQ9oxTN5DDSsgtCRqnae1zjpCybUzOOPuJy50KK0ikqzCBhEZW2MpPnm0tErOhTCb4v3mgaCQgcMEY5DxTyu1dZO86NRLOjQaHMdX4ruTljFf1gzgwNh5eB52KQbkfLefZC_Ph0_YNGLYsU9psYyVVOlu_QAOfbh-mHAFi_c2tF8fqfn7wNq4xlVT3dY8KXIii9nxwHW-cHr1JhncOqMYxcLkHxfJHapadlgYQbL5mnkc4p7gtv_c?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.511024,40.91495,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-22 Anadolu - Akyazı ( Adapazarı ) İstikameti Osmangazi Köprü Ayrımı Sonrası - 21. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6BQNX-8eBSopKwcSV-1PEwnJdT9CSzAPRSHiMK7E-jgexeeDXIZdDvaoRcuvus4cQNNom47SkS6zzrthgKj8HmnDJFFYSva_QEh1m64JbQcZd_4nI_ngXfyQLlrIHio42ClY4PoxSN1Ae859uQYY1L_1S4dGEmF9SzgHyScvxdmWL1YbAGM7FM6lO4cgoBQOz7-nxgHBt2XSbuwVi2PZ-GVq1RmmjnqZRd7tSxShsnPrTM5CquInT1vw4?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5ysOy6TYgzx9LNCDLw3zm63_-NdMuTUMWHL51885CCttWtcaBTgnla4mlS1V4V162tr1H0bekPWsAsBc8Y2pzKC89p1ih6DAAYMCakj5dPQju--tqt4ryKv7gWG1yqVFovR4QMstBbb4qDp4ruou-fPLGeOWEtFjrrthZ4ZsZPiUcXrFGRteYH6xxbtbYs6OzvKkrVR5i3sPETY3J9FDz35B5uzNAWqDJoA99wOTh4fLLROPNvxUSpM2o?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6BQNX-8eBSopKwcSV-1PEwnJdT9CSzAPRSHiMK7E-jgexeeDXIZdDvaoRcuvus4cQNNom47SkS6zzrthgKj8HmnDJFFYSva_QEh1m64JbQcZd_4nI_ngXfyQLlrIHio42ClY4PoxSN1Ae859uQYY1L_1S4dGEmF9SzgHyScvxdmWL1YbAGM7FM6lO4cgoBQOz7-nxgHBt2XSbuwVi2PZ-GVq1RmmjnqZRd7tSxShsnPrTM5CquInT1vw4?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5ysOy6TYgzx9LNCDLw3zm63_-NdMuTUMWHL51885CCttWtcaBTgnla4mlS1V4V162tr1H0bekPWsAsBc8Y2pzKC89p1ih6DAAYMCakj5dPQju--tqt4ryKv7gWG1yqVFovR4QMstBbb4qDp4ruou-fPLGeOWEtFjrrthZ4ZsZPiUcXrFGRteYH6xxbtbYs6OzvKkrVR5i3sPETY3J9FDz35B5uzNAWqDJoA99wOTh4fLLROPNvxUSpM2o?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.556672,40.893697,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-23 Anadolu - Akyazı ( Adapazarı ) İstikameti Köseler Mevki, - 23.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Hj4IA0ydDdYD1PdfqHL3uoFGaPqiPdRxu7xIshIycXX93rLP2Kg4DMxzF1Jwq8D9l0t04xh68eHLblZfokBnMCcj6B_XwbcWYJSPVIeAjE9nkf_WqZxb34Mcd6dBfUtCxRv7Jj8mkgfsFsg8E6XbABLmQWA3iqDb4JU4xXZrnHbLpcVnjy3OONVo2ds2QFr0KGfD9qxPyoXU-T0xPsRc7tL88Khip49zenyVFhxU3SU5eqsRdazYfr0w?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X73q--8C0pvfNbt7OxH6CpWkkYryJm9IloB3ksvTMzqux8IF8jgPMq5KZRjmmo-6WojDjxalwrypuKUp5AUoFzg7AlauMxudbTgmORGgMrkwjRl_DOhVFj5BFiKZurz3DPlqHKsL-bbiFHD1HNYMmHQOHpPcARrtPCNJcekNKAuGaMmkXuZp6MSbx1C6UD0jeWrEWLY422lWZojSKGkxJT6eX0DQYJHvbZYWzU21nkMTvqRMtlCiC0aCg8?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Hj4IA0ydDdYD1PdfqHL3uoFGaPqiPdRxu7xIshIycXX93rLP2Kg4DMxzF1Jwq8D9l0t04xh68eHLblZfokBnMCcj6B_XwbcWYJSPVIeAjE9nkf_WqZxb34Mcd6dBfUtCxRv7Jj8mkgfsFsg8E6XbABLmQWA3iqDb4JU4xXZrnHbLpcVnjy3OONVo2ds2QFr0KGfD9qxPyoXU-T0xPsRc7tL88Khip49zenyVFhxU3SU5eqsRdazYfr0w?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X73q--8C0pvfNbt7OxH6CpWkkYryJm9IloB3ksvTMzqux8IF8jgPMq5KZRjmmo-6WojDjxalwrypuKUp5AUoFzg7AlauMxudbTgmORGgMrkwjRl_DOhVFj5BFiKZurz3DPlqHKsL-bbiFHD1HNYMmHQOHpPcARrtPCNJcekNKAuGaMmkXuZp6MSbx1C6UD0jeWrEWLY422lWZojSKGkxJT6eX0DQYJHvbZYWzU21nkMTvqRMtlCiC0aCg8?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.584029,40.888421,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-24 Anadolu - Akyazı ( Adapazarı ) İstikameti Pak Hava Kooparatif Mevki - 26.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5QWl15VedUzj4XPDViBnD6JOHZ3aJdpRGT5UWJnGG0c5H545kQyb7Ip-oGVTlHGr78MXHNb8Jcu5q3d3VTFjCGKfLpMhuySigy_trYxf7cbc_x2TuW1AAvK10MnFnWFQJUF4pXWZeh79_E6UVU-VzJ_FsiOaeynmt3ORqfWXzyTQoWLJMbws6TSPkhUEG1taXjPFlJnUC4T28rG3bfIv2OfkhQ8UbnyfxLf_WZzvDWC26c_dOkF4Fa7NA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5JppxzVn1UriNTL0BcRQN5qESIY5BpCy604gBW__6mVIUPnh0ueEE0Iyu8pJb9JUbLdz92Q9B3banbSuMXS4KlU_gk1fLC2k8u_4tie0JE84ZjD47ov6sPmemJ7eOsPONkPXd2771SSzCnC9x32b3tiiwf_khDIa3B4s2zHdCDfuA-RP2ygMKCK6KgXbnXojEkUcKMcySREL-u1IYE8vdmz-zOKxtXtulFZMY9FjylcFH94jE0-d_zAY0?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5QWl15VedUzj4XPDViBnD6JOHZ3aJdpRGT5UWJnGG0c5H545kQyb7Ip-oGVTlHGr78MXHNb8Jcu5q3d3VTFjCGKfLpMhuySigy_trYxf7cbc_x2TuW1AAvK10MnFnWFQJUF4pXWZeh79_E6UVU-VzJ_FsiOaeynmt3ORqfWXzyTQoWLJMbws6TSPkhUEG1taXjPFlJnUC4T28rG3bfIv2OfkhQ8UbnyfxLf_WZzvDWC26c_dOkF4Fa7NA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5JppxzVn1UriNTL0BcRQN5qESIY5BpCy604gBW__6mVIUPnh0ueEE0Iyu8pJb9JUbLdz92Q9B3banbSuMXS4KlU_gk1fLC2k8u_4tie0JE84ZjD47ov6sPmemJ7eOsPONkPXd2771SSzCnC9x32b3tiiwf_khDIa3B4s2zHdCDfuA-RP2ygMKCK6KgXbnXojEkUcKMcySREL-u1IYE8vdmz-zOKxtXtulFZMY9FjylcFH94jE0-d_zAY0?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.621562,40.894625,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-25 Anadolu - Akyazı ( Adapazarı ) İstikameti Sevindikli Giriş - Çıkışı - 38. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6pbXCgF5Iuwkq-O5hNlNMxyaDs-ptCEV889OLhfZYxwyVHL7VD9jQqars4FQ0o6yS_kxEJo0SXMSh3f4BQZQM1GSNo-thqTdBkT_ECLS90fJdmayuAYrTtfK7Lr88OaYsebK4OxtylYvf1AHjQoWpfEAPsy16f0USlhu4tpCbmCtAjsENAQ-hcx3AVgF5tAfvRRm8VCSSrI_LlIRsIrFd5mCDwqJIRhPSjX0FMuMW6oRvyq_iz1hhMjS8?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7dTtW6fCPvuBloSMcbDSrgG51SxBW6tv5HoIbn2-ROB2Be4Jh68sSZK7es6duEK_MXGca0KO2oxm96PZkt-RXs4r5UcUtMCLJlvmWix2jvSiUBNK_4zVv149YhXI6sTdxgcpwxfS-3t70QqHFxJKkLrLLa4sX0Vr5-BawkngHiiImt5gHzevHRm6ccQwUXAX-lLtkly8anODj2tkZCwyHNrHOhQUqMzepAX-TtG2lPW-aRamPAKMsLthg?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6pbXCgF5Iuwkq-O5hNlNMxyaDs-ptCEV889OLhfZYxwyVHL7VD9jQqars4FQ0o6yS_kxEJo0SXMSh3f4BQZQM1GSNo-thqTdBkT_ECLS90fJdmayuAYrTtfK7Lr88OaYsebK4OxtylYvf1AHjQoWpfEAPsy16f0USlhu4tpCbmCtAjsENAQ-hcx3AVgF5tAfvRRm8VCSSrI_LlIRsIrFd5mCDwqJIRhPSjX0FMuMW6oRvyq_iz1hhMjS8?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7dTtW6fCPvuBloSMcbDSrgG51SxBW6tv5HoIbn2-ROB2Be4Jh68sSZK7es6duEK_MXGca0KO2oxm96PZkt-RXs4r5UcUtMCLJlvmWix2jvSiUBNK_4zVv149YhXI6sTdxgcpwxfS-3t70QqHFxJKkLrLLa4sX0Vr5-BawkngHiiImt5gHzevHRm6ccQwUXAX-lLtkly8anODj2tkZCwyHNrHOhQUqMzepAX-TtG2lPW-aRamPAKMsLthg?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.759376,40.876699,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-26 Anadolu - Akyazı ( Adapazarı ) İstikameti Sevindikli Girişi Sonrası, Korucular Mevki, 44.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X50OUUCyYSsl41dPEZe78VzjF-YMkY47BJCXdrYpa-wQnKajI0Nw6_vxPyn5yXXReP81cwywv8WppirE2Vdn5dTmp0OWWE3GJ-j7M_fln-ksS-KoW3YGSpUtyBHP-oar1Dw9BS6UC7p-4Xj8Xr7QP0b7Ki0kirtF1MQiHqNx2zaxPZBiR9M5uT9XL7Eu0QDe8alRgLAcG78hm5vC_DnRi7cQm8qoUM3nAQVCEeUl7PDIVXlpZSL-KM7jBA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5uzdOemLgurxbksJTUyT71O1P2UHOhhS60ETLA0z42vpOzXy0izI85heH7BBp1VcdlIffUIWs-iBPjCk7P9IDxHpDUujUCOj5WIQma66aqujSyFAi73hiz27ownKCyz0Anh4R_3_ih8LP7LU8BrQE_BSHPNDjjDm8gNHWaLbevj6s--Sb4li4lpKlNLbtjZ9nwfpSzhQ0SUanXjAGt6qqUK5vt0EHzZVKa5PBDAGI3kF8Nc3k6sGzkzhc?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X50OUUCyYSsl41dPEZe78VzjF-YMkY47BJCXdrYpa-wQnKajI0Nw6_vxPyn5yXXReP81cwywv8WppirE2Vdn5dTmp0OWWE3GJ-j7M_fln-ksS-KoW3YGSpUtyBHP-oar1Dw9BS6UC7p-4Xj8Xr7QP0b7Ki0kirtF1MQiHqNx2zaxPZBiR9M5uT9XL7Eu0QDe8alRgLAcG78hm5vC_DnRi7cQm8qoUM3nAQVCEeUl7PDIVXlpZSL-KM7jBA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5uzdOemLgurxbksJTUyT71O1P2UHOhhS60ETLA0z42vpOzXy0izI85heH7BBp1VcdlIffUIWs-iBPjCk7P9IDxHpDUujUCOj5WIQma66aqujSyFAi73hiz27ownKCyz0Anh4R_3_ih8LP7LU8BrQE_BSHPNDjjDm8gNHWaLbevj6s--Sb4li4lpKlNLbtjZ9nwfpSzhQ0SUanXjAGt6qqUK5vt0EHzZVKa5PBDAGI3kF8Nc3k6sGzkzhc?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.8189682,40.8639161,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-27 Anadolu - Akyazı ( Adapazarı ) İstikameti Durhasan İzmit ( Doğu ) Kavşağı Girişi Sonrası (Total Benzinlik Öncesi ) - 65. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-bYA1Sh8pAZ89xyRFQuNExL9F_Teox190yid_v_jfC_1pwF2bGwyxnaqx0EfcoWQ5OLFhnTmOvnkNP53XsL_5KxRVJYgHGncb3A0sTNgdRFL7uxJMOtHlHAkHEdkC_dTlGpWvQqgxF0z08mbXlfJgWYvtwObU9bJIZvudE2vyans-1Ubn86zvWTyMzY_NvDdPUc-3g1mx-gjOryngNKMM0fdWoUoxX7rY-Czab8CcRKXEGQ0R8NEVdCU?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4tRnzymsJDFU6aEIXU3ZlTOjAMNSdBpmGfWSppTIeIyk-HQjpjtSV1NVjIApEMERrEr8tkBxo7wDI6gbLjrFlvQ8XwiXaVARX-f6lDoOXB9sw_HMPaEd-dV37iWOFkYwNlw0qgyuAhv6BIoBTwWSm8U7BxiPWLQqsTCgQ3bOnXF3pMh2gpE1Xo0eMNR3LbZ3euLlizi4VhQQFyXk7GlE6rRgGhqK80c28gpcXBa9mMgLODJzC_ylW89gw?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-bYA1Sh8pAZ89xyRFQuNExL9F_Teox190yid_v_jfC_1pwF2bGwyxnaqx0EfcoWQ5OLFhnTmOvnkNP53XsL_5KxRVJYgHGncb3A0sTNgdRFL7uxJMOtHlHAkHEdkC_dTlGpWvQqgxF0z08mbXlfJgWYvtwObU9bJIZvudE2vyans-1Ubn86zvWTyMzY_NvDdPUc-3g1mx-gjOryngNKMM0fdWoUoxX7rY-Czab8CcRKXEGQ0R8NEVdCU?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4tRnzymsJDFU6aEIXU3ZlTOjAMNSdBpmGfWSppTIeIyk-HQjpjtSV1NVjIApEMERrEr8tkBxo7wDI6gbLjrFlvQ8XwiXaVARX-f6lDoOXB9sw_HMPaEd-dV37iWOFkYwNlw0qgyuAhv6BIoBTwWSm8U7BxiPWLQqsTCgQ3bOnXF3pMh2gpE1Xo0eMNR3LbZ3euLlizi4VhQQFyXk7GlE6rRgGhqK80c28gpcXBa9mMgLODJzC_ylW89gw?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.043018,40.792482,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-28 Anadolu - Akyazı ( Adapazarı ) İstikameti Karaabdülbaki Mevki - 73. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4X1rQpf55_oidAzZk9OYFnNP48QEqhGWid6PUM4TSXSK_8_ueCAC3QlWsi45fKX1w-39-SrfvsmzZ_eBQKNRAAElm-dKn5PGgFDbJQ3r2KaYLeUeg9MVGt3Py6PblIAlEhkJtXK2u1hZUBkTAvx7pDF4MOlHm_QYDN2q6hFHwiVUJ-v6masyGxsh3Q4-BJq_CQPjXP0atk3Uk0mW8GNAeUYbJ9DM0dz1Ub7XZFL_eZrMK4kRVcVg-sZaI?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5HfVNHOPMwyUPnpqsZimID28e_kSCcOhK1DaurhML3M_lLto-Eh7s2cVTdql5KtIJdClXMoNC_FxvmpQZi4rElY0TDaMu8wZgnwsD6SWzrupzL1YtZQp5Kfqogx3CqTY8fxGKTypf6TJXH_QistAUHC1uZlcBRUGf7f8ykauz9Z11Xab2yRvsWDHiYWQ4seNJy4cAHM4Zk2nhBfW03rWdXPZNnvY6w7KHjQx4c0M63lOaaD3ZITLdMszA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4X1rQpf55_oidAzZk9OYFnNP48QEqhGWid6PUM4TSXSK_8_ueCAC3QlWsi45fKX1w-39-SrfvsmzZ_eBQKNRAAElm-dKn5PGgFDbJQ3r2KaYLeUeg9MVGt3Py6PblIAlEhkJtXK2u1hZUBkTAvx7pDF4MOlHm_QYDN2q6hFHwiVUJ-v6masyGxsh3Q4-BJq_CQPjXP0atk3Uk0mW8GNAeUYbJ9DM0dz1Ub7XZFL_eZrMK4kRVcVg-sZaI?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5HfVNHOPMwyUPnpqsZimID28e_kSCcOhK1DaurhML3M_lLto-Eh7s2cVTdql5KtIJdClXMoNC_FxvmpQZi4rElY0TDaMu8wZgnwsD6SWzrupzL1YtZQp5Kfqogx3CqTY8fxGKTypf6TJXH_QistAUHC1uZlcBRUGf7f8ykauz9Z11Xab2yRvsWDHiYWQ4seNJy4cAHM4Zk2nhBfW03rWdXPZNnvY6w7KHjQx4c0M63lOaaD3ZITLdMszA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.132939,40.791119,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-29 Anadolu - Akyazı ( Adapazarı ) İstikameti Sapak Pınar Mevkii - 76. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7vFzXnADyCGnIqEK71g0q9JBSDCoRr3NdILYgx4vjsvBZU-YJpViwmPOzsws-nLo1khpXTFOyWql3vI_Nm5imqlEfEopu5zWtPDgEEhl5siCaC2L6eWBElS1QKqQnhpV_m4TSQo6jP520BbrOncEL0t8cePeeD4g1YgiATqdjxeQ5O4-r4ry-uWqCAiAEh5Lr35EoSPzwtgUx0M1dsjzpSCODvYZGPekFnMsEZEKtABOSRLhcX8CfZXhY?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7LNphCXGNaE55ZjV4pgSKedXTgf1yKfIZbFEfd6dxySG7FEMmJFOhaX1RUTeczKpM316pnJ2_RCFOu6kv78Utm3Cs0yG2Gncjpc0k0unWOOjRt2pC-X0BvO31J7e_zXsMim8Q3nOHvaFV-ZLTwR8Cy4dfNgWJHnXwyNQDpf6RsKIl-0fQhkE2QFk4ACikXbVBc6x5EQ5H31cch73Q15qt7ifkiRnnsrtRNAOf1AOOT2sfgl3TcU0ca9fk?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7vFzXnADyCGnIqEK71g0q9JBSDCoRr3NdILYgx4vjsvBZU-YJpViwmPOzsws-nLo1khpXTFOyWql3vI_Nm5imqlEfEopu5zWtPDgEEhl5siCaC2L6eWBElS1QKqQnhpV_m4TSQo6jP520BbrOncEL0t8cePeeD4g1YgiATqdjxeQ5O4-r4ry-uWqCAiAEh5Lr35EoSPzwtgUx0M1dsjzpSCODvYZGPekFnMsEZEKtABOSRLhcX8CfZXhY?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7LNphCXGNaE55ZjV4pgSKedXTgf1yKfIZbFEfd6dxySG7FEMmJFOhaX1RUTeczKpM316pnJ2_RCFOu6kv78Utm3Cs0yG2Gncjpc0k0unWOOjRt2pC-X0BvO31J7e_zXsMim8Q3nOHvaFV-ZLTwR8Cy4dfNgWJHnXwyNQDpf6RsKIl-0fQhkE2QFk4ACikXbVBc6x5EQ5H31cch73Q15qt7ifkiRnnsrtRNAOf1AOOT2sfgl3TcU0ca9fk?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.169083,40.807329,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-30 Anadolu - Akyazı ( Adapazarı ) İstikameti Adapazarı Servis Alanı, Shell Benzinlik Öncesi - 86. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4oeq4vR9Ptj0zsWU2Saz4Vqx8Y1dNSGVF0i1boDtHKnkUAcN-sXglNbfaklpVKyL7dQLJRaKk1sHfHcowgO-8A1qeQ5Bz9Z6i8D5Xabhw2a2NjoU1-1rhZgHi_1pOWwAnYV9b0Wj7AjLehzA8l2Tr1ZZnwpojdL7EA0dxHiv7V9xVuAErsu0_5xGg6xRHMMMu9ezlkg4YEo8t7P9G5n9KJ283gkrZnq2u7a82G21U1QfBh9FWGmKpRlsk?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6LiFTd2cOGAOlvmxZt9N5M8CQ1nBPtWqxFwSXRRpv0VKNh9rAYf3A3IV2afISRZBuXv8WGDBl3EU5-E4ekZXOOLfQ-9WSPuQPzl9OB1iHTP0s0DzM6QNLN8Hg8OYN_Z_pDbdtXMQ5sapmRK-J7CHcMy8VIc4jypUrfwVSqrdhwVmYI93JCM8D1FroX88IHwCQ7igmp6_i5lyFYgMiOSPmgeWPpiII_YXw7NOVyrURDtEnmLa43icsO9aA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4oeq4vR9Ptj0zsWU2Saz4Vqx8Y1dNSGVF0i1boDtHKnkUAcN-sXglNbfaklpVKyL7dQLJRaKk1sHfHcowgO-8A1qeQ5Bz9Z6i8D5Xabhw2a2NjoU1-1rhZgHi_1pOWwAnYV9b0Wj7AjLehzA8l2Tr1ZZnwpojdL7EA0dxHiv7V9xVuAErsu0_5xGg6xRHMMMu9ezlkg4YEo8t7P9G5n9KJ283gkrZnq2u7a82G21U1QfBh9FWGmKpRlsk?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6LiFTd2cOGAOlvmxZt9N5M8CQ1nBPtWqxFwSXRRpv0VKNh9rAYf3A3IV2afISRZBuXv8WGDBl3EU5-E4ekZXOOLfQ-9WSPuQPzl9OB1iHTP0s0DzM6QNLN8Hg8OYN_Z_pDbdtXMQ5sapmRK-J7CHcMy8VIc4jypUrfwVSqrdhwVmYI93JCM8D1FroX88IHwCQ7igmp6_i5lyFYgMiOSPmgeWPpiII_YXw7NOVyrURDtEnmLa43icsO9aA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.2649489,40.8450888,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-31 Anadolu - Akyazı ( Adapazarı ) İstikameti Karapınar Mevkii, Adapazarı Kavşağı Öncesi - 90. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4Q0x_4Mj0xGPEztAsAaNCr6m4OSh-EjGVdcYiaRFUx4_nRY1lm6Vp7PN_Ixtfqn-KJb0YpPDdBufG2o9XtlgFw7Sf0C0_UZdyQblEWikmF02J51YRkAq2pmTdMSKUYnKxfMknfoV4X4wa9Fk0i-Xut-PE13UbgTTwoWhoWgaJljIxnYPs1tX91rO6L3vlVx0fPIhfkaRSNJU_UhRf27Fu4lFG45ZboWnq2zbsX7q0s369SliSntrPhRFs?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-_T04fZof-s4ArniFLFoYG3AXsOLjV-WATY3TqscW9NABo-OHj08reSqOXO9xVUL_Erh81dkJjEWVHJsrGIn9m88yFYgUjsgjqG6TBZLLdnwkKUuDY4viuTBQVOVGI50pWp4DFL5KFoWhQkQlRzQxBphKxAIZM7ekheM4ndjJooWbZsGQdirN-41QOU3Jxq3R8lzNnhXOW-CRNjN_fuVXyTc84ZFQsK8FhvD5VWR7eMrTJ4gbEHtqVkw?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4Q0x_4Mj0xGPEztAsAaNCr6m4OSh-EjGVdcYiaRFUx4_nRY1lm6Vp7PN_Ixtfqn-KJb0YpPDdBufG2o9XtlgFw7Sf0C0_UZdyQblEWikmF02J51YRkAq2pmTdMSKUYnKxfMknfoV4X4wa9Fk0i-Xut-PE13UbgTTwoWhoWgaJljIxnYPs1tX91rO6L3vlVx0fPIhfkaRSNJU_UhRf27Fu4lFG45ZboWnq2zbsX7q0s369SliSntrPhRFs?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-_T04fZof-s4ArniFLFoYG3AXsOLjV-WATY3TqscW9NABo-OHj08reSqOXO9xVUL_Erh81dkJjEWVHJsrGIn9m88yFYgUjsgjqG6TBZLLdnwkKUuDY4viuTBQVOVGI50pWp4DFL5KFoWhQkQlRzQxBphKxAIZM7ekheM4ndjJooWbZsGQdirN-41QOU3Jxq3R8lzNnhXOW-CRNjN_fuVXyTc84ZFQsK8FhvD5VWR7eMrTJ4gbEHtqVkw?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.303224,40.843149,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-32 Anadolu - Akyazı ( Adapazarı ) İstikameti Karakamış Mevkii, Adapazarı, Kandıra, Karaman Giriş - Çıkışı - 94. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7K0C7QqhTObGwtAS37BquTQSNPybP609pOTQrFz-XJckt8h_zJzqivusAEB0JCaEJgwsyW1zSHgQ1L2y3OUgw2NigEOvZ4GG-bCvqd0HKmKXqeBxZtL0g4IMEpLJD1EsH8GsQEerR4n6LnpvkUlTM9nmZXE1tCNFzVtg2IkgmEnIyBvhbUhozIH31SEAeUb8eoK31P5MN1yV2AzoWbfxqVAtLBH43BCJ-Vp5mKjoH6M6rmgpoPyvu2a4E?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vxJL-QwoCHyTsmU4bwwDU121TwFPHvKLBmd5LFJ2kU9vrcWlDErzG8LkNKMjSZn4huc3yDw4TCvgnz__JEvSZW0-KNOD_8V5HH_EDkXrLOwebefbIFjdx_w7M1fjkuwuNGdZ26UGWmtXtxsOlE4R5D3Rwod58Gq4biJi0yn-m911EV3HZjeuovrj8ibm3LcCkqjP4RW2dpDirJkCm7Pnpa7BzsoR5Ezt0b1oJKFBCkdQFymLe0hm6oHg?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7K0C7QqhTObGwtAS37BquTQSNPybP609pOTQrFz-XJckt8h_zJzqivusAEB0JCaEJgwsyW1zSHgQ1L2y3OUgw2NigEOvZ4GG-bCvqd0HKmKXqeBxZtL0g4IMEpLJD1EsH8GsQEerR4n6LnpvkUlTM9nmZXE1tCNFzVtg2IkgmEnIyBvhbUhozIH31SEAeUb8eoK31P5MN1yV2AzoWbfxqVAtLBH43BCJ-Vp5mKjoH6M6rmgpoPyvu2a4E?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vxJL-QwoCHyTsmU4bwwDU121TwFPHvKLBmd5LFJ2kU9vrcWlDErzG8LkNKMjSZn4huc3yDw4TCvgnz__JEvSZW0-KNOD_8V5HH_EDkXrLOwebefbIFjdx_w7M1fjkuwuNGdZ26UGWmtXtxsOlE4R5D3Rwod58Gq4biJi0yn-m911EV3HZjeuovrj8ibm3LcCkqjP4RW2dpDirJkCm7Pnpa7BzsoR5Ezt0b1oJKFBCkdQFymLe0hm6oHg?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.350014,40.841212,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-33 Anadolu - Akyazı ( Adapazarı ) İstikameti Dağdibi Mevkii, Karasu Kavşağı Öncesi - 99. Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6bUuOy5S3ArQ7UFC6Zh7nr-BMqGFur5s6B4QjReR17jc88-vifXrXuTk4a84IoU4-RI1ZT1Zse7iRH2XYxAbgwrQHEQY89lpe_wE1H0CxdZg7oBbMupzElV9GdtrDsZdAlaryteF5fCIiqhxjd0RUEuBu1pg70Cmd5jAHxDnqnLGp_9QrZ9k2qmFTC2Zwjk9AJJQT5nOvTvE5yuMjuX07B9JUPCceR336CKye0yp1QTbR-HfaqrjgdCp4?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6BYikeF5BeihsjbStJ8NGlB4umAqvbSLjOtuE-AdKX2vH506D0zOVJ2g7nKGfL7V9ItK7SCqaqK6SIMRZjQ305d18WagbDpcbnQeia7UqKJ62gDl4Pk50_f272W1wVqeaKkRfjCegjzNLju3Z7l0TgvrvIW_wCThnuOds0eWh6qXjJzifeb28xMLBVF9eT4BawJn9JfGoenPRhSCkJ_BeqU0kL0bXyyBmc3KzLnFUDFysRU_0DMdohaHo?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6bUuOy5S3ArQ7UFC6Zh7nr-BMqGFur5s6B4QjReR17jc88-vifXrXuTk4a84IoU4-RI1ZT1Zse7iRH2XYxAbgwrQHEQY89lpe_wE1H0CxdZg7oBbMupzElV9GdtrDsZdAlaryteF5fCIiqhxjd0RUEuBu1pg70Cmd5jAHxDnqnLGp_9QrZ9k2qmFTC2Zwjk9AJJQT5nOvTvE5yuMjuX07B9JUPCceR336CKye0yp1QTbR-HfaqrjgdCp4?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6BYikeF5BeihsjbStJ8NGlB4umAqvbSLjOtuE-AdKX2vH506D0zOVJ2g7nKGfL7V9ItK7SCqaqK6SIMRZjQ305d18WagbDpcbnQeia7UqKJ62gDl4Pk50_f272W1wVqeaKkRfjCegjzNLju3Z7l0TgvrvIW_wCThnuOds0eWh6qXjJzifeb28xMLBVF9eT4BawJn9JfGoenPRhSCkJ_BeqU0kL0bXyyBmc3KzLnFUDFysRU_0DMdohaHo?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.408278,40.820406,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-34 Anadolu - Akyazı ( Adapazarı ) İstikameti Tekeler Mevkii, Karasu Kavşağı Girişi Sonrası - 101. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Fc5ZCbWcXN3qoNsgnwYXIlm2QQQ6H97sEHOUfv0_8d2VGFa5OcsAHuSvhbYNIa0Zn3laXeVLn16JTCuiiWw6MIm2jWMRZqimlKRYmkSjkMjZEgD6xgwkizGRUaguD5EGDpsYTlAUARJ_w5SLC2a4eu_WOu5_QLId2VYvK_0_dtnLFB-tptIsOBqhYHiDNRE_Bw8qfWjS6cnu0ZDGNkBmhLV-XwvF6o4OOdONS8bZ5ILeVuAil1_u0kHs?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XVYjhgbwZMM33skSaNR5TFgOC8WhLxTz16sLhQLJxvRIGl6KNNUNFq2fQjproJUGE_gYJZBz1Xz6bvFH5eYM09Se4C9MQNjyGERpeEnPJKqzHFMfdXkJPMLHFJouWuwWmNP3JQISpIDZINBF_FMF__KMk4ah6m6Phvd371VsZVMkqkYThT7BKr2r-Lp-hW1tYNJ7wb9nAnt29MXY7G3bnZLxIA8Okw1hbhtLmgMPyARxE0uKQy2j5c_E?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5Fc5ZCbWcXN3qoNsgnwYXIlm2QQQ6H97sEHOUfv0_8d2VGFa5OcsAHuSvhbYNIa0Zn3laXeVLn16JTCuiiWw6MIm2jWMRZqimlKRYmkSjkMjZEgD6xgwkizGRUaguD5EGDpsYTlAUARJ_w5SLC2a4eu_WOu5_QLId2VYvK_0_dtnLFB-tptIsOBqhYHiDNRE_Bw8qfWjS6cnu0ZDGNkBmhLV-XwvF6o4OOdONS8bZ5ILeVuAil1_u0kHs?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XVYjhgbwZMM33skSaNR5TFgOC8WhLxTz16sLhQLJxvRIGl6KNNUNFq2fQjproJUGE_gYJZBz1Xz6bvFH5eYM09Se4C9MQNjyGERpeEnPJKqzHFMfdXkJPMLHFJouWuwWmNP3JQISpIDZINBF_FMF__KMk4ah6m6Phvd371VsZVMkqkYThT7BKr2r-Lp-hW1tYNJ7wb9nAnt29MXY7G3bnZLxIA8Okw1hbhtLmgMPyARxE0uKQy2j5c_E?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.432275,40.816347,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-35 Anadolu - Akyazı ( Adapazarı ) İstikameti Budaklar Mevkii, Akyazı Park Alanı Öncesi - 107. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X68__ZP8tnN2TtdT3bOTS8Ow8hz_O31lcYFVdZy86SK10_yAHPps1iktra2xrJhkhuGt7e-Ts8804qyiTVlUJ9JymMhxtUYQcNParhFJFK3tTrL6YdhDsY8DCWftx7yxG2NmkClqsXHIp_dqYIqMUYwboay24aFwt8oYBLwNK6C_CCFK_kov5JbANTyFPOPdSh9Q8jznBCJbDb4nNgv213jlRqLf5OqcWNStIMlmUVaerN0iAPJB9fPB4M?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X65Zlg5gNhw432_KKWt8n1FAiblyqrh68lzOEk2nZvVDs0WzGY_v5O-tAjaTf7gUke-vBuN2KApjPgzSO1zZz2aDZHVb0yIr85SS5FJeMJD-Dj1jfg0qcbN6kK6N9K3LgJ4pT9hRMv_2bzwDSrph87q9DIyfZkN5qh1yoxFhpx4E86PUfXwOHU9H1k_Ssd4QRIc-pGgf6hU1iQhl1crbcar5ump_1FhTptl1tzb8h2y_IQs47DKXdTsRF8?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X68__ZP8tnN2TtdT3bOTS8Ow8hz_O31lcYFVdZy86SK10_yAHPps1iktra2xrJhkhuGt7e-Ts8804qyiTVlUJ9JymMhxtUYQcNParhFJFK3tTrL6YdhDsY8DCWftx7yxG2NmkClqsXHIp_dqYIqMUYwboay24aFwt8oYBLwNK6C_CCFK_kov5JbANTyFPOPdSh9Q8jznBCJbDb4nNgv213jlRqLf5OqcWNStIMlmUVaerN0iAPJB9fPB4M?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X65Zlg5gNhw432_KKWt8n1FAiblyqrh68lzOEk2nZvVDs0WzGY_v5O-tAjaTf7gUke-vBuN2KApjPgzSO1zZz2aDZHVb0yIr85SS5FJeMJD-Dj1jfg0qcbN6kK6N9K3LgJ4pT9hRMv_2bzwDSrph87q9DIyfZkN5qh1yoxFhpx4E86PUfXwOHU9H1k_Ssd4QRIc-pGgf6hU1iQhl1crbcar5ump_1FhTptl1tzb8h2y_IQs47DKXdTsRF8?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.490984,40.791473,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-36 Anadolu - Akyazı ( Adapazarı ) İstikameti Bediltahirbey Mevkii, Akyazı, Mudurnu Girişi Sonrası, - 114. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4zoooqohcu7A-ntH_npYNzrI2YJqx7_Fcq61HSixpBh-RnukF6Rvg1tprvsVrT6wIqKdUfQGc4zLt7F3kDGFQJLemyu-8WxDre2Iu3mZW56Do0y7MucBfn-Tj5gCxNapXtojlS-9LZZ5LBvRLxyboAwlWQHdCvxhdLKcMYHdAX6CFZn2QLJWECkC1pA7buODrXT6y_Bn2r88djUYaD_jcX_cJickXIA4MV7tUWbhFuuYxLPxEdEredePg?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5q38Z3B-boSRSkNMKxADOqiamdPeHCuXVJrub_FPLZ0ktunLHyjpwuuCEaDw02AfvhBp4hWHmCmHlVh7TzyWXx-HOHLI4iCSkxF7pjfwK6KCL5ii8MxQVan-SVH8zQ32IyV8C13Y6pBF0djk1fO2WaGXKRw9QvPreTw45fmODDzoWFtzYVjrWlpqPSCjv9Y8LVWFhWMqO0P08lLZE8dah5Q9Xwe4YlLxd4ljfoyyf9FPJ2vfqEgNLNw7U?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4zoooqohcu7A-ntH_npYNzrI2YJqx7_Fcq61HSixpBh-RnukF6Rvg1tprvsVrT6wIqKdUfQGc4zLt7F3kDGFQJLemyu-8WxDre2Iu3mZW56Do0y7MucBfn-Tj5gCxNapXtojlS-9LZZ5LBvRLxyboAwlWQHdCvxhdLKcMYHdAX6CFZn2QLJWECkC1pA7buODrXT6y_Bn2r88djUYaD_jcX_cJickXIA4MV7tUWbhFuuYxLPxEdEredePg?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5q38Z3B-boSRSkNMKxADOqiamdPeHCuXVJrub_FPLZ0ktunLHyjpwuuCEaDw02AfvhBp4hWHmCmHlVh7TzyWXx-HOHLI4iCSkxF7pjfwK6KCL5ii8MxQVan-SVH8zQ32IyV8C13Y6pBF0djk1fO2WaGXKRw9QvPreTw45fmODDzoWFtzYVjrWlpqPSCjv9Y8LVWFhWMqO0P08lLZE8dah5Q9Xwe4YlLxd4ljfoyyf9FPJ2vfqEgNLNw7U?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.560625,40.75993,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-37 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Akyazı Gişeleri Öncesi - 01. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6bBmdBgCE04j2SScyw2EmO2RLLCqkn_-8qNadEzVVxwKQYLeg5f33PlR5lhtc9hAVTd2XOAOcPm8fFbv_vQCBkvj8-I5JPHtBBh5qAk29P_1Q_J4nsbX10JuqgYTLDOWBecN66ORrV1XqwLUSv2vv-QfzkjYcS5OThUtT31ZvZ-2V-JZf85vqFRddhnQzvgNiXFXlx5UVRx-FQOqYV6UedAjzQWHrPvTBcxBNnlhetGvqX10ngYamkxQo?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7bUWvR1-xmICvZslIbFGi_sJxpdBwJV2hD7XbwQAh8Dtr9NdX1HDo8yy2OaGaSnfqB1lryZG0bVWsHZ0msavmJEy-mX3Q9zDYCW2hBhyM76ck58BdgdCGWr9rmWUgbDkuE3AxyYEXIx23cKwkrAa7uirGcwmzjezplYPfEERr7Rbl2pld1n5dmYXSd-J7lWLmtmUZdpO-UDxhu50lNUTaRTU254Uqg2pXQw-QnJuveQpyCsQED8_MFaDI?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6bBmdBgCE04j2SScyw2EmO2RLLCqkn_-8qNadEzVVxwKQYLeg5f33PlR5lhtc9hAVTd2XOAOcPm8fFbv_vQCBkvj8-I5JPHtBBh5qAk29P_1Q_J4nsbX10JuqgYTLDOWBecN66ORrV1XqwLUSv2vv-QfzkjYcS5OThUtT31ZvZ-2V-JZf85vqFRddhnQzvgNiXFXlx5UVRx-FQOqYV6UedAjzQWHrPvTBcxBNnlhetGvqX10ngYamkxQo?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7bUWvR1-xmICvZslIbFGi_sJxpdBwJV2hD7XbwQAh8Dtr9NdX1HDo8yy2OaGaSnfqB1lryZG0bVWsHZ0msavmJEy-mX3Q9zDYCW2hBhyM76ck58BdgdCGWr9rmWUgbDkuE3AxyYEXIx23cKwkrAa7uirGcwmzjezplYPfEERr7Rbl2pld1n5dmYXSd-J7lWLmtmUZdpO-UDxhu50lNUTaRTU254Uqg2pXQw-QnJuveQpyCsQED8_MFaDI?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.639128,40.738802,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-38 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Kızılcık Orman Mevkii, Akyazı, Mudurnu Kavşağı Öncesi, - 05.Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X71YNq_5bMT0UmrAhzRTpm_WrzfLwZC67EHW4hpGoyV3Xg1HLoh9D3csZuOMN1PhzJHEkaKlfvijtxpxqV_H5leLQX-1o6HfVvFt6o6bgnhnbXq4ZpYooLaxOs0pq2lA2QJ29_2Qu3qlkTa0Cm-bIbLb9-NXAL1z80GQf-QHIiPMkC64Bw89Ln9BARakuHRaT2h8nLTZiO-dsi0jzl6hUbK6nlrEl7Rf3jcsxLVjuA7ihhIa-2QSJfDp7E?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vfqksY2va7zIBAJ3fLd2jbjTp1Jxm57mcVGoEGjEoL6Hj82fnfvi1QWELVrio4Gws1LGOpQfaah7VTdq3fWaZ6evANjyqqiSHkYzwG8qaFcvy2NpKGDlmuBvGWz_2Ii0bDfasfEQjlTmMpldvDd_3HFKXIxr9cbHxEW4il_2KUAiNpuJFeDpcV5iZfgjgZADJTFhAKqXvIo9PFeFhI679hRqu3U5Yqo4wkxnO5NdZJYN6opLZLYtPzr0?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X71YNq_5bMT0UmrAhzRTpm_WrzfLwZC67EHW4hpGoyV3Xg1HLoh9D3csZuOMN1PhzJHEkaKlfvijtxpxqV_H5leLQX-1o6HfVvFt6o6bgnhnbXq4ZpYooLaxOs0pq2lA2QJ29_2Qu3qlkTa0Cm-bIbLb9-NXAL1z80GQf-QHIiPMkC64Bw89Ln9BARakuHRaT2h8nLTZiO-dsi0jzl6hUbK6nlrEl7Rf3jcsxLVjuA7ihhIa-2QSJfDp7E?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4vfqksY2va7zIBAJ3fLd2jbjTp1Jxm57mcVGoEGjEoL6Hj82fnfvi1QWELVrio4Gws1LGOpQfaah7VTdq3fWaZ6evANjyqqiSHkYzwG8qaFcvy2NpKGDlmuBvGWz_2Ii0bDfasfEQjlTmMpldvDd_3HFKXIxr9cbHxEW4il_2KUAiNpuJFeDpcV5iZfgjgZADJTFhAKqXvIo9PFeFhI679hRqu3U5Yqo4wkxnO5NdZJYN6opLZLYtPzr0?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.583601,40.749682,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-39 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Mudurnu Kavşağı Çıkışı Sonrası - 09. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5iJ_FSqO8EVhqVKBy71BOB6yZyZsvJZZvnlR1ti8ZehW_VQ31aOIDOlyXLyg_4onU0IrpnDaAyPS1c1CEfos3IuOlmSHihcPy-HqvEAIcd3ZYYrA3gmakYlSCi8RcYz9eZuTZ5HmCu1INurglEnL6Mtg7yyRn82PTyGOZGbWwKi9qWCG_doBJLBsA_qRUH0kQ-Hvp2B_wfZdmIuSzkREdHCOnOipKvbCoLbVAY1wh657inkCSifsFWVYU?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XRm-pb8P2VjX21mBcqjeZkr5TEFq4CIhwY12PRSWAS5y3iWzXWfp_KOMNIDontRqAMO69-sMrshCT_Ny6Tou4O2xQLu5sLp3Ko7rojQvaethSupYrJ9F7yHc6lbWf7bEK42yesjTgSWMsaXvuUOlfG5rC2SEpRNtJiHtextwbJAg7H2P3cRmiVY-TtHnOkMYBrJTJeGOedW-St0d1JIMxvF_7D_jqt5J0WyURjEHfThRQKRcQSURn_Xg?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5iJ_FSqO8EVhqVKBy71BOB6yZyZsvJZZvnlR1ti8ZehW_VQ31aOIDOlyXLyg_4onU0IrpnDaAyPS1c1CEfos3IuOlmSHihcPy-HqvEAIcd3ZYYrA3gmakYlSCi8RcYz9eZuTZ5HmCu1INurglEnL6Mtg7yyRn82PTyGOZGbWwKi9qWCG_doBJLBsA_qRUH0kQ-Hvp2B_wfZdmIuSzkREdHCOnOipKvbCoLbVAY1wh657inkCSifsFWVYU?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4XRm-pb8P2VjX21mBcqjeZkr5TEFq4CIhwY12PRSWAS5y3iWzXWfp_KOMNIDontRqAMO69-sMrshCT_Ny6Tou4O2xQLu5sLp3Ko7rojQvaethSupYrJ9F7yHc6lbWf7bEK42yesjTgSWMsaXvuUOlfG5rC2SEpRNtJiHtextwbJAg7H2P3cRmiVY-TtHnOkMYBrJTJeGOedW-St0d1JIMxvF_7D_jqt5J0WyURjEHfThRQKRcQSURn_Xg?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.54851,40.764342,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-40 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Tekeler Mevkii, Karasu Kavşağı Öncesi (Adapazarı Doğu) - 17. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4iERJDN6MkTdKrw7HiNsfcvTk-j99pTB0CEGiCDcjaxphq4uP3vXMAao3vDxo7oUGqKatSUyXIGnBIsbji0WSL3Aj3Y4Yo9jUEbay490CPkiSV6tf3e2gzW4SBEeYmbNR2Z8ajSKtA--O_PH-eN3DwiXX2NmHQqRy0DT_8m0Hk-vqcd5b8xLl5gHD04925U4rjdpqsnDQTtnEcl9UZHAJR0HE17dcTozZXdn2RTEJRZQ3QJV0vBhiWb-Y?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X53c2bI1a-VimVSycMajcWChp7Zip8l4G9AGAUXMDHAgTqZ_9ntpTyaY5-XBiGKokDTfdEVtFhbXV_dQQ3OeIRatlnM4ft44f2kAC2_vRId9kqrsE2G4O5InVTnnjylh1W-YT9wbgXkgU99lR8gfH00Fy8IjIXVn5BnqwCwtp_Q8aDn0OTUi5Oz0--84hQt80dBhyEQhmnV8d2Muuwzyau-9GvI0Bpo7bPj7Kb7XJMxZUE_h_JdJpkGC1U?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4iERJDN6MkTdKrw7HiNsfcvTk-j99pTB0CEGiCDcjaxphq4uP3vXMAao3vDxo7oUGqKatSUyXIGnBIsbji0WSL3Aj3Y4Yo9jUEbay490CPkiSV6tf3e2gzW4SBEeYmbNR2Z8ajSKtA--O_PH-eN3DwiXX2NmHQqRy0DT_8m0Hk-vqcd5b8xLl5gHD04925U4rjdpqsnDQTtnEcl9UZHAJR0HE17dcTozZXdn2RTEJRZQ3QJV0vBhiWb-Y?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X53c2bI1a-VimVSycMajcWChp7Zip8l4G9AGAUXMDHAgTqZ_9ntpTyaY5-XBiGKokDTfdEVtFhbXV_dQQ3OeIRatlnM4ft44f2kAC2_vRId9kqrsE2G4O5InVTnnjylh1W-YT9wbgXkgU99lR8gfH00Fy8IjIXVn5BnqwCwtp_Q8aDn0OTUi5Oz0--84hQt80dBhyEQhmnV8d2Muuwzyau-9GvI0Bpo7bPj7Kb7XJMxZUE_h_JdJpkGC1U?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.459807,40.804953,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-41 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Tekeler Adapazarı Mevkii, Adapazarı, Kandıra Kavşağı Öncesi - 25. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X66VwdF89oujmZ5WE1Lg4cqVmL6jKa1I4EmQdXZv_Gewcb6u8KeqhVZopPf8eJaNvoAIcb9CNMMY5tCRodpq8oK6wyaW_pJmOLrPGp2bgu5pEhIu8QadKIVgAHDHrTmUhzPulUb3Ys6wO3uGnXDmEtFerXOlIuhvvt26ZHwJPNqtndxVGUzDDAsdWnbedeHr9dc39kKpbuXP_AaxvrEAQMxLFKzUSav5g4qWx0ke1r2DLPmLktSWi2n7NA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4VmiZRmgZ8Z6kgtCIA3wk8G3UbbMOYOoAL8Pzo4AfYx62avX_ho2taMi4JL1tGMDoJcGU-qjkpmFpKkyB6eRIaQx4NviQgeKi8qU4iiV47T81FMFHvS8xEJjMuShgbkfiM5-0r1sOuoa3GJiKcwRYJifxhhJNfhUw3H5Y0J3-1ni4JZHLj4VphfOomF8emU_I-t2gW_72xEel3hvsqKsaVxtD8S_-x7K558zpTUQp0x9E2RfrhG9aGjXU?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X66VwdF89oujmZ5WE1Lg4cqVmL6jKa1I4EmQdXZv_Gewcb6u8KeqhVZopPf8eJaNvoAIcb9CNMMY5tCRodpq8oK6wyaW_pJmOLrPGp2bgu5pEhIu8QadKIVgAHDHrTmUhzPulUb3Ys6wO3uGnXDmEtFerXOlIuhvvt26ZHwJPNqtndxVGUzDDAsdWnbedeHr9dc39kKpbuXP_AaxvrEAQMxLFKzUSav5g4qWx0ke1r2DLPmLktSWi2n7NA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4VmiZRmgZ8Z6kgtCIA3wk8G3UbbMOYOoAL8Pzo4AfYx62avX_ho2taMi4JL1tGMDoJcGU-qjkpmFpKkyB6eRIaQx4NviQgeKi8qU4iiV47T81FMFHvS8xEJjMuShgbkfiM5-0r1sOuoa3GJiKcwRYJifxhhJNfhUw3H5Y0J3-1ni4JZHLj4VphfOomF8emU_I-t2gW_72xEel3hvsqKsaVxtD8S_-x7K558zpTUQp0x9E2RfrhG9aGjXU?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.386511,40.835107,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-42 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Korucuk Mevkii, Shell Benzinlik Sonrası – 35. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X75czXZZQIt-Oe-uHu6eeiaq5QLhblfiqL0UMA4fRitRjA0ZP92gzMIjNH5aCK7yVg98UcWlV5aGz_AfoAsgEUtPb_WybzURQ80oniYOPVz3kiF4vRVboP9nOrG3drPZsqKe-0cV2bCuDDO1CkYwg9EVTCHDMbtzhAyvN3ZQrilNKkuJSWG8SmdVjxWzEBsquvFAv3M6nTLkDEUHYdu3sSfmITcBDm4VxStRckerj86LPa9P7F1Yv15R8g?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Ap0W5FueeJ4ymOcN89XAIS3bx3fVsuHWiKWSNNcuMT9I5q_0yz9cjxVaqk563601gMRmUa2hnLkSwtHHes0gls8qCNR8eKu8P7lrtzeoWgds9OSPOJeYcRDTzt8kAJfDkrJ1oo6al-O9BdpZEVbA4gSZNVoDgTRstNucjQV7jc6EOQg9ScQMVPUAf-kWFenEgAp5rJVflzWEdtSrhMHRGpMjIUdyJL8C1KMq3xayz5_cItyiuNY8fXQ4?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X75czXZZQIt-Oe-uHu6eeiaq5QLhblfiqL0UMA4fRitRjA0ZP92gzMIjNH5aCK7yVg98UcWlV5aGz_AfoAsgEUtPb_WybzURQ80oniYOPVz3kiF4vRVboP9nOrG3drPZsqKe-0cV2bCuDDO1CkYwg9EVTCHDMbtzhAyvN3ZQrilNKkuJSWG8SmdVjxWzEBsquvFAv3M6nTLkDEUHYdu3sSfmITcBDm4VxStRckerj86LPa9P7F1Yv15R8g?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6Ap0W5FueeJ4ymOcN89XAIS3bx3fVsuHWiKWSNNcuMT9I5q_0yz9cjxVaqk563601gMRmUa2hnLkSwtHHes0gls8qCNR8eKu8P7lrtzeoWgds9OSPOJeYcRDTzt8kAJfDkrJ1oo6al-O9BdpZEVbA4gSZNVoDgTRstNucjQV7jc6EOQg9ScQMVPUAf-kWFenEgAp5rJVflzWEdtSrhMHRGpMjIUdyJL8C1KMq3xayz5_cItyiuNY8fXQ4?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.267548,40.845364,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-43 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Akmeşe Giriş- Çıkışı, - 39.Km </name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5IwM0jTl6nVzIVTJZ4BfG55hj9qHpUbTI8x6HiytfrGDE0QoiyNA7LkY2oVpmA6teZLIAh9aCLZrgndzF0qcTaC3OJfljzi2gqLgvO22H_q3vK4Wx9Z_mgHPuXhQtPvsfs1ofNAAME22iGvGKjJSbccfre_B3kjpHc-Ocgbk8xSITxWPXCiAP9JYrb8cJB08ogFtPSgqza2nkdVZjJIRl4JGMvSNIyQKqHBAxnNB3r9WmrKZpPMN0yt-k?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5kCIVHwkaGYOkvLtWeXn6Etoey3imAWD9FlVNI0aoXFqx8oAwYI1srpJxOH-UH1VqjRk9Zc5rwZnDeQf_jBgJaPc5S5aRwWe7X-S7o0bdFEKxPFHFj0UvWTwxBuu8j1VeSSQwAP9-oLAVCdZpv_xUiktGR0cHJo381giEKNTIHww_1R2fk_WTbcSGuwOA94D01z6vgykDP9OQS25f9XGjbl-ZiW_-Bni49eG1ugg2yyazC7y6BPsNKeYA?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5IwM0jTl6nVzIVTJZ4BfG55hj9qHpUbTI8x6HiytfrGDE0QoiyNA7LkY2oVpmA6teZLIAh9aCLZrgndzF0qcTaC3OJfljzi2gqLgvO22H_q3vK4Wx9Z_mgHPuXhQtPvsfs1ofNAAME22iGvGKjJSbccfre_B3kjpHc-Ocgbk8xSITxWPXCiAP9JYrb8cJB08ogFtPSgqza2nkdVZjJIRl4JGMvSNIyQKqHBAxnNB3r9WmrKZpPMN0yt-k?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5kCIVHwkaGYOkvLtWeXn6Etoey3imAWD9FlVNI0aoXFqx8oAwYI1srpJxOH-UH1VqjRk9Zc5rwZnDeQf_jBgJaPc5S5aRwWe7X-S7o0bdFEKxPFHFj0UvWTwxBuu8j1VeSSQwAP9-oLAVCdZpv_xUiktGR0cHJo381giEKNTIHww_1R2fk_WTbcSGuwOA94D01z6vgykDP9OQS25f9XGjbl-ZiW_-Bni49eG1ugg2yyazC7y6BPsNKeYA?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.222176,40.846325,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-44 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Bayraktar Mevkii, İzmit Servis Alanı Öncesi - 50. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6XXCzrx81FZFJ6BdtespbHQgHalgAI5HBGstO7tmqO7ifQ2dh2MvVJipY-95VjNMjtHJW3wu6xrtAGDxMZsIS6Mq6c-gH2GRp3bfqdvbsFJtslO5WWgrokSlQEGzC-L8aiICYU1Rrt10__nJwpZjRVN9t5hRKbyk5CkGgMaMljl1WSq-nue5AWhqOErrBm3FE0HvcjcgKGpIczeDJaM4BI7_y15O8dKxmoeIDoYwlc0qQCK5kKpLCWb2Q?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X79HphN-hUczOBM0YW4W-3I6SPUnVTAmwXcpPc8pD7dDuRzd_i5gi9vD6oJv3anTlGbXRfdVji5MkanQ_8dVbBFIxO7TTj2bjf1wDxqOveAj2h6nXXC_b1zNM4o0K0ZuP2uImzTEdQrvRLRt-7qpvrbdM4xNdPh0my-7bUjbOtLptmXpU8zPXPLiYzJ3O2qJTMcDXe8HF-oZYY-HMOD9-aCDef2t8Kxs-qqi0ROB4DYeyA20xi7Nmd6FnI?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6XXCzrx81FZFJ6BdtespbHQgHalgAI5HBGstO7tmqO7ifQ2dh2MvVJipY-95VjNMjtHJW3wu6xrtAGDxMZsIS6Mq6c-gH2GRp3bfqdvbsFJtslO5WWgrokSlQEGzC-L8aiICYU1Rrt10__nJwpZjRVN9t5hRKbyk5CkGgMaMljl1WSq-nue5AWhqOErrBm3FE0HvcjcgKGpIczeDJaM4BI7_y15O8dKxmoeIDoYwlc0qQCK5kKpLCWb2Q?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X79HphN-hUczOBM0YW4W-3I6SPUnVTAmwXcpPc8pD7dDuRzd_i5gi9vD6oJv3anTlGbXRfdVji5MkanQ_8dVbBFIxO7TTj2bjf1wDxqOveAj2h6nXXC_b1zNM4o0K0ZuP2uImzTEdQrvRLRt-7qpvrbdM4xNdPh0my-7bUjbOtLptmXpU8zPXPLiYzJ3O2qJTMcDXe8HF-oZYY-HMOD9-aCDef2t8Kxs-qqi0ROB4DYeyA20xi7Nmd6FnI?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.109485,40.791818,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-45 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Kartepe Sapanca Ayrımı Öncesi Eseler Mevkii - 55. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6_A0XbkzgqW_kMUvM-RYsoKpnYnGQRgg3cxiX07War5CQYGIxHnhssUjy4uLRIhmCgtC0YItvlUdz9domXPfQiEpmz9v4ZiOijpIksuibgq4oiBvuExoj5DkauTZ-91lY9JqhACK60PS2l6l3FOw_fKfK3rjjPpSgs7p8dSluo6UhXxWV5zu7X9Yl0FUSyiR38uU1mcOGEN2v6bEyfbAQgX9JPq-8bUhXG6UgR4HiooMbB7Nz51uuMJsk?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4MZlNf5GyjTH9-1V8uH-_OgW_S3ysemhE9xI7deT0PlmtOX3cEwCifYQFby1h4aXyEEyMKU5_1BhntCgOPSlVHb1EAcXRCncoQHOLpOlwfKkJcRPn48r5iUxCqx3qye4ac7O5U6hX76yVPsCHi6_rI-XSckVn3p8T5dsGNLWi1rhtBphqXrfJQ5h1jRLsn0q2jRfXmIplLEZq4bYTT269wAN3-nmkvueB3cyGBV5L-1m9wfbCQW1VmFqw?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6_A0XbkzgqW_kMUvM-RYsoKpnYnGQRgg3cxiX07War5CQYGIxHnhssUjy4uLRIhmCgtC0YItvlUdz9domXPfQiEpmz9v4ZiOijpIksuibgq4oiBvuExoj5DkauTZ-91lY9JqhACK60PS2l6l3FOw_fKfK3rjjPpSgs7p8dSluo6UhXxWV5zu7X9Yl0FUSyiR38uU1mcOGEN2v6bEyfbAQgX9JPq-8bUhXG6UgR4HiooMbB7Nz51uuMJsk?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X4MZlNf5GyjTH9-1V8uH-_OgW_S3ysemhE9xI7deT0PlmtOX3cEwCifYQFby1h4aXyEEyMKU5_1BhntCgOPSlVHb1EAcXRCncoQHOLpOlwfKkJcRPn48r5iUxCqx3qye4ac7O5U6hX76yVPsCHi6_rI-XSckVn3p8T5dsGNLWi1rhtBphqXrfJQ5h1jRLsn0q2jRfXmIplLEZq4bYTT269wAN3-nmkvueB3cyGBV5L-1m9wfbCQW1VmFqw?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            30.059891,40.796736,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-46 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Kaşıkçı Mevkii, Tünel 1 Çıkışı, - 74. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7hddYJEnhbfhqd9qZcbsJU8P88Rn2vjMXZWpI9jhx-lX5gydMVV-loWfaiNY0oP35P6wT8VJnO6mzNTUDaQqsEd91KkPezYR_R_ZUGQ3qz60pB2ckwtzgQOj6jtG9DN0FaWkOslJ6Ep47h2c6OuZhVB_5KbYRMrr1KR3-lLl4difFzZX2WlMWdx870L3grK0WXW48AxWpo0J9eSnv0hfHX__66bJODVm1ZdddC5hDWkqowMCLToCoF9oI?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5ExvJAzJFm5BaQQJPoSEfXv7AuNSH0ZTG6YaKkECSH2hs0tEU_-CTKHyem3-U0jVsuHIAKyOiClheYVHBdGWcf0c9DPUwwazfBzS9Adw34qhyL9C0dZaPlvAOXBrt9dwV4A12p1IW2UB0x3SsJnS8yPBf6qfbFCDNvdccM9ar65vYIwaIf89K5zg87P5ghGY-J56wher3F7kzaI0rwjJjzPLb45Mvr8bSLT8XioPXHuua4uP5vwJ25j80?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7hddYJEnhbfhqd9qZcbsJU8P88Rn2vjMXZWpI9jhx-lX5gydMVV-loWfaiNY0oP35P6wT8VJnO6mzNTUDaQqsEd91KkPezYR_R_ZUGQ3qz60pB2ckwtzgQOj6jtG9DN0FaWkOslJ6Ep47h2c6OuZhVB_5KbYRMrr1KR3-lLl4difFzZX2WlMWdx870L3grK0WXW48AxWpo0J9eSnv0hfHX__66bJODVm1ZdddC5hDWkqowMCLToCoF9oI?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5ExvJAzJFm5BaQQJPoSEfXv7AuNSH0ZTG6YaKkECSH2hs0tEU_-CTKHyem3-U0jVsuHIAKyOiClheYVHBdGWcf0c9DPUwwazfBzS9Adw34qhyL9C0dZaPlvAOXBrt9dwV4A12p1IW2UB0x3SsJnS8yPBf6qfbFCDNvdccM9ar65vYIwaIf89K5zg87P5ghGY-J56wher3F7kzaI0rwjJjzPLb45Mvr8bSLT8XioPXHuua4uP5vwJ25j80?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.866097,40.860239,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-47 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Kocaeli Çayırova Bağlantı Yolu Öncesi - 76. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X64ZQciNThyVPnMaH80V_mS63uV6J-j0nB0cXzTYl6WhsLfRa58wuDKUhZeRIWOpTl702InPECyDcduZdJjZGAP1CvzS9uF9bwvSvNXlH9Wu7x23ZAZXLbYtL3Ct1X25N8eGvpRQDmfeZkDlqQytSochnoyExMbbOp5S-ctigtC6aC8qddLP5G9PJjvOQMRX9OX5Yi1b5jnep96GckFKCKP4V3Yucn9JaFOhd1yqws_1-iFrHfL4gpHeww?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7Fe9341vU_dv8D-djO2JqVgezzSRaukackZJW04S4iqPi2QfekAEWIm_fFb24fVZKV2uCgxD1DMCH2M4gd0-XJRBcpRLM_x8LpguN557qU6lhCDWguNkG0RkfrJ6Ll7puFygC0UlVJrqwy0woUWA6js-73KlaFxVBQ-QfhBv93YcFdinFsEDIEcAvEuPWqhRtRKWR1wrXH6N3CV6Yu92vZL2nLglgidxn22uyxm9B71CdBPUyPPViSi9U?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X64ZQciNThyVPnMaH80V_mS63uV6J-j0nB0cXzTYl6WhsLfRa58wuDKUhZeRIWOpTl702InPECyDcduZdJjZGAP1CvzS9uF9bwvSvNXlH9Wu7x23ZAZXLbYtL3Ct1X25N8eGvpRQDmfeZkDlqQytSochnoyExMbbOp5S-ctigtC6aC8qddLP5G9PJjvOQMRX9OX5Yi1b5jnep96GckFKCKP4V3Yucn9JaFOhd1yqws_1-iFrHfL4gpHeww?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7Fe9341vU_dv8D-djO2JqVgezzSRaukackZJW04S4iqPi2QfekAEWIm_fFb24fVZKV2uCgxD1DMCH2M4gd0-XJRBcpRLM_x8LpguN557qU6lhCDWguNkG0RkfrJ6Ll7puFygC0UlVJrqwy0woUWA6js-73KlaFxVBQ-QfhBv93YcFdinFsEDIEcAvEuPWqhRtRKWR1wrXH6N3CV6Yu92vZL2nLglgidxn22uyxm9B71CdBPUyPPViSi9U?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.840044,40.863839,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-48 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Sevindikli Girişi- Çıkışı Şemsettin Mevkii, 82.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6_kFnzTRDv4A_76gb7QXhcjstZluqey4JmOJNx4gbCTLmWYlBlfrZUFSIyAKzIAyqmzSawiawonVPxJ5dfdXFav6gu6JZKurfTNgC4absXWI0be5pqcIhdR5JksKTvPw4YQi9_8xcaB93heTILSf8Px08_JBOe9Du4Pge6y4fPszLQSreSsSldgPF7GIiabv_w0_18rHf3CB96jE7uy7-JMD843HNvWhARKKnJCyyQWbxuhAjGmEefYrA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6s7gxDKp8TVfVFrz2JWF1mmwg49ue8e3gKYrfxnAAel44_7wfbHzT1EVQ0lgyWgckesqmyWUynZt3ByDxRxT2FyWeeQ0tmuepdpxZvBmm8-cI1Wt05ZC9ihyXm8oP4tl2NIqvQvzpcSZW3jm8rlR3Ft1TMVQcbH0S2FLJgJUHLrTHurj_LwUMsrz9uVXvsExtCghht9LxcYA510gYDdZhhw6SndOl2sXziVu2ZKu7y_QLutRqDoEbuL14?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6_kFnzTRDv4A_76gb7QXhcjstZluqey4JmOJNx4gbCTLmWYlBlfrZUFSIyAKzIAyqmzSawiawonVPxJ5dfdXFav6gu6JZKurfTNgC4absXWI0be5pqcIhdR5JksKTvPw4YQi9_8xcaB93heTILSf8Px08_JBOe9Du4Pge6y4fPszLQSreSsSldgPF7GIiabv_w0_18rHf3CB96jE7uy7-JMD843HNvWhARKKnJCyyQWbxuhAjGmEefYrA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6s7gxDKp8TVfVFrz2JWF1mmwg49ue8e3gKYrfxnAAel44_7wfbHzT1EVQ0lgyWgckesqmyWUynZt3ByDxRxT2FyWeeQ0tmuepdpxZvBmm8-cI1Wt05ZC9ihyXm8oP4tl2NIqvQvzpcSZW3jm8rlR3Ft1TMVQcbH0S2FLJgJUHLrTHurj_LwUMsrz9uVXvsExtCghht9LxcYA510gYDdZhhw6SndOl2sXziVu2ZKu7y_QLutRqDoEbuL14?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.7638,40.875326,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-49 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Sevindikli Servis Alanı ( BP ) Sonrası - 88. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-iSrK-LClmdbSY9LwdIrLLpFH88s9msZINjmzOWi7wwhzsZ3sdeWMAK853-5Q-diTO89jEY2nln-ntZ57zb_QnNFZjED4wO4W465XH_-WVHIoDFd7_ALT6kNBIS7zA-W3mqj1eQ4JkOfl8-mE3KFMwQuCW-POaXiJpsSvZz01C7nWPO99hszaMIXOyUpwPhKmt-0Q9NENIxeYMPUHubiuY8w63vbjLk9XjWf7r6tD9sB4Q5_P4bzJzTQ?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7CG_yg2HU5ZyEpEhPZ_gz5Y6nJMQXG55gMRAT0QK8DeNcUvQjKOSJdM4sBW2pbG-n9SD2Dpo94J-QQIa1vcuMrf53BVszA1mOciNK38zUHrrRnlsGZbAR9ZCuhijOZHCSJW56TxnioJmp3dFd8jDjfJG_urLZMWW8WJ_D39S8jHfI8Z-q_Koc3XKxHgIT6l9GEX_75DB34vgzoAnPECNRUGoo8hhE-wZ1NbRff2VgPZ0e1DOvqXG46ZNU?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7-iSrK-LClmdbSY9LwdIrLLpFH88s9msZINjmzOWi7wwhzsZ3sdeWMAK853-5Q-diTO89jEY2nln-ntZ57zb_QnNFZjED4wO4W465XH_-WVHIoDFd7_ALT6kNBIS7zA-W3mqj1eQ4JkOfl8-mE3KFMwQuCW-POaXiJpsSvZz01C7nWPO99hszaMIXOyUpwPhKmt-0Q9NENIxeYMPUHubiuY8w63vbjLk9XjWf7r6tD9sB4Q5_P4bzJzTQ?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7CG_yg2HU5ZyEpEhPZ_gz5Y6nJMQXG55gMRAT0QK8DeNcUvQjKOSJdM4sBW2pbG-n9SD2Dpo94J-QQIa1vcuMrf53BVszA1mOciNK38zUHrrRnlsGZbAR9ZCuhijOZHCSJW56TxnioJmp3dFd8jDjfJG_urLZMWW8WJ_D39S8jHfI8Z-q_Koc3XKxHgIT6l9GEX_75DB34vgzoAnPECNRUGoo8hhE-wZ1NbRff2VgPZ0e1DOvqXG46ZNU?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.698111,40.890866,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-50 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Gebze Liman Kavşağı Yağcılar Mevkii, - 92.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X54o2ns8MVLU995qxw1kYERUoIrLYaeXSsRxRl3gu3Q0YPFS2HTPyONQ9ifce5L-cL_73Tyud-N1ypbQnTPIkAwqeCle2N6CPIBaRQUef0D41PGU08ZgdH8WJXtPvtP__ioOUOe9ouR00oZOd-QLDE-eCd5txdSykXwGVRtkpzdDMdK-8b0iqPlBSm0luOdqhDOUJmzt46ALfWWWcv4-j73HpXiJBmaI_7Ehdx38nQ5TT-IJKaXxmGZRcA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6ihpzjSTIBe5JEaID0uV3nge8YPn6M8RP0hwNb3-3H0zVQfPNec2jxajwtztjXo6gPdPQi2zO7qZXDpjLYsPTKLPmb50dBSXQoblSn6LES5mHosVC2RfKAV4M-9z1--UJcywtqXrFWUW-vfg8z1oJAN9kOP65ZdwqOWkWfkh6S7eIdIoownT3t7lSXvaA2bqXR7qiLM53MEkeSfF4azK0AHCBoPaqUKcg9vajXB78z3pWjT_RPjagkXfE?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X54o2ns8MVLU995qxw1kYERUoIrLYaeXSsRxRl3gu3Q0YPFS2HTPyONQ9ifce5L-cL_73Tyud-N1ypbQnTPIkAwqeCle2N6CPIBaRQUef0D41PGU08ZgdH8WJXtPvtP__ioOUOe9ouR00oZOd-QLDE-eCd5txdSykXwGVRtkpzdDMdK-8b0iqPlBSm0luOdqhDOUJmzt46ALfWWWcv4-j73HpXiJBmaI_7Ehdx38nQ5TT-IJKaXxmGZRcA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6ihpzjSTIBe5JEaID0uV3nge8YPn6M8RP0hwNb3-3H0zVQfPNec2jxajwtztjXo6gPdPQi2zO7qZXDpjLYsPTKLPmb50dBSXQoblSn6LES5mHosVC2RfKAV4M-9z1--UJcywtqXrFWUW-vfg8z1oJAN9kOP65ZdwqOWkWfkh6S7eIdIoownT3t7lSXvaA2bqXR7qiLM53MEkeSfF4azK0AHCBoPaqUKcg9vajXB78z3pWjT_RPjagkXfE?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.656088,40.898512,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-51 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Dilovası ( OSGK ) Girişi Öncesi - 96. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X756f4SFpIH6orJhrq8QJ1HY9iOfRAlP0RSraAzjJPGZ7sEmIa5NVSct8eOyhTPxY4QrUBDmNBPddoNzrK7zEkkuuItVKT-p_kwaQcYk_Lg_FGamZSzTPL52qmw1SzNsnCAALnpJxkwYZ9QBwzwELTvUEouePmRdUpfEEcgpPsVnZYhCL9NJmDStiADpLdz6YyjEPY3SGtg0NyfIfmRGnFe2XBOpm1n5F05-hCzcvyFkBE1O9Ujdnv3It4?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7tc5eRaquWaYzLqL8uP-artBD8qu9ItbRew8BaG9WQrJ3-nfW_XRfldfMV0PzfyJr8enOdEVFd_9CT_96pUvM_XUU_ObIJSpJ3C-J53pqZyFeh2r3cZxkAx9QRykKX0wnEZezpN3qp20QvG4EodsY0wAXibUOVy2LR3a1ycKeMb_TH_aQf21Zj7yf2uFF9O7f9wzo07rm6sDGfojsTh8V5iHT76AK3XPeHt-_yg7p8ylnpCkBjy3kHWyQ?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X756f4SFpIH6orJhrq8QJ1HY9iOfRAlP0RSraAzjJPGZ7sEmIa5NVSct8eOyhTPxY4QrUBDmNBPddoNzrK7zEkkuuItVKT-p_kwaQcYk_Lg_FGamZSzTPL52qmw1SzNsnCAALnpJxkwYZ9QBwzwELTvUEouePmRdUpfEEcgpPsVnZYhCL9NJmDStiADpLdz6YyjEPY3SGtg0NyfIfmRGnFe2XBOpm1n5F05-hCzcvyFkBE1O9Ujdnv3It4?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7tc5eRaquWaYzLqL8uP-artBD8qu9ItbRew8BaG9WQrJ3-nfW_XRfldfMV0PzfyJr8enOdEVFd_9CT_96pUvM_XUU_ObIJSpJ3C-J53pqZyFeh2r3cZxkAx9QRykKX0wnEZezpN3qp20QvG4EodsY0wAXibUOVy2LR3a1ycKeMb_TH_aQf21Zj7yf2uFF9O7f9wzo07rm6sDGfojsTh8V5iHT76AK3XPeHt-_yg7p8ylnpCkBjy3kHWyQ?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.611829,40.893727,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-52 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Dilovası Giriş Sonrası - 100. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6ZYCRnyCfki_Zm12nl51Mv8ZEpx7w17x8LMla985qGkq394WIcOju_0AD97HLoh0gxOX-D4BEi0-4zBc0EBM1Nvw0Janb1gCqxRwpq9NThPzyYm4LoTbE0G-J6eRuSnECVC4x4p0_NzCVWV9E1g2jnqiCl501SLFwnxjXTDOGKrj6jayQKnIKjwCnMtyLwZvq6ZEf1dZqow4BdGUhqj5yOwEupf5q5_JKko_8P1pRIuDkIhbxK3Xl1LMA?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X66ka8gaW54lnKLSSoiv1mVHbOCSc1KMon4I_WSa9ifS72-uDij8dDgsu9T9kmHInKvC31iqwXi6RVNGj_lbAiPEETvkqIydNtWkiI3Z8tS7bEWSLdvgrwVNBMow2_tj91zdoX1lDRL6-ha29vcQclFq9OFG5khrbAOHNVpGbVTFdYa0NWxJ8BHIW2XSojjGM5jTZztLMVMFTPEJ5z2qU9GjuS9SzNpzQtxYLQeK3tguV-0WS3MSjFpmNI?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6ZYCRnyCfki_Zm12nl51Mv8ZEpx7w17x8LMla985qGkq394WIcOju_0AD97HLoh0gxOX-D4BEi0-4zBc0EBM1Nvw0Janb1gCqxRwpq9NThPzyYm4LoTbE0G-J6eRuSnECVC4x4p0_NzCVWV9E1g2jnqiCl501SLFwnxjXTDOGKrj6jayQKnIKjwCnMtyLwZvq6ZEf1dZqow4BdGUhqj5yOwEupf5q5_JKko_8P1pRIuDkIhbxK3Xl1LMA?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X66ka8gaW54lnKLSSoiv1mVHbOCSc1KMon4I_WSa9ifS72-uDij8dDgsu9T9kmHInKvC31iqwXi6RVNGj_lbAiPEETvkqIydNtWkiI3Z8tS7bEWSLdvgrwVNBMow2_tj91zdoX1lDRL6-ha29vcQclFq9OFG5khrbAOHNVpGbVTFdYa0NWxJ8BHIW2XSojjGM5jTZztLMVMFTPEJ5z2qU9GjuS9SzNpzQtxYLQeK3tguV-0WS3MSjFpmNI?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.563951,40.891058,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-53 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) istikameti İstanbul Park Servis Alanı ( Opet Benzinlik) Öncesi, - 110.Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5M0hzZ100oENm0wSr8kHU7iRtEnk-1WokybzuFY6CMdBTBJUD0iaVHoDMi92yaZx2_mY_5JDM1ysYyZ7btDeFfHb0esN41ugjnVeMY-LwAxRM9mVLwfaC5qCbYAXzCzMhCPw6TdpS2nDUyf2VP_RO9hBTqeNYUzBbYGtkWnE-6BOJvw8lCgu8tNrZKe0pLOlCaXL70GZcM1sQ2UrI_zhgsfeKPr5vgY1ScxJ-9DBo62jCh2tMhuldCr70?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7yqDdHj91WLK7acCbszHvS2YqN02zGPHefWR3B_u9hjkNJQ14W54j0aMOu1FBAHn--dZGomjGZjR-THdcO50l8-73w-96jYOJrSVONz5PIkT7Oos-X-z7NvSaFFv77DnWjVjkvlAQJGMt_ib5BTlcnHchIuQt0zKAPqeZwuZ4KHKQLBDaVuDy1hhRQt3QgGIF-tW9cYFH437FlVF_h8OPNZRv2uPNoS2TFzXFerLynivVfrDm_liB3POg?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5M0hzZ100oENm0wSr8kHU7iRtEnk-1WokybzuFY6CMdBTBJUD0iaVHoDMi92yaZx2_mY_5JDM1ysYyZ7btDeFfHb0esN41ugjnVeMY-LwAxRM9mVLwfaC5qCbYAXzCzMhCPw6TdpS2nDUyf2VP_RO9hBTqeNYUzBbYGtkWnE-6BOJvw8lCgu8tNrZKe0pLOlCaXL70GZcM1sQ2UrI_zhgsfeKPr5vgY1ScxJ-9DBo62jCh2tMhuldCr70?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7yqDdHj91WLK7acCbszHvS2YqN02zGPHefWR3B_u9hjkNJQ14W54j0aMOu1FBAHn--dZGomjGZjR-THdcO50l8-73w-96jYOJrSVONz5PIkT7Oos-X-z7NvSaFFv77DnWjVjkvlAQJGMt_ib5BTlcnHchIuQt0zKAPqeZwuZ4KHKQLBDaVuDy1hhRQt3QgGIF-tW9cYFH437FlVF_h8OPNZRv2uPNoS2TFzXFerLynivVfrDm_liB3POg?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.453519,40.923136,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-54 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstı̇kametı̇ Tepeören, İstanbul Park Gı̇rı̇ş - 114. Km
+</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7L3M2X-gV7blgFDf-_gExb_SNFYBYnbs86gpXX3MyhFUPqKbmwBYyWERHSv2uaM0ZrOFtS5xyCE_lN5A6zatsztFMCYWv85ylC2bNbVRReX2DhYwFDOdG5VeTk-MsAEtZ7oeTaR655vFWBb4FlNaSNIPiB_AOvhZ5O7NXaW02_l-KcamHVsaKuSk6ECcXRCBJE5ro9vvWQTnT-CVyZsZtxATVxzbGb4wFUzKhwe4TvqMS7ZIiH88OPepU?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5_QkpdMyc18VsqOxkgkZpY0YQCrOQXCdTqjyWUNH-SU5uvSp89IJmBlpkyfFcs0fb1wkB6Eumvneo3OERTznsePBauoV_QAVu3JBbA4ZwA4aTU4IE1iv54rmDa08l5kl5FVQVxtrjAQQ44gOKYnRRTLxrzylbGDP7AaQS4gej7HnyB-Y-EWY_00VlXeGM8BnYTbl0A4tnkVC-xL2Fzauyo1nDRifYY9NWUc5R3e_M3pwsc52WeljJMwi4?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7L3M2X-gV7blgFDf-_gExb_SNFYBYnbs86gpXX3MyhFUPqKbmwBYyWERHSv2uaM0ZrOFtS5xyCE_lN5A6zatsztFMCYWv85ylC2bNbVRReX2DhYwFDOdG5VeTk-MsAEtZ7oeTaR655vFWBb4FlNaSNIPiB_AOvhZ5O7NXaW02_l-KcamHVsaKuSk6ECcXRCBJE5ro9vvWQTnT-CVyZsZtxATVxzbGb4wFUzKhwe4TvqMS7ZIiH88OPepU?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X5_QkpdMyc18VsqOxkgkZpY0YQCrOQXCdTqjyWUNH-SU5uvSp89IJmBlpkyfFcs0fb1wkB6Eumvneo3OERTznsePBauoV_QAVu3JBbA4ZwA4aTU4IE1iv54rmDa08l5kl5FVQVxtrjAQQ44gOKYnRRTLxrzylbGDP7AaQS4gej7HnyB-Y-EWY_00VlXeGM8BnYTbl0A4tnkVC-xL2Fzauyo1nDRifYY9NWUc5R3e_M3pwsc52WeljJMwi4?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.417353,40.932864,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>MGB-55 Anadolu - Kurnaköy ( Yavuz Sultan Selim Köprüsü ) İstikameti Kurnaköy 2.Gişeler Öncesi - 118. Km</name>
+        <description><![CDATA[<img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7pzBKnqh8gX5mRDTy-bJGYXRmK5_zJ2Mna7BfSKi21P2KmkrZqmcfnXaUZB47ftAAJS3gg0vihtnlQLs-krhtGPaZC95-wKjoobAjWnfCzoE39rybxXvKNL9dAJxesE--hddOi8akqwmagjidzKDEQwon25JjMzartElaf0HgoRakXn67cZPLtN3zIgH0eQJtFZ77Q5Tje6iPqu_mRpUBUpn5asFCvC_I3ssrbJBD_wT89O2vvE4c7uNg?authuser=0&fife=s16383" height="200" width="auto" /><br><br><br><br><img src="https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6WC2o5RvkEt4n4Jsrwyu937Seq-dppmdj_l68cCmvl9R3acituSQySogvZPPHRLN6u1SarO2_HXMZKlSTX6FFAE1J1M6fohF1pcfFFYLUg7mnuxIV1c9QNw3zxbY4duvb8UgHYpNPfXtNpCynSYaJXs2QQGC8Efw65lVEkuCa6Hxbh5SH_DLhHg0h-Ye0MYbBCtaaWRqJIVwG6wVz5v6K9ygAsMggaS0rGbNYobnSIcPkw2C2s9rI3-_s?authuser=0&fife=s16383" height="200" width="auto" />]]></description>
+        <styleUrl>#icon-1899-DB4436</styleUrl>
+        <ExtendedData>
+          <Data name="gx_media_links">
+            <value><![CDATA[https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X7pzBKnqh8gX5mRDTy-bJGYXRmK5_zJ2Mna7BfSKi21P2KmkrZqmcfnXaUZB47ftAAJS3gg0vihtnlQLs-krhtGPaZC95-wKjoobAjWnfCzoE39rybxXvKNL9dAJxesE--hddOi8akqwmagjidzKDEQwon25JjMzartElaf0HgoRakXn67cZPLtN3zIgH0eQJtFZ77Q5Tje6iPqu_mRpUBUpn5asFCvC_I3ssrbJBD_wT89O2vvE4c7uNg?authuser=0&fife=s16383 https://mymaps.usercontent.google.com/hostedimage/m/*/3AL_Y2X6WC2o5RvkEt4n4Jsrwyu937Seq-dppmdj_l68cCmvl9R3acituSQySogvZPPHRLN6u1SarO2_HXMZKlSTX6FFAE1J1M6fohF1pcfFFYLUg7mnuxIV1c9QNw3zxbY4duvb8UgHYpNPfXtNpCynSYaJXs2QQGC8Efw65lVEkuCa6Hxbh5SH_DLhHg0h-Ye0MYbBCtaaWRqJIVwG6wVz5v6K9ygAsMggaS0rGbNYobnSIcPkw2C2s9rI3-_s?authuser=0&fife=s16383]]></value>
+          </Data>
+        </ExtendedData>
+        <Point>
+          <coordinates>
+            29.3610345,40.9393542,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

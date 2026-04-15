@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
     ArrowLeft, Upload, FileSpreadsheet, Download, CheckCircle2,
-    XCircle, AlertTriangle, Loader2, Trash2, Eye, Send
+    XCircle, AlertTriangle, Loader2, Trash2, Eye, Send, Map
 } from 'lucide-react';
 import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
 import { parseGoogleMapsUrl, normalizePanelType } from '@/lib/geo-utils';
+import { kmlXmlToPanelImportRows } from '@/lib/kml-import';
 
 interface PanelRow {
     name: string;
@@ -37,6 +39,9 @@ interface PanelRow {
     estimatedDailyImpressions?: string;
     trafficLevel?: string;
     subType?: string;
+    width?: string;
+    height?: string;
+    imageUrl?: string;
     [key: string]: string | undefined;
 }
 
@@ -56,6 +61,37 @@ interface ImportResult {
 
 type Step = 'upload' | 'preview' | 'importing' | 'done';
 
+const REQUIRED_FIELDS = ['name', 'type', 'city', 'district', 'address'] as const;
+
+function enrichPanelRows(data: PanelRow[]): PanelRow[] {
+    return data.map((row) => {
+        const newRow = { ...row };
+        if (row.googleMapsUrl && (!row.latitude || !row.longitude || row.latitude === '0' || row.longitude === '0')) {
+            const coords = parseGoogleMapsUrl(row.googleMapsUrl);
+            if (coords) {
+                newRow.latitude = String(coords.latitude);
+                newRow.longitude = String(coords.longitude);
+            }
+        }
+        return newRow;
+    });
+}
+
+function validatePanelRows(data: PanelRow[]): ValidationError[] {
+    const validationErrors: ValidationError[] = [];
+    data.forEach((row, i) => {
+        REQUIRED_FIELDS.forEach((field) => {
+            if (!row[field]?.trim()) {
+                validationErrors.push({ row: i + 1, field, message: `"${field}" alanı boş olamaz` });
+            }
+        });
+        if (row.type && !normalizePanelType(row.type)) {
+            validationErrors.push({ row: i + 1, field: 'type', message: `Geçersiz pano türü: "${row.type}"` });
+        }
+    });
+    return validationErrors;
+}
+
 export default function ImportPanelsPage() {
     const [step, setStep] = useState<Step>('upload');
     const [fileName, setFileName] = useState('');
@@ -66,7 +102,12 @@ export default function ImportPanelsPage() {
     const [dragOver, setDragOver] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const REQUIRED_FIELDS = ['name', 'type', 'city', 'district', 'address'];
+    const processRows = useCallback((data: PanelRow[]) => {
+        const enriched = enrichPanelRows(data);
+        setRows(enriched);
+        setErrors(validatePanelRows(enriched));
+        setStep('preview');
+    }, []);
 
     const parseFile = useCallback((file: File) => {
         setFileName(file.name);
@@ -99,46 +140,35 @@ export default function ImportPanelsPage() {
                 }
             };
             reader.readAsBinaryString(file);
+        } else if (ext === 'kml') {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const xml = String(reader.result || '');
+                    const raw = kmlXmlToPanelImportRows(xml);
+                    const data = raw.map((r) => ({ ...r } as PanelRow));
+                    processRows(data);
+                } catch {
+                    alert('KML dosyası okunamadı veya placemark bulunamadı');
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
         } else {
-            alert('Desteklenen formatlar: .csv, .xlsx, .xls');
+            alert('Desteklenen formatlar: .csv, .xlsx, .xls, .kml');
         }
+    }, [processRows]);
+
+    const updateRowField = useCallback((index: number, field: keyof PanelRow, value: string) => {
+        setRows((prev) => {
+            const next = prev.map((r, i) => (i === index ? { ...r, [field]: value } : r));
+            return next;
+        });
     }, []);
 
-    function processRows(data: PanelRow[]) {
-        const validationErrors: ValidationError[] = [];
-
-        // Auto-resolve coordinates from Google Maps URLs
-        const enriched = data.map((row, i) => {
-            const newRow = { ...row };
-
-            // Google Maps'ten koordinat çıkar
-            if (row.googleMapsUrl && (!row.latitude || !row.longitude || row.latitude === '0' || row.longitude === '0')) {
-                const coords = parseGoogleMapsUrl(row.googleMapsUrl);
-                if (coords) {
-                    newRow.latitude = String(coords.latitude);
-                    newRow.longitude = String(coords.longitude);
-                }
-            }
-
-            // Validate required fields
-            REQUIRED_FIELDS.forEach(field => {
-                if (!newRow[field]?.trim()) {
-                    validationErrors.push({ row: i + 1, field, message: `"${field}" alanı boş olamaz` });
-                }
-            });
-
-            // Validate panel type
-            if (newRow.type && !normalizePanelType(newRow.type)) {
-                validationErrors.push({ row: i + 1, field: 'type', message: `Geçersiz pano türü: "${newRow.type}"` });
-            }
-
-            return newRow;
-        });
-
-        setRows(enriched);
-        setErrors(validationErrors);
-        setStep('preview');
-    }
+    useEffect(() => {
+        if (step !== 'preview' || rows.length === 0) return;
+        setErrors(validatePanelRows(rows));
+    }, [rows, step]);
 
     const handleDrop = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -153,11 +183,7 @@ export default function ImportPanelsPage() {
     };
 
     const removeRow = (index: number) => {
-        setRows(prev => prev.filter((_, i) => i !== index));
-        setErrors(prev => prev.filter(e => e.row !== index + 1).map(e => ({
-            ...e,
-            row: e.row > index + 1 ? e.row - 1 : e.row
-        })));
+        setRows((prev) => prev.filter((_, i) => i !== index));
     };
 
     const handleImport = async () => {
@@ -214,7 +240,7 @@ export default function ImportPanelsPage() {
                         </Link>
                     </Button>
                     <h1 className="text-3xl font-bold text-slate-900">Toplu Pano Import</h1>
-                    <p className="text-slate-600 mt-1">CSV veya Excel dosyasından toplu pano ekleyin</p>
+                    <p className="text-slate-600 mt-1">CSV, Excel veya Google My Maps KML ile toplu pano ekleyin — import öncesi tabloda düzenleyebilirsiniz</p>
                 </div>
 
                 {/* Step: Upload */}
@@ -240,6 +266,23 @@ export default function ImportPanelsPage() {
                                             CSV Şablonu İndir
                                         </a>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+                            <div className="flex items-start gap-3">
+                                <Map className="w-8 h-8 text-emerald-700 flex-shrink-0 mt-0.5" />
+                                <div>
+                                    <h3 className="font-semibold text-emerald-900 mb-1">KML (Google My Maps)</h3>
+                                    <p className="text-emerald-800 text-sm">
+                                        Haritadan dışa aktardığınız <code className="bg-white/80 px-1 rounded">.kml</code> dosyasını yükleyin.
+                                        Nokta adı, koordinat ve ilk görsel bağlantısı okunur; tür / il / fiyat / boyut için varsayılanlar gelir — önizlemede düzenleyip import edin.
+                                        Google görsel adresleri sitede kırılabilir; import sonrası{' '}
+                                        <strong>Admin → Panolar</strong> sayfasındaki{' '}
+                                        <strong>«Görselleri depoya taşı»</strong> ile otomatik indirip Supabase&apos;e kopyalayın (
+                                        <code className="bg-white/80 px-1 rounded">SUPABASE_SERVICE_ROLE_KEY</code> gerekir).
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -273,12 +316,12 @@ export default function ImportPanelsPage() {
                                 Dosyayı sürükleyip bırakın veya tıklayın
                             </p>
                             <p className="text-sm text-slate-500">
-                                Desteklenen formatlar: .csv, .xlsx, .xls
+                                Desteklenen formatlar: .csv, .xlsx, .xls, .kml
                             </p>
                             <input
                                 ref={fileInputRef}
                                 type="file"
-                                accept=".csv,.xlsx,.xls"
+                                accept=".csv,.xlsx,.xls,.kml,text/xml,application/vnd.google-earth.kml+xml"
                                 onChange={handleFileSelect}
                                 className="hidden"
                             />
@@ -293,11 +336,15 @@ export default function ImportPanelsPage() {
                         <div className="flex flex-wrap items-center justify-between gap-4 bg-white border border-slate-200 rounded-xl p-4">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
-                                    <FileSpreadsheet className="w-5 h-5 text-slate-500" />
+                                    {fileName.toLowerCase().endsWith('.kml') ? (
+                                        <Map className="w-5 h-5 text-emerald-600" />
+                                    ) : (
+                                        <FileSpreadsheet className="w-5 h-5 text-slate-500" />
+                                    )}
                                     <span className="text-sm font-medium text-slate-700">{fileName}</span>
                                 </div>
                                 <span className="text-sm text-slate-500">
-                                    {rows.length} pano bulundu
+                                    {rows.length} pano — aşağıda düzenleyebilirsiniz
                                 </span>
                                 {errors.length > 0 && (
                                     <span className="flex items-center gap-1 text-sm text-amber-600">
@@ -349,71 +396,144 @@ export default function ImportPanelsPage() {
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="bg-slate-50 border-b border-slate-200">
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">#</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Ad</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Tür</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">İl</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">İlçe</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Koordinat</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Boyut</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Fiyat</th>
-                                            <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Sahip</th>
-                                            <th className="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase w-10"></th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">#</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase min-w-[160px]">Ad</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Tür</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">İl</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">İlçe</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase min-w-[140px]">Adres</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Enlem</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Boylam</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Boyut (m)</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">₺/hf</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase min-w-[180px]">Görsel URL</th>
+                                            <th className="px-2 py-3 text-left text-xs font-semibold text-slate-600 uppercase">Sahip</th>
+                                            <th className="px-2 py-3 text-center text-xs font-semibold text-slate-600 uppercase w-10"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {rows.map((row, i) => {
                                             const rowErrors = errors.filter(e => e.row === i + 1);
                                             const hasError = rowErrors.length > 0;
-                                            const typeLabel = PANEL_TYPE_LABELS[normalizePanelType(row.type) || ''] || row.type;
                                             const hasCoords = row.latitude && row.longitude && row.latitude !== '0' && row.longitude !== '0';
-                                            const priceInfo = [
-                                                row.priceDaily && `G:${row.priceDaily}₺`,
-                                                row.priceWeekly && `H:${row.priceWeekly}₺`,
-                                                row.priceMonthly && `A:${row.priceMonthly}₺`,
-                                                row.price3Month && `3A:${row.price3Month}₺`,
-                                                row.price6Month && `6A:${row.price6Month}₺`,
-                                                row.priceYearly && `Y:${row.priceYearly}₺`,
-                                            ].filter(Boolean).join(', ') || '—';
+                                            const wM = row.width || (row.width_cm ? String(Number(row.width_cm) / 100) : '');
+                                            const hM = row.height || (row.height_cm ? String(Number(row.height_cm) / 100) : '');
 
                                             return (
                                                 <tr
                                                     key={i}
                                                     className={`border-b border-slate-100 ${hasError ? 'bg-amber-50' : 'hover:bg-slate-50'}`}
                                                 >
-                                                    <td className="px-3 py-2 text-slate-500">{i + 1}</td>
-                                                    <td className="px-3 py-2 font-medium text-slate-900 max-w-[200px] truncate">{row.name}</td>
-                                                    <td className="px-3 py-2 text-slate-600">
-                                                        <span className="px-2 py-0.5 bg-slate-100 rounded text-xs">{typeLabel}</span>
+                                                    <td className="px-2 py-1.5 text-slate-500 align-top text-xs">{i + 1}</td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.name}
+                                                            onChange={(e) => updateRowField(i, 'name', e.target.value)}
+                                                            className="h-8 text-xs min-w-[140px]"
+                                                        />
                                                     </td>
-                                                    <td className="px-3 py-2 text-slate-600">{row.city}</td>
-                                                    <td className="px-3 py-2 text-slate-600">{row.district}</td>
-                                                    <td className="px-3 py-2">
-                                                        {hasCoords ? (
-                                                            <span className="flex items-center gap-1 text-green-600 text-xs">
-                                                                <CheckCircle2 className="w-3 h-3" />
-                                                                {parseFloat(row.latitude!).toFixed(4)}, {parseFloat(row.longitude!).toFixed(4)}
-                                                            </span>
-                                                        ) : (
-                                                            <span className="flex items-center gap-1 text-amber-500 text-xs">
-                                                                <AlertTriangle className="w-3 h-3" />
-                                                                Eksik
-                                                            </span>
-                                                        )}
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.type || ''}
+                                                            onChange={(e) => updateRowField(i, 'type', e.target.value)}
+                                                            className="h-8 text-xs w-[100px]"
+                                                            placeholder="MEGABOARD"
+                                                        />
                                                     </td>
-                                                    <td className="px-3 py-2 text-slate-600 text-xs">
-                                                        {row.width_cm && row.height_cm ? `${row.width_cm}×${row.height_cm}cm` : '—'}
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.city || ''}
+                                                            onChange={(e) => updateRowField(i, 'city', e.target.value)}
+                                                            className="h-8 text-xs w-[88px]"
+                                                        />
                                                     </td>
-                                                    <td className="px-3 py-2 text-slate-600 text-xs max-w-[150px] truncate">{priceInfo}</td>
-                                                    <td className="px-3 py-2 text-slate-600 text-xs truncate max-w-[100px]">{row.ownerName || '—'}</td>
-                                                    <td className="px-3 py-2 text-center">
-                                                        <button
-                                                            onClick={() => removeRow(i)}
-                                                            className="text-red-400 hover:text-red-600 transition-colors p-1"
-                                                            title="Satırı kaldır"
-                                                        >
-                                                            <XCircle className="w-4 h-4" />
-                                                        </button>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.district || ''}
+                                                            onChange={(e) => updateRowField(i, 'district', e.target.value)}
+                                                            className="h-8 text-xs w-[100px]"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.address || ''}
+                                                            onChange={(e) => updateRowField(i, 'address', e.target.value)}
+                                                            className="h-8 text-xs min-w-[120px]"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.latitude || ''}
+                                                            onChange={(e) => updateRowField(i, 'latitude', e.target.value)}
+                                                            className="h-8 text-xs w-[92px]"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.longitude || ''}
+                                                            onChange={(e) => updateRowField(i, 'longitude', e.target.value)}
+                                                            className="h-8 text-xs w-[92px]"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <div className="flex items-center gap-1">
+                                                            <Input
+                                                                value={wM}
+                                                                onChange={(e) => updateRowField(i, 'width', e.target.value)}
+                                                                className="h-8 text-xs w-14"
+                                                                title="Genişlik (m)"
+                                                            />
+                                                            <span className="text-slate-400 text-xs">×</span>
+                                                            <Input
+                                                                value={hM}
+                                                                onChange={(e) => updateRowField(i, 'height', e.target.value)}
+                                                                className="h-8 text-xs w-14"
+                                                                title="Yükseklik (m)"
+                                                            />
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.priceWeekly || ''}
+                                                            onChange={(e) => updateRowField(i, 'priceWeekly', e.target.value)}
+                                                            className="h-8 text-xs w-20"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.imageUrl || ''}
+                                                            onChange={(e) => updateRowField(i, 'imageUrl', e.target.value)}
+                                                            className="h-8 text-xs min-w-[160px] max-w-[220px]"
+                                                            placeholder="https://..."
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 align-top">
+                                                        <Input
+                                                            value={row.ownerName || ''}
+                                                            onChange={(e) => updateRowField(i, 'ownerName', e.target.value)}
+                                                            className="h-8 text-xs w-24"
+                                                        />
+                                                    </td>
+                                                    <td className="px-2 py-1.5 text-center align-top">
+                                                        <div className="flex flex-col items-center gap-0.5">
+                                                            {hasCoords ? (
+                                                                <span aria-label="Koordinat girildi">
+                                                                    <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                                                </span>
+                                                            ) : (
+                                                                <span aria-label="Koordinat eksik">
+                                                                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                                                                </span>
+                                                            )}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeRow(i)}
+                                                                className="text-red-400 hover:text-red-600 transition-colors p-1"
+                                                                title="Satırı kaldır"
+                                                            >
+                                                                <XCircle className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             );
