@@ -5,27 +5,15 @@ import { Button } from "@/components/ui/button";
 import { X, MapPin, CheckCircle2, Navigation, ShoppingCart, Loader2 } from "lucide-react";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { formatCurrency } from "@/lib/utils";
-import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
+import { useAppLocale } from "@/contexts/LocaleContext";
+import { staticBillboardsCopy } from "@/messages/staticBillboards";
+import { locationTypeLabel, panelTypeLabel } from "@/lib/panel-labels-locale";
 
 interface PanelDetailSidebarProps {
     panel: any;
     isOpen: boolean;
     onClose: () => void;
 }
-
-// Location type Turkish labels
-const LOCATION_TYPE_LABELS: Record<string, string> = {
-    'OPEN_AREA': 'Açık Alan',
-    'AVM': 'AVM İçi',
-    'HIGHWAY': 'Otoyol',
-    'E5': 'E5 Yolu',
-    'CITY_CENTER': 'Şehir Merkezi',
-    'METRO': 'Metro',
-    'STADIUM': 'Stadyum',
-    'HOSPITAL': 'Hastane',
-    'UNIVERSITY': 'Üniversite',
-    'AIRPORT': 'Havalimanı',
-};
 
 // Get or create session ID
 function getSessionId(): string {
@@ -40,13 +28,16 @@ function getSessionId(): string {
 }
 
 export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDetailSidebarProps) {
+    const { locale } = useAppLocale();
+    const s = staticBillboardsCopy(locale);
+    const numLocale = locale === "en" ? "en-US" : "tr-TR";
     const [cartLoading, setCartLoading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
     const [cartError, setCartError] = useState<string | null>(null);
 
     const handleAddToCart = async () => {
         if (!panel?.id) {
-            setCartError('Pano bilgisi bulunamadı');
+            setCartError(s.panelNotFound);
             return;
         }
 
@@ -67,14 +58,14 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
             const data = await res.json();
 
             if (!res.ok) {
-                setCartError(data.error || 'Bir hata oluştu');
+                setCartError(data.error || s.genericError);
             } else {
                 setAddedToCart(true);
                 setTimeout(() => setAddedToCart(false), 3000);
             }
         } catch (error) {
             console.error('Cart error:', error);
-            setCartError('Bağlantı hatası');
+            setCartError(s.connectionError);
         } finally {
             setCartLoading(false);
         }
@@ -98,13 +89,13 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                     type="button"
                     onClick={onClose}
                     className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-neutral-900/55 text-white backdrop-blur-sm transition-colors hover:bg-neutral-900/75"
-                    aria-label="Kapat"
+                    aria-label={s.closeAria}
                 >
                     <X className="h-4 w-4" />
                 </button>
                 <div className="absolute bottom-2 left-2 flex items-center gap-1.5 rounded-md bg-white/92 px-2 py-1 shadow-sm backdrop-blur-sm">
                     <PanelTypeIcon type={panel.type} size={14} />
-                    <span className="text-xs font-semibold text-slate-800">{PANEL_TYPE_LABELS[panel.type] || panel.type}</span>
+                    <span className="text-xs font-semibold text-slate-800">{panelTypeLabel(panel.type, locale)}</span>
                 </div>
             </div>
 
@@ -123,25 +114,25 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                         </span>
                     ) : (
                         <span className="inline-flex items-center rounded-md bg-sky-50 px-2 py-0.5 text-[10px] font-medium text-sky-800 ring-1 ring-inset ring-sky-100">
-                            Açık alan
+                            {s.openAreaBadge}
                         </span>
                     )}
                     <span className="inline-flex items-center gap-0.5 rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-800 ring-1 ring-inset ring-emerald-100">
                         <CheckCircle2 className="h-3 w-3" />
-                        Müsait
+                        {s.availability}
                     </span>
                     {panel.type === "CLP" && (
                         <span className="inline-flex items-center rounded-md bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-800 ring-1 ring-inset ring-violet-100">
-                            Çift yüz
+                            {s.doubleSidedShort}
                         </span>
                     )}
                 </div>
 
                 <div className="mt-3">
-                    <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Görünürlük</h3>
+                    <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{s.visibility}</h3>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="rounded-lg border border-blue-100 bg-gradient-to-br from-indigo-50/90 to-blue-50/80 p-2.5 text-center">
-                            <div className="text-[9px] font-medium uppercase tracking-wide text-blue-600/90">Sınıf</div>
+                            <div className="text-[9px] font-medium uppercase tracking-wide text-blue-600/90">{s.grade}</div>
                             <div className="text-2xl font-black leading-none tracking-tight text-blue-700">
                                 {panel.socialGrade
                                     ? panel.socialGrade.replace("_PLUS", "+")
@@ -154,14 +145,16 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                                           : "C"}
                             </div>
                             <div className="mt-0.5 truncate text-[9px] font-medium text-blue-500/90">
-                                {panel.locationType ? LOCATION_TYPE_LABELS[panel.locationType] || panel.locationType : "Lokasyon"}
+                                {panel.locationType
+                                    ? locationTypeLabel(panel.locationType, locale)
+                                    : s.locationFallback}
                             </div>
                         </div>
                         <div className="rounded-lg border border-slate-200 bg-white p-2.5 text-center">
-                            <div className="text-[9px] font-medium uppercase tracking-wide text-slate-500">Günlük</div>
+                            <div className="text-[9px] font-medium uppercase tracking-wide text-slate-500">{s.daily}</div>
                             <div className="text-lg font-bold tabular-nums leading-tight text-slate-900">
                                 {panel.estimatedDailyImpressions > 0
-                                    ? panel.estimatedDailyImpressions.toLocaleString("tr-TR")
+                                    ? panel.estimatedDailyImpressions.toLocaleString(numLocale)
                                     : panel.trafficLevel === "VERY_HIGH"
                                       ? "50K+"
                                       : panel.trafficLevel === "HIGH"
@@ -172,44 +165,46 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                             </div>
                             <div className="mt-0.5 flex items-center justify-center gap-0.5 text-[9px] font-medium text-emerald-600">
                                 <span className="inline-block h-1 w-1 animate-pulse rounded-full bg-emerald-500" />
-                                İzlenme
+                                {s.impressions}
                             </div>
                         </div>
                     </div>
                     <div className="mt-2 grid grid-cols-3 gap-px overflow-hidden rounded-md border border-slate-100 bg-slate-100 text-center text-[10px] text-slate-600">
                         <div className="bg-slate-50/90 py-1.5">
                             <div className="font-semibold text-slate-800">OTS</div>
-                            <div>Yüksek</div>
+                            <div>{s.otsHigh}</div>
                         </div>
                         <div className="bg-slate-50/90 py-1.5">
-                            <div className="font-semibold text-slate-800">Açı</div>
-                            <div>Tam</div>
+                            <div className="font-semibold text-slate-800">{s.angle}</div>
+                            <div>{s.angleFull}</div>
                         </div>
                         <div className="bg-slate-50/90 py-1.5">
-                            <div className="font-semibold text-slate-800">Süre</div>
-                            <div>7/24</div>
+                            <div className="font-semibold text-slate-800">{s.duration}</div>
+                            <div>{s.duration247}</div>
                         </div>
                     </div>
                 </div>
 
-                <h3 className="mb-1.5 mt-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">Teknik</h3>
+                <h3 className="mb-1.5 mt-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{s.technical}</h3>
                 <dl className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px]">
                     <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
-                        <dt className="text-slate-500">Boyut</dt>
+                        <dt className="text-slate-500">{s.size}</dt>
                         <dd className="font-medium text-slate-900">
                             {Number(panel.width)}×{Number(panel.height)} m
                         </dd>
                     </div>
                     <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
-                        <dt className="text-slate-500">Alan</dt>
+                        <dt className="text-slate-500">{s.area}</dt>
                         <dd className="font-medium text-slate-900">{(Number(panel.width) * Number(panel.height)).toFixed(1)} m²</dd>
                     </div>
                     <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
-                        <dt className="text-slate-500">Min. kiralama</dt>
-                        <dd className="font-medium text-slate-900">{panel.minRentalDays || 7} gün</dd>
+                        <dt className="text-slate-500">{s.minRental}</dt>
+                        <dd className="font-medium text-slate-900">
+                            {panel.minRentalDays || 7} {s.days}
+                        </dd>
                     </div>
                     <div className="flex flex-col rounded-md bg-slate-50/80 px-2 py-1.5">
-                        <dt className="text-slate-500">Aydınlatma</dt>
+                        <dt className="text-slate-500">{s.lighting}</dt>
                         <dd className="font-medium text-slate-900">LED</dd>
                     </div>
                 </dl>
@@ -225,20 +220,18 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                 {panel.type === "CLP" && (
                     <div className="mt-3 rounded-lg border border-violet-100 bg-violet-50/80 p-2.5 text-[11px] leading-relaxed text-violet-900">
                         <p>
-                            <span className="font-semibold">Çift yüz:</span> Fiyat tek yüz içindir; çift yüz için sepette işaretleyin.
+                            <span className="font-semibold">{s.clpNoteTitle}</span> {s.clpNoteBody}
                         </p>
                         {panel.city === "Kocaeli" && (
-                            <p className="mt-1 font-medium text-orange-700">
-                                20+ CLP → 1.500₺/hafta
-                            </p>
+                            <p className="mt-1 font-medium text-orange-700">{s.clpKocaeli}</p>
                         )}
                     </div>
                 )}
 
                 <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
-                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">Haftalık kiralama</div>
+                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{s.weeklyRental}</div>
                     <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">{formatCurrency(Number(panel.priceWeekly))}</div>
-                    <div className="text-[10px] text-slate-400">+ KDV</div>
+                    <div className="text-[10px] text-slate-400">{s.plusVat}</div>
                 </div>
             </div>
 
@@ -254,16 +247,16 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                         <Loader2 className="h-4 w-4 animate-spin" />
                     ) : addedToCart ? (
                         <span className="flex items-center justify-center gap-2">
-                            <CheckCircle2 className="h-4 w-4" /> Sepete eklendi
+                            <CheckCircle2 className="h-4 w-4" /> {s.addedToCart}
                         </span>
                     ) : (
                         <span className="flex items-center justify-center gap-2">
-                            <ShoppingCart className="h-4 w-4" /> Sepete ekle
+                            <ShoppingCart className="h-4 w-4" /> {s.addToCart}
                         </span>
                     )}
                 </Button>
                 {cartError && <p className="mt-1.5 text-center text-[10px] text-red-500">{cartError}</p>}
-                <p className="mt-1.5 text-center text-[10px] leading-tight text-slate-400">Tarih ve ödeme: sepet → ödeme adımları</p>
+                <p className="mt-1.5 text-center text-[10px] leading-tight text-slate-400">{s.cartHint}</p>
             </div>
         </div>
     );

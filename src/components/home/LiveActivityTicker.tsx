@@ -2,6 +2,9 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { useAppLocale } from "@/contexts/LocaleContext";
+import { tickerCopy } from "@/messages/ticker";
+import LanguageToggle from "@/components/LanguageToggle";
 
 const BRAND = "#11b981";
 
@@ -32,9 +35,8 @@ function Separator() {
     return <span className="text-neutral-300 select-none shrink-0" aria-hidden>|</span>;
 }
 
-/** Masaüstü: sayfa en üstünde (navbar üstünde), kaydırınca kaybolur; sabit header ile bitişik değildir. */
-export default function LiveActivityTicker() {
-    const track = (
+function TrackTr() {
+    return (
         <>
             <TickerItem>
                 <span className="font-semibold text-neutral-900">Sakarya Üniversite Önü</span>
@@ -79,12 +81,67 @@ export default function LiveActivityTicker() {
             <Separator />
         </>
     );
+}
+
+function TrackEn() {
+    return (
+        <>
+            <TickerItem>
+                <span className="font-semibold text-neutral-900">Sakarya University front</span>
+                <span>CLP</span>
+                <PriceBadge>1,800 TRY / day</PriceBadge>
+                <span className="text-neutral-500">(~40% off typical rate)</span>
+            </TickerItem>
+            <Separator />
+            <TickerItem>
+                <span>A fashion brand</span>
+                <span className="font-semibold text-neutral-900">in Sakarya</span>
+                <span>is looking for a billboard. Budget</span>
+                <PriceBadge>30,000 TRY</PriceBadge>
+            </TickerItem>
+            <Separator />
+            <TickerItem>
+                <span className="font-semibold text-neutral-900">Gebze organized zone</span>
+                <span>megalight</span>
+                <PriceBadge>12,500 TRY / week</PriceBadge>
+                <span className="text-neutral-500">— 2 faces left</span>
+            </TickerItem>
+            <Separator />
+            <TickerItem>
+                <span>A local chain</span>
+                <span className="font-semibold text-neutral-900">Izmit center</span>
+                <span>wants a rocket board.</span>
+                <PriceBadge>4,200 TRY / week</PriceBadge>
+            </TickerItem>
+            <Separator />
+            <TickerItem>
+                <span className="font-semibold text-neutral-900">D-100 Kartepe</span>
+                <span>billboard</span>
+                <PriceBadge>25% promo</PriceBadge>
+                <span className="text-neutral-500">this month</span>
+            </TickerItem>
+            <Separator />
+            <TickerItem>
+                <span>Mall-front CLP</span>
+                <span className="font-semibold text-neutral-900">Derince</span>
+                <PriceBadge>950 TRY / day</PriceBadge>
+            </TickerItem>
+            <Separator />
+        </>
+    );
+}
+
+/** Masaüstü: sayfa en üstünde (navbar üstünde), kaydırınca kaybolur; sabit header ile bitişik değildir. */
+export default function LiveActivityTicker() {
+    const { locale } = useAppLocale();
+    const tc = tickerCopy(locale);
+    const track = locale === "en" ? <TrackEn /> : <TrackTr />;
 
     return (
         <div
             className="hidden lg:flex items-stretch relative z-40 border-b border-neutral-200 bg-gradient-to-r from-neutral-50 via-white to-neutral-50"
             role="region"
-            aria-label="Örnek kampanya ve talep bilgileri"
+            aria-label={tc.aria}
         >
             <div className="container mx-auto px-4 flex items-center min-h-[2.75rem] gap-3">
                 <div className="flex items-center gap-2 shrink-0 pr-2 border-r border-neutral-200">
@@ -99,7 +156,7 @@ export default function LiveActivityTicker() {
                         className="text-[10px] font-bold uppercase tracking-[0.2em] px-2 py-1 rounded-full border bg-white text-neutral-800"
                         style={{ borderColor: "rgba(17, 185, 129, 0.35)" }}
                     >
-                        Canlı
+                        {tc.live}
                     </span>
                 </div>
 
@@ -112,12 +169,15 @@ export default function LiveActivityTicker() {
                     </div>
                 </div>
 
-                <Link
-                    href="/static-billboards"
-                    className="shrink-0 text-sm font-semibold text-neutral-900 transition-colors hover:text-neutral-600 underline-offset-4 hover:underline pl-2"
-                >
-                    {"Panoları Gör ->"}
-                </Link>
+                <div className="shrink-0 flex items-center gap-3 pl-3 ml-1 border-l border-neutral-200">
+                    <Link
+                        href="/static-billboards"
+                        className="text-sm font-semibold text-neutral-900 transition-colors hover:text-neutral-600 underline-offset-4 hover:underline whitespace-nowrap"
+                    >
+                        {tc.cta}
+                    </Link>
+                    <LanguageToggle className="shrink-0" />
+                </div>
             </div>
         </div>
     );

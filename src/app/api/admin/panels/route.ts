@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
         const district = searchParams.get('district');
         const type = searchParams.get('type');
         const isAVM = searchParams.get('isAVM');
+        const reviewStatus = searchParams.get('reviewStatus');
 
         const where: any = {};
 
@@ -50,6 +51,7 @@ export async function GET(req: NextRequest) {
         if (district) where.district = district;
         if (type) where.type = type;
         if (isAVM === 'true') where.isAVM = true;
+        if (reviewStatus) where.reviewStatus = reviewStatus;
 
         // Regional admin can only see panels from their assigned city
         if (session.assignedCity) {
@@ -66,6 +68,14 @@ export async function GET(req: NextRequest) {
                         startDate: true,
                         endDate: true,
                         status: true
+                    }
+                },
+                owner: {
+                    select: {
+                        id: true,
+                        companyName: true,
+                        slug: true,
+                        user: { select: { name: true, email: true } }
                     }
                 }
             }

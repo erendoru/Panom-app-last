@@ -11,6 +11,7 @@ import {
     TRAFFIC_LEVEL_LABELS,
     TRAFFIC_LEVEL_COLORS
 } from '@/lib/turkey-data';
+import PendingPanelsBanner from '@/components/admin/PendingPanelsBanner';
 
 interface Panel {
     id: string;
@@ -31,6 +32,13 @@ interface Panel {
     createdAt: string;
     ownerName?: string;
     ownerPhone?: string;
+    ownerId?: string | null;
+    owner?: {
+        id: string;
+        companyName: string;
+        slug: string | null;
+        user?: { name?: string | null; email?: string | null } | null;
+    } | null;
 }
 
 interface EditedPanel {
@@ -522,6 +530,8 @@ export default function AdminPanelsPage() {
                     </div>
                 </div>
 
+                <PendingPanelsBanner />
+
                 {(mirrorPending !== null && mirrorPending > 0) || (cropPending !== null && cropPending > 0) ? (
                     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 space-y-2">
                         {mirrorPending !== null && mirrorPending > 0 && (
@@ -902,13 +912,25 @@ export default function AdminPanelsPage() {
                                                 </div>
                                             </td>
                                             <td className="px-4 py-3">
-                                                <input
-                                                    type="text"
-                                                    value={(getValue(panel, 'ownerName') as string) || ''}
-                                                    onChange={(e) => handleEditChange(panel.id, 'ownerName', e.target.value)}
-                                                    placeholder="Sahip adı"
-                                                    className="w-24 px-2 py-1 border border-transparent hover:border-slate-300 focus:border-blue-500 rounded text-sm bg-transparent focus:bg-white"
-                                                />
+                                                {panel.ownerId ? (
+                                                    <div className="flex flex-col gap-0.5 min-w-[140px]">
+                                                        <span className="inline-flex items-center gap-1 text-sm font-medium text-slate-900">
+                                                            <span className="inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                                                            {panel.owner?.companyName || panel.ownerName || '—'}
+                                                        </span>
+                                                        <span className="text-[10px] text-emerald-700 font-medium uppercase tracking-wide">
+                                                            Panobu hesabı
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <input
+                                                        type="text"
+                                                        value={(getValue(panel, 'ownerName') as string) || ''}
+                                                        onChange={(e) => handleEditChange(panel.id, 'ownerName', e.target.value)}
+                                                        placeholder="Sahip adı"
+                                                        className="w-24 px-2 py-1 border border-transparent hover:border-slate-300 focus:border-blue-500 rounded text-sm bg-transparent focus:bg-white"
+                                                    />
+                                                )}
                                             </td>
                                             <td className="px-4 py-3">
                                                 {panel.active ? (

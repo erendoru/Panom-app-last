@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import PublicLayout from "@/components/PublicLayout";
 import { Sparkles, Zap, BarChart3, Users, Settings } from "lucide-react";
+import { useAppLocale } from "@/contexts/LocaleContext";
+import { updatesCategoryBadge, updatesCategoryChips, updatesListingCopy } from "@/messages/updatesPage";
 
 interface Update {
     id: string;
@@ -13,15 +15,19 @@ interface Update {
     createdAt: string;
 }
 
-const categories = [
-    { label: "Hepsi", value: "Hepsi", icon: null },
-    { label: "Kampanya Başlatma", value: "Kampanya Başlatma", icon: Zap },
-    { label: "Erişilebilirlik", value: "Erişilebilirlik", icon: Users },
-    { label: "Raporlama ve Analiz", value: "Raporlama ve Analiz", icon: BarChart3 },
-    { label: "Genel", value: "Genel", icon: Settings },
-];
+const categoryIcon = {
+    none: null,
+    zap: Zap,
+    users: Users,
+    chart: BarChart3,
+    settings: Settings,
+} as const;
 
 export default function UpdatesPage() {
+    const { locale } = useAppLocale();
+    const u = updatesListingCopy(locale);
+    const categories = updatesCategoryChips(locale);
+    const dateLocale = locale === "en" ? "en-US" : "tr-TR";
     const [updates, setUpdates] = useState<Update[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState("Hepsi");
@@ -50,16 +56,14 @@ export default function UpdatesPage() {
             <div className="container mx-auto px-4 py-16">
                 {/* Header */}
                 <div className="text-center max-w-3xl mx-auto mb-12">
-                    <h1 className="text-4xl md:text-5xl font-bold mb-6">Yenilikler</h1>
-                    <p className="text-xl text-slate-400">
-                        Yeni özellikler sizleri bekliyor 🎉 Güncellemelerimizi keşfedin ve deneyin.
-                    </p>
+                    <h1 className="text-4xl md:text-5xl font-bold mb-6">{u.title}</h1>
+                    <p className="text-xl text-slate-400">{u.subtitle}</p>
                 </div>
 
                 {/* Category Filters */}
                 <div className="flex flex-wrap justify-center gap-3 mb-12">
                     {categories.map((cat) => {
-                        const Icon = cat.icon;
+                        const Icon = categoryIcon[cat.icon];
                         return (
                             <button
                                 key={cat.value}
@@ -69,7 +73,7 @@ export default function UpdatesPage() {
                                     : "bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10"
                                     }`}
                             >
-                                {Icon && <Icon className="w-4 h-4" />}
+                                {Icon ? <Icon className="w-4 h-4" /> : null}
                                 {cat.label}
                             </button>
                         );
@@ -80,13 +84,13 @@ export default function UpdatesPage() {
                 {loading ? (
                     <div className="text-center text-slate-400 py-20">
                         <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                        Yükleniyor...
+                        {u.loading}
                     </div>
                 ) : updates.length === 0 ? (
                     <div className="text-center py-20">
                         <div className="text-6xl mb-4">✨</div>
-                        <h3 className="text-xl font-bold mb-2">Henüz güncelleme yok</h3>
-                        <p className="text-slate-400">Bu kategoride henüz güncelleme bulunmuyor.</p>
+                        <h3 className="text-xl font-bold mb-2">{u.emptyTitle}</h3>
+                        <p className="text-slate-400">{u.emptyLead}</p>
                     </div>
                 ) : (
                     <div className="max-w-4xl mx-auto space-y-6">
@@ -120,10 +124,10 @@ export default function UpdatesPage() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-3 mb-3">
                                                     <span className="text-xs font-medium px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full">
-                                                        {update.category}
+                                                        {updatesCategoryBadge(update.category, locale)}
                                                     </span>
                                                     <span className="text-slate-500 text-sm">
-                                                        {new Date(update.createdAt).toLocaleDateString("tr-TR", {
+                                                        {new Date(update.createdAt).toLocaleDateString(dateLocale, {
                                                             year: "numeric",
                                                             month: "long",
                                                             day: "numeric",
@@ -139,7 +143,7 @@ export default function UpdatesPage() {
                                                         href={detailUrl}
                                                         className="inline-flex items-center gap-2 px-4 py-2 bg-[#11b981] hover:bg-[#0ea472] text-white text-sm font-medium rounded-lg transition-colors"
                                                     >
-                                                        Detaylı Oku
+                                                        {u.readDetails}
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                         </svg>

@@ -55,8 +55,19 @@ model ScreenOwner {
   taxId        String?
   address      String?
   approved     Boolean  @default(false)
-  
+
+  // Medya sahibi profili (billboard + dijital ekran ünite sahibi)
+  phone        String?
+  contactEmail String?
+  logoUrl      String?
+  coverUrl     String?
+  cities       String[] @default([])
+  website      String?
+  description  String?
+  slug         String?  @unique
+
   screens      Screen[]
+  panels       StaticPanel[]
   payouts      Payout[]
   balance      OwnerBalance?
 
@@ -232,6 +243,18 @@ enum SocialGrade {
   D
 }
 
+enum PanelReviewStatus {
+  PENDING    // Medya sahibi ekledi, admin onay bekliyor
+  APPROVED   // Admin onayladı, Panobu.com'da yayında
+  REJECTED   // Admin reddetti
+}
+
+enum PanelOwnerStatus {
+  ACTIVE       // Sahip yayında tutuyor
+  PAUSED       // Sahip geçici olarak kapattı
+  MAINTENANCE  // Bakımda
+}
+
 model StaticPanel {
   id                         String         @id @default(uuid())
   name                       String
@@ -260,20 +283,41 @@ model StaticPanel {
   avmName                    String?
   active                     Boolean        @default(true)
   imageUrl                   String?
+  imageUrls                  String[]       @default([])
+  description                String?
+  lighting                   String?        // "LIGHTED" | "UNLIGHTED" | "DIGITAL"
+  faceCount                  Int            @default(1)
   estimatedDailyImpressions  Int            @default(0)
+  estimatedCpm               Decimal?       @db.Decimal(10, 2)
+  nearbyTags                 String[]       @default([])
   trafficLevel               TrafficLevel   @default(MEDIUM)
   blockedDates               Json?          // Array of {startDate, endDate} objects
   
   // Pano Sahibi Bilgileri (Admin görür)
   ownerName                  String?
   ownerPhone                 String?
-  
+
+  // Medya sahibi ilişkisi (Faz 3)
+  ownerId                    String?
+  owner                      ScreenOwner?   @relation(fields: [ownerId], references: [id])
+
+  // Moderasyon (admin onay süreci)
+  reviewStatus               PanelReviewStatus @default(APPROVED)
+  reviewNote                 String?
+  submittedAt                DateTime?
+  reviewedAt                 DateTime?
+
+  // Sahip tarafından yayın durumu (sahip kendi panelinden yönetir)
+  ownerStatus                PanelOwnerStatus  @default(ACTIVE)
+
   createdAt                  DateTime       @default(now())
   updatedAt                  DateTime       @updatedAt
   rentals                    StaticRental[]
   cartItems                  CartItem[]
   orderItems                 OrderItem[]
 
+  @@index([ownerId])
+  @@index([reviewStatus])
   @@map("static_panels")
 }
 

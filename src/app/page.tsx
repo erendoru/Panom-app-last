@@ -7,6 +7,12 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import LiveActivityTicker from "@/components/home/LiveActivityTicker";
+import LanguageToggle from "@/components/LanguageToggle";
+import { useAppLocale } from "@/contexts/LocaleContext";
+import { navLabel } from "@/messages/publicNav";
+import { budgetStrings } from "@/messages/landing/budget";
+import { landingMainStrings } from "@/messages/landing/main";
+import { footerCopy } from "@/messages/footer";
 
 function CountUp({ target, suffix = "", duration = 2 }: { target: number; suffix?: string; duration?: number }) {
     const [count, setCount] = useState(0);
@@ -32,28 +38,15 @@ function CountUp({ target, suffix = "", duration = 2 }: { target: number; suffix
     return <span ref={ref}>{count}{suffix}</span>;
 }
 
-const BUDGET_PRESETS = [
-    { label: "5.000 ₺", value: 5000 },
-    { label: "10.000 ₺", value: 10000 },
-    { label: "25.000 ₺", value: 25000 },
-    { label: "50.000 ₺", value: 50000 },
-    { label: "100.000 ₺", value: 100000 },
-];
-
-const DURATION_OPTIONS = [
-    { label: "1 Hafta", value: 1, multiplier: 1 },
-    { label: "2 Hafta", value: 2, multiplier: 2 },
-    { label: "1 Ay", value: 4, multiplier: 4 },
-    { label: "3 Ay", value: 12, multiplier: 12 },
-];
-
 const AVG_WEEKLY_PRICE = 3000;
 const AVG_DAILY_IMPRESSIONS = 25000;
 
 function BudgetCalculator() {
+    const { locale } = useAppLocale();
+    const b = budgetStrings(locale);
     const [budget, setBudget] = useState(10000);
     const [durationIdx, setDurationIdx] = useState(0);
-    const duration = DURATION_OPTIONS[durationIdx];
+    const duration = b.durations[durationIdx];
 
     const results = useMemo(() => {
         const totalWeeks = duration.multiplier;
@@ -76,12 +69,11 @@ function BudgetCalculator() {
             <div className="container mx-auto px-4">
                 <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
                     <span className="inline-block px-4 py-1.5 rounded-full bg-[#11b981]/10 text-[#0d9e6e] text-sm font-medium mb-4">
-                        <Calculator className="w-4 h-4 inline mr-1.5 -mt-0.5" />Bütçe Hesaplayıcı
+                        <Calculator className="w-4 h-4 inline mr-1.5 -mt-0.5" />
+                        {b.badge}
                     </span>
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4 text-neutral-900">Ne Kadara Ne Alırım?</h2>
-                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                        Bütçenizi girin, süreyi seçin — kaç panoya ulaşabileceğinizi ve tahmini gösterim sayınızı anında görün.
-                    </p>
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4 text-neutral-900">{b.title}</h2>
+                    <p className="text-slate-400 max-w-2xl mx-auto text-lg">{b.subtitle}</p>
                 </motion.div>
 
                 <motion.div
@@ -96,9 +88,9 @@ function BudgetCalculator() {
                             <div className="space-y-8">
                                 {/* Budget */}
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 mb-3">Toplam Bütçe</label>
+                                    <label className="block text-sm font-medium text-neutral-700 mb-3">{b.totalBudget}</label>
                                     <div className="flex flex-wrap gap-2 mb-4">
-                                        {BUDGET_PRESETS.map((p) => (
+                                        {b.presets.map((p) => (
                                             <button
                                                 key={p.value}
                                                 onClick={() => setBudget(p.value)}
@@ -123,18 +115,20 @@ function BudgetCalculator() {
                                             className="w-full h-2 bg-neutral-100 rounded-full appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#11b981] [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:shadow-[#11b981]/35 [&::-webkit-slider-thumb]:cursor-pointer"
                                         />
                                         <div className="flex justify-between mt-2 text-xs text-slate-500">
-                                            <span>1.000 ₺</span>
-                                            <span className="text-[#11b981] font-bold text-base">{budget.toLocaleString("tr-TR")} ₺</span>
-                                            <span>200.000 ₺</span>
+                                            <span>{b.rangeMin}</span>
+                                            <span className="text-[#11b981] font-bold text-base">
+                                                {budget.toLocaleString(locale === "en" ? "en-US" : "tr-TR")} {locale === "en" ? "TRY" : "₺"}
+                                            </span>
+                                            <span>{b.rangeMax}</span>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Duration */}
                                 <div>
-                                    <label className="block text-sm font-medium text-neutral-700 mb-3">Kampanya Süresi</label>
+                                    <label className="block text-sm font-medium text-neutral-700 mb-3">{b.duration}</label>
                                     <div className="grid grid-cols-4 gap-2">
-                                        {DURATION_OPTIONS.map((d, i) => (
+                                        {b.durations.map((d, i) => (
                                             <button
                                                 key={d.value}
                                                 onClick={() => setDurationIdx(i)}
@@ -155,33 +149,31 @@ function BudgetCalculator() {
                             <div className="flex flex-col justify-center">
                                 <div className="space-y-4">
                                     <div className="bg-[#11b981]/8 border border-[#11b981]/25 rounded-2xl p-6 text-center">
-                                        <div className="text-sm text-[#0d9e6e] font-medium mb-1">Ulaşabileceğiniz Pano Sayısı</div>
+                                        <div className="text-sm text-[#0d9e6e] font-medium mb-1">{b.panelsTitle}</div>
                                         <div className="text-5xl md:text-6xl font-black text-neutral-900 mb-1">{results.panelCount}</div>
-                                        <div className="text-xs text-slate-500">pano × {duration.label}</div>
+                                        <div className="text-xs text-slate-500">{b.panelsSub(duration.label)}</div>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-3">
                                         <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 text-center">
-                                            <div className="text-xs text-slate-500 mb-1">Tahmini Gösterim</div>
+                                            <div className="text-xs text-slate-500 mb-1">{b.impressions}</div>
                                             <div className="text-2xl font-bold text-neutral-900">{formatNumber(results.totalImpressions)}</div>
-                                            <div className="text-[10px] text-slate-500 mt-0.5">toplam kişi</div>
+                                            <div className="text-[10px] text-slate-500 mt-0.5">{b.impressionsSub}</div>
                                         </div>
                                         <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 text-center">
-                                            <div className="text-xs text-slate-500 mb-1">Bin Gösterim Maliyeti</div>
+                                            <div className="text-xs text-slate-500 mb-1">{b.cpm}</div>
                                             <div className="text-2xl font-bold text-[#11b981]">₺{results.cpm.toFixed(1)}</div>
-                                            <div className="text-[10px] text-slate-500 mt-0.5">CPM</div>
+                                            <div className="text-[10px] text-slate-500 mt-0.5">{b.cpmSub}</div>
                                         </div>
                                     </div>
 
                                     <Button asChild size="lg" className="w-full h-14 text-base bg-[#11b981] hover:bg-[#0ea472] text-white rounded-xl transition-all hover:scale-[1.02] shadow-md shadow-[#11b981]/25">
                                         <Link href="/static-billboards">
-                                            Panoları Gör ve Seç <ArrowRight className="w-5 h-5 ml-2" />
+                                            {b.cta} <ArrowRight className="w-5 h-5 ml-2" />
                                         </Link>
                                     </Button>
 
-                                    <p className="text-[11px] text-slate-600 text-center">
-                                        * Ortalama pano fiyatları ve gösterim verileri baz alınmıştır. Gerçek fiyatlar lokasyona göre değişir.
-                                    </p>
+                                    <p className="text-[11px] text-slate-600 text-center">{b.disclaimer}</p>
                                 </div>
                             </div>
                         </div>
@@ -194,6 +186,9 @@ function BudgetCalculator() {
 
 export default function LandingPage() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { locale } = useAppLocale();
+    const lm = landingMainStrings(locale);
+    const foot = footerCopy(locale);
 
     return (
         <div className="min-h-screen flex flex-col bg-white text-neutral-900 selection:bg-blue-100 selection:text-neutral-900 overflow-x-clip">
@@ -208,25 +203,26 @@ export default function LandingPage() {
                     </Link>
 
                     <nav className="hidden lg:flex items-center gap-6">
-                        <Link href="/" className="text-sm font-medium text-neutral-900 transition-colors">Anasayfa</Link>
-                        <Link href="/static-billboards" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Klasik Panolar</Link>
-                        <Link href="/screens" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Dijital Billboard</Link>
-                        <Link href="/how-it-works" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Nasıl Çalışır?</Link>
-                        <Link href="/blog" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Blog</Link>
-                        <Link href="/updates" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">Yenilikler</Link>
+                        <Link href="/" className="text-sm font-medium text-neutral-900 transition-colors">{navLabel(locale, "home")}</Link>
+                        <Link href="/static-billboards" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "classic")}</Link>
+                        <Link href="/screens" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "digital")}</Link>
+                        <Link href="/how-it-works" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "howItWorks")}</Link>
+                        <Link href="/blog" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "blog")}</Link>
+                        <Link href="/updates" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "updates")}</Link>
                     </nav>
 
-                    <div className="flex items-center gap-3 md:gap-4">
+                    <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+                        <LanguageToggle className="shrink-0 lg:hidden" />
                         <Link href="/auth/login" className="hidden sm:block text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">
-                            Giriş Yap
+                            {navLabel(locale, "login")}
                         </Link>
                         <Button asChild className="bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full px-4 md:px-6 text-sm font-medium shadow-sm shadow-[#11b981]/20">
-                            <Link href="/auth/register">Hemen Başla</Link>
+                            <Link href="/auth/register">{navLabel(locale, "getStarted")}</Link>
                         </Button>
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="lg:hidden p-2 text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors"
-                            aria-label="Toggle menu"
+                            aria-label={navLabel(locale, "ariaMenu")}
                         >
                             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
@@ -243,12 +239,12 @@ export default function LandingPage() {
                         >
                             <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
                                 {[
-                                    { href: "/", label: "Anasayfa", active: true },
-                                    { href: "/static-billboards", label: "Klasik Panolar" },
-                                    { href: "/screens", label: "Dijital Billboard" },
-                                    { href: "/how-it-works", label: "Nasıl Çalışır?" },
-                                    { href: "/blog", label: "Blog" },
-                                    { href: "/updates", label: "Yenilikler" },
+                                    { href: "/", label: navLabel(locale, "home"), active: true },
+                                    { href: "/static-billboards", label: navLabel(locale, "classic") },
+                                    { href: "/screens", label: navLabel(locale, "digital") },
+                                    { href: "/how-it-works", label: navLabel(locale, "howItWorks") },
+                                    { href: "/blog", label: navLabel(locale, "blog") },
+                                    { href: "/updates", label: navLabel(locale, "updates") },
                                 ].map((item) => (
                                     <Link
                                         key={item.href}
@@ -261,7 +257,7 @@ export default function LandingPage() {
                                 ))}
                                 <div className="border-t border-neutral-200 mt-2 pt-4">
                                     <Link href="/auth/login" className="text-base font-medium text-neutral-600 hover:text-neutral-900 py-3 px-4 rounded-lg hover:bg-neutral-100 transition-colors block" onClick={() => setIsMobileMenuOpen(false)}>
-                                        Giriş Yap
+                                        {navLabel(locale, "login")}
                                     </Link>
                                 </div>
                             </nav>
@@ -276,12 +272,12 @@ export default function LandingPage() {
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-blue-600/15 rounded-full blur-[150px] -z-10" />
                     <div className="absolute top-40 right-0 w-[400px] h-[400px] bg-indigo-500/10 rounded-full blur-[100px] -z-10" />
 
-                    <ContainerScroll>
+                    <ContainerScroll hero={lm.hero}>
                         {/* Önizleme görseli: dosyayı değiştirmek için public/images/dashboard-preview.jpeg (veya src'yi aşağıda güncelleyin) */}
                         <div className="relative h-full w-full min-h-0 overflow-hidden rounded-2xl bg-neutral-200">
                             <img
                                 src="/images/dashboard-preview.jpeg"
-                                alt="Panobu Dashboard önizlemesi"
+                                alt={lm.dashboardAlt}
                                 className="absolute inset-0 h-full w-full object-contain object-top p-1 md:p-2 rounded-2xl"
                             />
                             <motion.div 
@@ -294,7 +290,7 @@ export default function LandingPage() {
                                         <TrendingUp className="w-5 h-5 text-emerald-400" />
                                     </div>
                                     <div>
-                                        <div className="text-xs text-slate-400">Günlük Gösterim</div>
+                                        <div className="text-xs text-slate-400">{lm.overlayImpressionsLabel}</div>
                                         <div className="text-lg font-bold text-neutral-900">45.2K</div>
                                     </div>
                                 </div>
@@ -311,25 +307,25 @@ export default function LandingPage() {
                                 <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
                                     <CountUp target={300} suffix="+" duration={2} />
                                 </div>
-                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Reklam Ünitesi</div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">{lm.stats.units}</div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.15, duration: 0.5 }} className="text-center py-4 md:py-0 md:border-r border-neutral-200">
                                 <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent whitespace-nowrap">
-                                    Tüm Türkiye
+                                    {lm.stats.allTurkey}
                                 </div>
-                                <div className="text-xs md:text-sm text-emerald-500/80 uppercase tracking-widest">Yakında Global</div>
+                                <div className="text-xs md:text-sm text-emerald-500/80 uppercase tracking-widest">{lm.stats.globalSoon}</div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.5 }} className="text-center py-4 md:py-0 md:border-r border-neutral-200">
                                 <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                                    En Uygun
+                                    {lm.stats.bestPrice}
                                 </div>
-                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Fiyat Garantisi</div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">{lm.stats.priceGuarantee}</div>
                             </motion.div>
                             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.45, duration: 0.5 }} className="text-center py-4 md:py-0">
                                 <div className="text-4xl md:text-5xl font-bold mb-2 leading-normal pb-1 text-neutral-900">
-                                    <CountUp target={5} suffix=" dk" duration={1.5} />
+                                    <CountUp target={5} suffix={lm.stats.fastSuffix} duration={1.5} />
                                 </div>
-                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">Hızlı Başlangıç</div>
+                                <div className="text-xs md:text-sm text-slate-500 uppercase tracking-widest">{lm.stats.fastStart}</div>
                             </motion.div>
                         </div>
                     </div>
@@ -339,17 +335,15 @@ export default function LandingPage() {
                 <section className="py-20 bg-white">
                     <div className="container mx-auto px-4">
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4">Açık Hava Reklamcılığının Yeni Adresi</h2>
-                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                                Planlayın. Kiralayın. Ölçümleyin. Tek platform, sınırsız olanak.
-                            </p>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4">{lm.products.title}</h2>
+                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">{lm.products.subtitle}</p>
                         </motion.div>
 
                         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
                             {[
-                                { icon: Monitor, title: "Dijital Panolar", desc: "AVM ekranları, dijital billboardlar ve LED duvar panolarını keşfedin. Saniyeler içinde kampanyanızı oluşturun.", link: "/screens", linkText: "Keşfet", color: "blue" },
-                                { icon: Layers, title: "Klasik Billboardlar", desc: "Sokak, cadde ve otoyol panolarında markanızı milyonlara ulaştırın. Tüm formatlar, tek çatı altında.", link: "/static-billboards", linkText: "İncele", color: "indigo" },
-                                { icon: BarChart3, title: "Fiyat Karşılaştır", desc: "Bütçenize uygun panoları anında filtreleyin. Şehir, ilçe ve format bazında en uygun fiyatları görün.", link: "/static-billboards", linkText: "Hesapla", color: "emerald" },
+                                { icon: Monitor, title: lm.products.cards[0].title, desc: lm.products.cards[0].desc, link: "/screens", linkText: lm.products.cards[0].linkText, color: "blue" },
+                                { icon: Layers, title: lm.products.cards[1].title, desc: lm.products.cards[1].desc, link: "/static-billboards", linkText: lm.products.cards[1].linkText, color: "indigo" },
+                                { icon: BarChart3, title: lm.products.cards[2].title, desc: lm.products.cards[2].desc, link: "/static-billboards", linkText: lm.products.cards[2].linkText, color: "emerald" },
                             ].map((item, i) => (
                                 <motion.div
                                     key={i}
@@ -388,20 +382,21 @@ export default function LandingPage() {
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
                     <div className="container mx-auto px-4">
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">Farkımız</span>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-neutral-900">Neden Panobu?</h2>
-                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                                Geleneksel outdoor reklam ajanslarıyla uğraşmayın. Panobu ile hızlı, şeffaf ve uygun fiyatlı reklam verin.
-                            </p>
+                            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 text-blue-400 text-sm font-medium mb-4">{lm.why.badge}</span>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-6 text-neutral-900">{lm.why.title}</h2>
+                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">{lm.why.subtitle}</p>
                         </motion.div>
 
                         <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                            {[
-                                { icon: Clock, traditional: "Günlerce fiyat teklifi bekleme", panobu: "Anında fiyatları gör, hemen kirala", color: "blue" },
-                                { icon: ShieldCheck, traditional: "Aracı komisyonları + gizli ücretler", panobu: "Direkt pano sahibinden, sıfır komisyon", color: "emerald" },
-                                { icon: Globe, traditional: "Her ajansı tek tek ara", panobu: "Tüm panolar tek platformda", color: "indigo" },
-                                { icon: Target, traditional: "Sadece büyük bütçeler kabul edilir", panobu: "Her bütçeye uygun, esnek kiralama", color: "amber" },
-                            ].map((item, i) => (
+                            {lm.why.rows.map((row, i) => {
+                                const meta = [
+                                    { icon: Clock, color: "blue" as const },
+                                    { icon: ShieldCheck, color: "emerald" as const },
+                                    { icon: Globe, color: "indigo" as const },
+                                    { icon: Target, color: "amber" as const },
+                                ][i];
+                                const item = { ...meta, traditional: row.traditional, panobu: row.panobu };
+                                return (
                                 <motion.div
                                     key={i}
                                     initial={{ opacity: 0, y: 20 }}
@@ -432,7 +427,8 @@ export default function LandingPage() {
                                         </div>
                                     </div>
                                 </motion.div>
-                            ))}
+                                );
+                            })}
                         </div>
 
                         {/* Competitive Edge Bar */}
@@ -446,26 +442,26 @@ export default function LandingPage() {
                             <div className="bg-gradient-to-r from-blue-600/10 to-indigo-600/10 border border-blue-500/15 rounded-2xl p-6 md:p-8">
                                 <div className="flex items-center justify-center gap-2 mb-5">
                                     <span className="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-xs font-bold">
-                                        Türkiye&apos;nin İlk Aracısız OOH Platformu
+                                        {lm.why.barBadge}
                                     </span>
                                 </div>
                                 <div className="grid grid-cols-3 gap-4 md:gap-8 text-center mb-5">
                                     <div>
-                                        <div className="text-2xl md:text-3xl font-bold text-emerald-400">%0</div>
-                                        <div className="text-xs text-slate-500 mt-1">Ajans Komisyonu</div>
+                                        <div className="text-2xl md:text-3xl font-bold text-emerald-400">{lm.why.barCol1}</div>
+                                        <div className="text-xs text-slate-500 mt-1">{lm.why.barCol1Sub}</div>
                                     </div>
                                     <div className="border-x border-neutral-200">
-                                        <div className="text-2xl md:text-3xl font-bold text-blue-400">Yok</div>
-                                        <div className="text-xs text-slate-500 mt-1">Minimum Bütçe</div>
+                                        <div className="text-2xl md:text-3xl font-bold text-blue-400">{lm.why.barCol2}</div>
+                                        <div className="text-xs text-slate-500 mt-1">{lm.why.barCol2Sub}</div>
                                     </div>
                                     <div>
-                                        <div className="text-2xl md:text-3xl font-bold text-indigo-400">5 dk</div>
-                                        <div className="text-xs text-slate-500 mt-1">Başlangıç Süresi</div>
+                                        <div className="text-2xl md:text-3xl font-bold text-indigo-400">{lm.why.barCol3}</div>
+                                        <div className="text-xs text-slate-500 mt-1">{lm.why.barCol3Sub}</div>
                                     </div>
                                 </div>
                                 <div className="text-center">
                                     <Link href="/platform/why-panobu" className="inline-flex items-center text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
-                                        Detaylı karşılaştırmayı gör <ArrowRight className="w-4 h-4 ml-1" />
+                                        {lm.why.compareLink} <ArrowRight className="w-4 h-4 ml-1" />
                                     </Link>
                                 </div>
                             </div>
@@ -477,31 +473,29 @@ export default function LandingPage() {
                 <section className="py-24 relative bg-white">
                     <div className="container mx-auto px-4">
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-4">Özellikler</span>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6">Geleceğin Reklamcılığı</h2>
-                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-                                Geleneksel süreçleri unutun. Panobu ile dijital açıkhava reklamcılığı artık online reklam vermek kadar kolay.
-                            </p>
+                            <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-4">{lm.features.badge}</span>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-6">{lm.features.title}</h2>
+                            <p className="text-slate-400 max-w-2xl mx-auto text-lg">{lm.features.subtitle}</p>
                         </motion.div>
 
                         <div className="grid md:grid-cols-3 gap-6">
                             {[
                                 {
                                     icon: ShieldCheck,
-                                    title: "Sabit & Şeffaf Fiyatlar",
-                                    desc: "Tüm billboard ve ekranların fiyatları platformda sabit ve şeffaf olarak listelenir. Sürpriz ücretler, gizli komisyonlar yok. Gördüğünüz fiyat, ödediğiniz fiyattır.",
+                                    title: lm.features.items[0].title,
+                                    desc: lm.features.items[0].desc,
                                     gradient: "from-blue-500/20 to-indigo-500/20"
                                 },
                                 {
                                     icon: Zap,
-                                    title: "Direkt Pano Sahibinden",
-                                    desc: "Aracı firmalara komisyon ödemeye son. Panobu ile doğrudan pano ve ekran sahipleriyle çalışarak maliyetinizi düşürün, sürecinizi hızlandırın.",
+                                    title: lm.features.items[1].title,
+                                    desc: lm.features.items[1].desc,
                                     gradient: "from-emerald-500/20 to-teal-500/20"
                                 },
                                 {
                                     icon: Monitor,
-                                    title: "Tüm Formatlar Tek Platformda",
-                                    desc: "AVM iç mekan ekranları, cadde billboardları, otoyol megaboardları, bina kaplamaları — tüm açıkhava reklam formatlarını tek bir platform üzerinden yönetin.",
+                                    title: lm.features.items[2].title,
+                                    desc: lm.features.items[2].desc,
                                     gradient: "from-slate-200 to-slate-100"
                                 }
                             ].map((feature, i) => (
@@ -529,37 +523,22 @@ export default function LandingPage() {
                 <section className="py-24 bg-white text-slate-900">
                     <div className="container mx-auto px-4">
                         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-4">Nasıl Çalışır?</span>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6">4 Adımda Reklam Verin</h2>
-                            <p className="text-slate-500 max-w-2xl mx-auto text-lg">
-                                Sadece birkaç dakikada reklamınızı şehrin en görünür noktalarına taşıyın.
-                            </p>
+                            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-4">{lm.how.badge}</span>
+                            <h2 className="text-3xl md:text-5xl font-bold mb-6">{lm.how.title}</h2>
+                            <p className="text-slate-500 max-w-2xl mx-auto text-lg">{lm.how.subtitle}</p>
                         </motion.div>
 
                         <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
                             <div className="space-y-10">
-                                {[
-                                    {
-                                        step: "1", icon: MapPin, color: "blue",
-                                        title: "Lokasyon Seçin",
-                                        desc: "Harita üzerinden şehir, ilçe ve cadde bazında pano lokasyonlarını keşfedin. Trafik yoğunluğu, günlük gösterim tahmini ve çevre analiziyle en doğru noktayı bulun."
-                                    },
-                                    {
-                                        step: "2", icon: CalendarCheck, color: "indigo",
-                                        title: "Tarih ve Bütçe Belirleyin",
-                                        desc: "Her panonun müsaitlik takvimini anlık kontrol edin. Günlük, haftalık veya aylık esnek kiralama periyotlarıyla bütçenize uygun planı oluşturun."
-                                    },
-                                    {
-                                        step: "3", icon: Layers, color: "emerald",
-                                        title: "Görsellerinizi Yükleyin",
-                                        desc: "Reklam görsellerinizi platforma yükleyin. Ölçü ve format kılavuzuyla doğru boyutta hazırlayın. İsterseniz tasarım desteği talep edin, biz halledelim."
-                                    },
-                                    {
-                                        step: "4", icon: Zap, color: "amber",
-                                        title: "Yayına Geçin",
-                                        desc: "Siparişiniz hızlıca incelenir ve onaylanır. Onay sonrası kampanyanız belirlediğiniz tarihte otomatik başlar. Tüm süreci panelden takip edin."
-                                    }
-                                ].map((item, i) => (
+                                {lm.how.steps.map((stepText, i) => {
+                                    const meta = [
+                                        { step: "1", icon: MapPin, color: "blue" as const },
+                                        { step: "2", icon: CalendarCheck, color: "indigo" as const },
+                                        { step: "3", icon: Layers, color: "emerald" as const },
+                                        { step: "4", icon: Zap, color: "amber" as const },
+                                    ][i];
+                                    const item = { ...meta, title: stepText.title, desc: stepText.desc };
+                                    return (
                                     <motion.div
                                         key={i}
                                         initial={{ opacity: 0, x: -20 }}
@@ -576,11 +555,16 @@ export default function LandingPage() {
                                             }`} />
                                         </div>
                                         <div>
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-semibold mb-3 border border-neutral-200">
+                                                <item.icon className="w-4 h-4" />
+                                                <span>{locale === "en" ? `Step ${item.step}` : `Adım ${item.step}`}</span>
+                                            </div>
                                             <h3 className="text-lg font-bold mb-1.5 text-slate-900">{item.title}</h3>
                                             <p className="text-slate-500 leading-relaxed text-sm">{item.desc}</p>
                                         </div>
                                     </motion.div>
-                                ))}
+                                );
+                                })}
                             </div>
 
                             <motion.div
@@ -589,7 +573,7 @@ export default function LandingPage() {
                                 viewport={{ once: true }}
                                 className="relative h-[550px] w-full rounded-3xl overflow-hidden border border-slate-200 shadow-2xl"
                             >
-                                <img src="/images/how-it-works-billboard.png" alt="Panobu Billboard" className="w-full h-full object-cover" />
+                                <img src="/images/how-it-works-billboard.png" alt="" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
 
                                 <motion.div
@@ -601,7 +585,7 @@ export default function LandingPage() {
                                         <TrendingUp className="w-4 h-4 text-emerald-600" />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] text-slate-500 font-medium">Günlük Gösterim</div>
+                                        <div className="text-[10px] text-slate-500 font-medium">{lm.how.overlayImp}</div>
                                         <div className="text-base font-bold text-slate-900">45.2K</div>
                                     </div>
                                 </motion.div>
@@ -612,16 +596,16 @@ export default function LandingPage() {
                                     className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg flex items-center gap-2 z-10"
                                 >
                                     <Zap className="w-4 h-4 text-blue-600" />
-                                    <span className="font-semibold text-slate-800 text-sm">Kolay & Hızlı</span>
+                                    <span className="font-semibold text-slate-800 text-sm">{lm.how.overlayEasy}</span>
                                 </motion.div>
                             </motion.div>
                         </div>
 
                         <div className="grid md:grid-cols-3 gap-6">
                             {[
-                                { title: "Şeffaf Fiyatlandırma", desc: "Tüm billboard ve ekranların fiyatları platformda anlık görünür. Aracı firmalara zaman kaybetmeden direkt kiralayın.", icon: ShieldCheck },
-                                { title: "Herkes İçin Uygun", desc: "Restoran, emlakçı, showroom, kafe — işletmenizin büyüklüğü fark etmez. Küçük bütçelerle bile açık hava reklamı verin.", icon: Target },
-                                { title: "Türkiye Geneli Kapsama", desc: "Her ile, her ilçeye genişliyoruz. Stratejik lokasyonlarda markanızı konumlandırın, yerel ve ulusal ölçekte görünür olun.", icon: MapPin },
+                                { title: lm.how.bottomCards[0].title, desc: lm.how.bottomCards[0].desc, icon: ShieldCheck },
+                                { title: lm.how.bottomCards[1].title, desc: lm.how.bottomCards[1].desc, icon: Target },
+                                { title: lm.how.bottomCards[2].title, desc: lm.how.bottomCards[2].desc, icon: MapPin },
                             ].map((item, i) => (
                                 <motion.div
                                     key={i}
@@ -648,22 +632,19 @@ export default function LandingPage() {
                     <div className="container mx-auto px-4">
                         <div className="grid lg:grid-cols-2 gap-16 items-center">
                             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}>
-                                <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-6">Enterprise</span>
+                                <span className="inline-block px-4 py-1.5 rounded-full bg-indigo-500/10 text-indigo-400 text-sm font-medium mb-6">{lm.enterprise.badge}</span>
                                 <h2 className="text-3xl md:text-4xl font-bold mb-6 text-neutral-900 leading-tight">
-                                    Büyük Markalar İçin<br />
-                                    <span className="text-blue-700">Kurumsal Çözümler</span>
+                                    {lm.enterprise.titleLine1}
+                                    <br />
+                                    <span className="text-blue-700">{lm.enterprise.titleLine2}</span>
                                 </h2>
-                                <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-                                    Türkiye&apos;nin dört bir yanında, il bazlı stratejik kampanyalar oluşturun. Farklı lokasyonlarla A/B testleri yapın, en yüksek dönüşümü yakalayan kombinasyonu keşfedin.
-                                </p>
+                                <p className="text-slate-400 text-lg mb-10 leading-relaxed">{lm.enterprise.lead}</p>
 
                                 <div className="space-y-6 mb-10">
-                                    {[
-                                        { icon: MapPin, title: "İl Bazlı Kampanya Yönetimi", desc: "Her ilde stratejik lokasyonlarda markanızı konumlandırın. Bölgesel hedefleme ile reklam bütçenizi en verimli şekilde kullanın." },
-                                        { icon: BarChart3, title: "A/B Test & Performans Analizi", desc: "Farklı lokasyonlar ve görseller ile A/B testleri yapın. Kampanyalarınızın performansını karşılaştırın, veriye dayalı kararlar alın." },
-                                        { icon: Calendar, title: "Anlık Müsaitlik Takvimi", desc: "Her panonun müsaitlik tarihlerini anlık kontrol edin. Reklamlarınızı önceden planlayarak en uygun zamanlarda yayın yapın." },
-                                        { icon: LayoutDashboard, title: "Sipariş Takip Paneli", desc: "Tüm açık hava siparişlerinizi tek bir panelden yönetin. Geçmiş kampanya detaylarını, ödeme geçmişini ve süreç durumunu anlık görüntüleyin." },
-                                    ].map((item, i) => (
+                                    {lm.enterprise.bullets.map((bul, i) => {
+                                        const icons = [MapPin, BarChart3, Calendar, LayoutDashboard] as const;
+                                        const item = { icon: icons[i], title: bul.title, desc: bul.desc };
+                                        return (
                                         <motion.div
                                             key={i}
                                             initial={{ opacity: 0, x: -10 }}
@@ -680,12 +661,13 @@ export default function LandingPage() {
                                                 <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
                                             </div>
                                         </motion.div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
 
                                 <Button asChild size="lg" className="h-14 px-8 text-base bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full shadow-md shadow-[#11b981]/25">
                                     <Link href="https://calendly.com/erendoru/30dk" target="_blank">
-                                        Demo Talep Et <ArrowRight className="w-5 h-5 ml-2" />
+                                        {lm.enterprise.cta} <ArrowRight className="w-5 h-5 ml-2" />
                                     </Link>
                                 </Button>
                             </motion.div>
@@ -701,15 +683,13 @@ export default function LandingPage() {
                                         <div className="w-3 h-3 rounded-full bg-red-400" />
                                         <div className="w-3 h-3 rounded-full bg-amber-400" />
                                         <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                                        <span className="text-xs text-slate-500 ml-2">Panobu Enterprise Dashboard</span>
+                                        <span className="text-xs text-slate-500 ml-2">{lm.enterprise.dashTitle}</span>
                                     </div>
 
-                                    {[
-                                        { label: "Aktif Kampanyalar", value: "12", change: "+3 bu ay", color: "blue" },
-                                        { label: "Toplam Gösterim", value: "2.4M", change: "+18% artış", color: "emerald" },
-                                        { label: "Kapsanan İl", value: "28", change: "81 il hedefi", color: "indigo" },
-                                        { label: "Aylık Tasarruf", value: "₺45K", change: "aracısız fiyat", color: "amber" },
-                                    ].map((stat, i) => (
+                                    {lm.enterprise.stats.map((st, i) => {
+                                        const colors = ["blue", "emerald", "indigo", "amber"] as const;
+                                        const stat = { label: st.label, value: ["12", "2.4M", "28", "₺45K"][i], change: st.change, color: colors[i] };
+                                        return (
                                         <div key={i} className="flex items-center justify-between py-4 border-b border-neutral-200 last:border-0">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-2 h-8 rounded-full ${
@@ -722,7 +702,8 @@ export default function LandingPage() {
                                             </div>
                                             <span className="text-xs text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">{stat.change}</span>
                                         </div>
-                                    ))}
+                                        );
+                                    })}
                                 </div>
                             </motion.div>
                         </div>
@@ -738,19 +719,17 @@ export default function LandingPage() {
                             viewport={{ once: true }}
                             className="max-w-3xl mx-auto"
                         >
-                            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-neutral-900">Markanızı Şehre Duyurun</h2>
-                            <p className="text-lg md:text-xl text-neutral-600 mb-10 max-w-xl mx-auto">
-                                Ücretsiz hesabınızı oluşturun ve ilk kampanyanızı bugün başlatın. Açık hava reklamcılığı hiç bu kadar kolay olmamıştı.
-                            </p>
+                            <h2 className="text-4xl md:text-6xl font-bold mb-6 text-neutral-900">{lm.cta.title}</h2>
+                            <p className="text-lg md:text-xl text-neutral-600 mb-10 max-w-xl mx-auto">{lm.cta.subtitle}</p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Button asChild size="lg" className="h-14 px-10 text-lg bg-white text-slate-900 hover:bg-slate-100 rounded-full font-semibold shadow-xl">
                                     <Link href="/static-billboards">
-                                        Şimdi Başla — Ücretsiz <ArrowRight className="w-5 h-5 ml-2" />
+                                        {lm.cta.primary} <ArrowRight className="w-5 h-5 ml-2" />
                                     </Link>
                                 </Button>
                                 <Button asChild size="lg" variant="outline" className="h-14 px-10 text-lg border-2 border-[#11b981] text-[#11b981] bg-white hover:bg-[#11b981]/10 rounded-full font-medium">
                                     <Link href="https://calendly.com/erendoru/30dk" target="_blank">
-                                        Demo Rezervasyon
+                                        {lm.cta.secondary}
                                     </Link>
                                 </Button>
                             </div>
@@ -772,59 +751,59 @@ export default function LandingPage() {
                             </div>
                             <Button asChild className="bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full px-6 py-5 font-bold text-base shadow-lg shadow-[#11b981]/30 w-full md:w-auto">
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">
-                                    Demo Rezervasyon
+                                    {foot.demoBooking}
                                 </Link>
                             </Button>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">Ürünler</h4>
+                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">{foot.colProducts}</h4>
                             <ul className="space-y-3.5 text-slate-500">
-                                <li><Link href="/screens" className="hover:text-neutral-900 transition-colors text-sm">Açık Hava Reklamcılığı</Link></li>
-                                <li><Link href="/screens" className="hover:text-neutral-900 transition-colors text-sm">Dijital Panolar</Link></li>
-                                <li><Link href="/static-billboards" className="hover:text-neutral-900 transition-colors text-sm">Billboard Kiralama</Link></li>
+                                <li><Link href="/screens" className="hover:text-neutral-900 transition-colors text-sm">{foot.products.outdoor}</Link></li>
+                                <li><Link href="/screens" className="hover:text-neutral-900 transition-colors text-sm">{foot.products.digital}</Link></li>
+                                <li><Link href="/static-billboards" className="hover:text-neutral-900 transition-colors text-sm">{foot.products.rental}</Link></li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">Platform</h4>
+                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">{foot.colPlatform}</h4>
                             <ul className="space-y-3.5 text-slate-500">
-                                <li><Link href="/platform/why-panobu" className="hover:text-neutral-900 transition-colors text-sm">Neden Panobu?</Link></li>
-                                <li><Link href="/platform/advantages" className="hover:text-neutral-900 transition-colors text-sm">Panobu Avantajları</Link></li>
-                                <li><Link href="/platform/advertisers" className="hover:text-neutral-900 transition-colors text-sm">Reklam Verenler İçin</Link></li>
-                                <li><Link href="/platform/publishers" className="hover:text-neutral-900 transition-colors text-sm">Reklam Alanları İçin</Link></li>
+                                <li><Link href="/platform/why-panobu" className="hover:text-neutral-900 transition-colors text-sm">{foot.platform.why}</Link></li>
+                                <li><Link href="/platform/advantages" className="hover:text-neutral-900 transition-colors text-sm">{foot.platform.advantages}</Link></li>
+                                <li><Link href="/platform/advertisers" className="hover:text-neutral-900 transition-colors text-sm">{foot.platform.advertisers}</Link></li>
+                                <li><Link href="/platform/publishers" className="hover:text-neutral-900 transition-colors text-sm">{foot.platform.publishers}</Link></li>
                             </ul>
                         </div>
 
                         <div>
-                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">Şirket</h4>
+                            <h4 className="font-bold text-sm uppercase tracking-wider text-slate-400 mb-6">{foot.colCompany}</h4>
                             <ul className="space-y-3.5 text-slate-500">
-                                <li><Link href="/company/about" className="hover:text-neutral-900 transition-colors text-sm">Hakkımızda</Link></li>
-                                <li><Link href="/company/careers" className="hover:text-neutral-900 transition-colors text-sm">Kariyer</Link></li>
-                                <li><Link href="/blog" className="hover:text-neutral-900 transition-colors text-sm">Blog</Link></li>
-                                <li><Link href="/updates" className="hover:text-neutral-900 transition-colors text-sm">Yenilikler</Link></li>
-                                <li><Link href="/company/help" className="hover:text-neutral-900 transition-colors text-sm">Yardım Merkezi</Link></li>
-                                <li><Link href="/legal/contact" className="hover:text-neutral-900 transition-colors text-sm">İletişim</Link></li>
+                                <li><Link href="/company/about" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.about}</Link></li>
+                                <li><Link href="/company/careers" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.careers}</Link></li>
+                                <li><Link href="/blog" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.blog}</Link></li>
+                                <li><Link href="/updates" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.updates}</Link></li>
+                                <li><Link href="/company/help" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.help}</Link></li>
+                                <li><Link href="/legal/contact" className="hover:text-neutral-900 transition-colors text-sm">{foot.company.contact}</Link></li>
                             </ul>
                         </div>
                     </div>
 
                     <div className="border-t border-neutral-200 pt-8">
                         <div className="flex flex-wrap items-center justify-center gap-4 text-xs text-slate-600 mb-4">
-                            <Link href="/legal/privacy" className="hover:text-slate-400 transition-colors">Gizlilik Politikası</Link>
+                            <Link href="/legal/privacy" className="hover:text-slate-400 transition-colors">{foot.legal.privacy}</Link>
                             <span>•</span>
-                            <Link href="/legal/refund" className="hover:text-slate-400 transition-colors">İade Politikası</Link>
+                            <Link href="/legal/refund" className="hover:text-slate-400 transition-colors">{foot.legal.refund}</Link>
                             <span>•</span>
-                            <Link href="/legal/terms" className="hover:text-slate-400 transition-colors">Hizmet Şartları</Link>
+                            <Link href="/legal/terms" className="hover:text-slate-400 transition-colors">{foot.legal.terms}</Link>
                             <span>•</span>
-                            <Link href="/legal/distance-sales" className="hover:text-slate-400 transition-colors">Mesafeli Satış Sözleşmesi</Link>
+                            <Link href="/legal/distance-sales" className="hover:text-slate-400 transition-colors">{foot.legal.distance}</Link>
                             <span>•</span>
-                            <Link href="/legal/delivery" className="hover:text-slate-400 transition-colors">Teslimat Koşulları</Link>
+                            <Link href="/legal/delivery" className="hover:text-slate-400 transition-colors">{foot.legal.delivery}</Link>
                             <span>•</span>
-                            <Link href="/legal/contact" className="hover:text-slate-400 transition-colors">İletişim</Link>
+                            <Link href="/legal/contact" className="hover:text-slate-400 transition-colors">{foot.company.contact}</Link>
                         </div>
                         <div className="text-center text-slate-600 text-xs">
-                            <p>&copy; 2026 Panobu. Tüm hakları saklıdır.</p>
+                            <p>{foot.copyright}</p>
                         </div>
                     </div>
                 </div>

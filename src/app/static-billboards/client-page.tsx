@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2, ShoppingCart } from "lucide-react";
+import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import FilterSidebar, { FilterState } from "@/components/static/FilterSidebar";
@@ -10,21 +10,31 @@ import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import PanelDetailSidebar from "@/components/static/PanelDetailSidebar";
 import { useSearchParams, useRouter } from "next/navigation";
-import { CartProvider, useCart } from "@/contexts/CartContext";
-import Link from "next/link";
+import { CartProvider } from "@/contexts/CartContext";
+import { useAppLocale } from "@/contexts/LocaleContext";
+import { staticBillboardsCopy, staticBillboardsCityLabel } from "@/messages/staticBillboards";
+import { panelTypeLabel } from "@/lib/panel-labels-locale";
+
+function MapLoadingPlaceholder() {
+    const { locale } = useAppLocale();
+    const s = staticBillboardsCopy(locale);
+    return (
+        <div className="w-full h-full bg-slate-100 animate-pulse flex items-center justify-center text-slate-400">{s.mapLoading}</div>
+    );
+}
 
 // Dynamically import Map to avoid SSR issues
 const Map = dynamic(() => import("@/components/domain/Map"), {
     ssr: false,
-    loading: () => <div className="w-full h-full bg-slate-100 animate-pulse flex items-center justify-center text-slate-400">Harita Yükleniyor...</div>
+    loading: MapLoadingPlaceholder,
 });
 
 // Cart-wrapped inner component
 function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
-    // Client component for static billboards page
+    const { locale } = useAppLocale();
+    const s = staticBillboardsCopy(locale);
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { count: cartCount } = useCart();
     const [selectedCity, setSelectedCity] = useState("Tümü");
     const [panels, setPanels] = useState<any[]>(initialPanels);
     const [isLoadingPanels, setIsLoadingPanels] = useState(false);
@@ -174,15 +184,13 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                             className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-200"
                         >
                             <MapPin className="w-4 h-4 text-blue-600" />
-                            <span className="font-medium text-blue-700">{selectedCity}</span>
+                            <span className="font-medium text-blue-700">{staticBillboardsCityLabel(selectedCity, locale)}</span>
                             <ChevronDown className={`w-4 h-4 text-blue-600 transition-transform ${mobileFiltersOpen ? 'rotate-180' : ''}`} />
                         </button>
 
                         <div className="flex items-center gap-2">
                             {/* Panel Count */}
-                            <span className="text-xs text-slate-500 font-medium">
-                                {filteredPanels.length} pano
-                            </span>
+                            <span className="text-xs text-slate-500 font-medium">{s.panelCountMobile(filteredPanels.length)}</span>
 
                             {/* Full Filters Button */}
                             <Button
@@ -217,7 +225,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                             : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                             }`}
                                     >
-                                        {city}
+                                        {staticBillboardsCityLabel(city, locale)}
                                     </button>
                                 ))}
                             </div>
@@ -231,7 +239,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                         }`}
                                 >
                                     <SlidersHorizontal className="w-3.5 h-3.5" />
-                                    <span>Pano Tipi</span>
+                                    <span>{s.panelType}</span>
                                     {filters.panelTypes.length > 0 && (
                                         <span className="bg-[#11b981] text-white text-[10px] px-1 rounded-full">
                                             {filters.panelTypes.length}
@@ -251,7 +259,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                         })}
                                         className="px-3 py-1.5 rounded-lg text-sm text-red-600 border border-red-200 bg-red-50"
                                     >
-                                        Temizle ×
+                                        {s.clearFilters}
                                     </button>
                                 )}
                             </div>
@@ -276,7 +284,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                             }`}
                                     >
-                                        {city}
+                                        {staticBillboardsCityLabel(city, locale)}
                                     </button>
                                 ))}
                             </div>
@@ -291,7 +299,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.panelTypes.length > 0 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <span>Pano Tipi</span>
+                                    <span>{s.panelType}</span>
                                     {filters.panelTypes.length > 0 && (
                                         <span className="bg-[#11b981] text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                                             {filters.panelTypes.length}
@@ -303,7 +311,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 {openDropdown === 'type' && (
                                     <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-xl border border-slate-200 p-2 z-50 animate-in fade-in zoom-in-95 duration-200">
                                         <div className="space-y-1 max-h-[300px] overflow-y-auto">
-                                            {Object.entries(PANEL_TYPE_LABELS).map(([key, label]) => (
+                                            {Object.keys(PANEL_TYPE_LABELS).map((key) => (
                                                 <button
                                                     key={key}
                                                     onClick={() => togglePanelType(key)}
@@ -311,7 +319,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                                 >
                                                     <div className="flex items-center gap-2">
                                                         <PanelTypeIcon type={key} size={16} />
-                                                        <span className="text-slate-700">{label}</span>
+                                                        <span className="text-slate-700">{panelTypeLabel(key, locale)}</span>
                                                     </div>
                                                     {filters.panelTypes.includes(key) && (
                                                         <Check className="w-4 h-4 text-blue-600" />
@@ -330,7 +338,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <span>Fiyat</span>
+                                    <span>{s.price}</span>
                                     <ChevronDown className="w-3.5 h-3.5 opacity-50" />
                                 </button>
 
@@ -341,9 +349,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                                 <span>Min: {formatCurrency(filters.priceRange[0])}</span>
                                                 <span>Max: {formatCurrency(filters.priceRange[1])}</span>
                                             </div>
-                                            <p className="text-xs text-slate-500 text-center">
-                                                Detaylı fiyat ayarı için sağdaki filtre menüsünü kullanın.
-                                            </p>
+                                            <p className="text-xs text-slate-500 text-center">{s.priceDropdownHint}</p>
                                         </div>
                                     </div>
                                 )}
@@ -356,7 +362,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${filters.isAVM !== null ? 'bg-blue-50 border-blue-200 text-blue-700' : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
                                         }`}
                                 >
-                                    <span>Konum</span>
+                                    <span>{s.location}</span>
                                     {filters.isAVM !== null && (
                                         <span className="bg-[#11b981] text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
                                             1
@@ -372,21 +378,21 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                                 onClick={() => setFilters({ ...filters, isAVM: null })}
                                                 className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">Tümü</span>
+                                                <span className="text-slate-700">{s.allLocations}</span>
                                                 {filters.isAVM === null && <Check className="w-4 h-4 text-blue-600" />}
                                             </button>
                                             <button
                                                 onClick={() => setFilters({ ...filters, isAVM: true })}
                                                 className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">🏬 AVM İçi</span>
+                                                <span className="text-slate-700">{s.mallInterior}</span>
                                                 {filters.isAVM === true && <Check className="w-4 h-4 text-blue-600" />}
                                             </button>
                                             <button
                                                 onClick={() => setFilters({ ...filters, isAVM: false })}
                                                 className="w-full flex items-center justify-between px-3 py-2 text-sm rounded-md hover:bg-slate-50 transition-colors text-left"
                                             >
-                                                <span className="text-slate-700">🏙️ Açık Alan</span>
+                                                <span className="text-slate-700">{s.openArea}</span>
                                                 {filters.isAVM === false && <Check className="w-4 h-4 text-blue-600" />}
                                             </button>
                                         </div>
@@ -398,9 +404,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
 
                         {/* Right Side: Filter Toggle & Count */}
                         <div className="flex items-center gap-3">
-                            <p className="text-xs text-slate-500 font-medium">
-                                {filteredPanels.length} pano bulundu
-                            </p>
+                            <p className="text-xs text-slate-500 font-medium">{s.panelCountDesktop(filteredPanels.length)}</p>
 
                             <Button
                                 variant={showFiltersOverlay ? "default" : "outline"}
@@ -409,7 +413,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                 className="relative shadow-sm"
                             >
                                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                                {showFiltersOverlay ? 'Filtreleri Gizle' : 'Tüm Filtreler'}
+                                {showFiltersOverlay ? s.filtersHide : s.filtersShow}
                                 {activeFilterCount > 0 && !showFiltersOverlay && (
                                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-sm border border-white">
                                         {activeFilterCount}
@@ -453,7 +457,7 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                         <div className="absolute inset-0 bg-white/70 z-20 flex items-center justify-center backdrop-blur-sm">
                             <div className="flex items-center gap-3 bg-white px-6 py-4 rounded-xl shadow-lg border border-slate-200">
                                 <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                                <span className="text-slate-700 font-medium">Panolar yükleniyor...</span>
+                                <span className="text-slate-700 font-medium">{s.panelsLoading}</span>
                             </div>
                         </div>
                     )}

@@ -5,7 +5,11 @@ import prisma from "@/lib/prisma";
 export async function GET(request: Request) {
     try {
         const panels = await prisma.staticPanel.findMany({
-            where: { active: true },
+            where: {
+                active: true,
+                reviewStatus: "APPROVED",
+                ownerStatus: "ACTIVE",
+            },
             orderBy: { createdAt: "desc" },
         });
 

@@ -9,7 +9,11 @@ export async function GET(request: NextRequest) {
         const city = searchParams.get("city");
 
         // Build where clause
-        const where: any = { active: true };
+        const where: any = {
+            active: true,
+            reviewStatus: "APPROVED",
+            ownerStatus: "ACTIVE",
+        };
 
         // Filter by city if provided and not "Tümü"
         if (city && city !== "Tümü") {

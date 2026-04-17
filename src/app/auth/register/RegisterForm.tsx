@@ -8,20 +8,27 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { translateAuthError } from "@/lib/auth-translations";
+import CityMultiSelect from "@/components/form/CityMultiSelect";
+
+type Role = "ADVERTISER" | "SCREEN_OWNER";
 
 export default function RegisterForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get('redirect');
-    const resumeRental = searchParams.get('resumeRental');
+    const redirectTo = searchParams.get("redirect");
+    const resumeRental = searchParams.get("resumeRental");
+    const initialRole = (searchParams.get("role") as Role | null) === "SCREEN_OWNER" ? "SCREEN_OWNER" : "ADVERTISER";
 
-    const [role, setRole] = useState<"ADVERTISER" | "SCREEN_OWNER">("ADVERTISER");
+    const [role, setRole] = useState<Role>(initialRole);
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
         companyName: "",
+        phone: "",
+        taxId: "",
     });
+    const [cities, setCities] = useState<string[]>([]);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [registrationSuccess, setRegistrationSuccess] = useState(false);
@@ -34,7 +41,7 @@ export default function RegisterForm() {
         }
     }, [resumeRental]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
@@ -43,6 +50,19 @@ export default function RegisterForm() {
         setLoading(true);
         setError("");
 
+        if (role === "SCREEN_OWNER") {
+            if (!formData.phone.trim()) {
+                setError("Telefon numarası zorunludur.");
+                setLoading(false);
+                return;
+            }
+            if (cities.length === 0) {
+                setError("En az bir hizmet verdiğiniz il seçmelisiniz.");
+                setLoading(false);
+                return;
+            }
+        }
+
         try {
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.email,
@@ -50,7 +70,7 @@ export default function RegisterForm() {
                 options: {
                     data: {
                         name: formData.name,
-                        role: role,
+                        role,
                     },
                 },
             });
@@ -69,20 +89,29 @@ export default function RegisterForm() {
                     email: formData.email,
                     role,
                     name: formData.name,
-                    companyName: formData.companyName
+                    companyName: formData.companyName,
+                    phone: formData.phone || undefined,
+                    taxId: formData.taxId || undefined,
+                    cities,
                 }),
             });
 
             if (!res.ok) {
-                console.error("Profile sync failed");
+                const detail = await res.json().catch(() => ({}));
+                console.error("Profile sync failed", detail);
+                setError(
+                    "Hesap oluşturuldu fakat profiliniz kaydedilemedi. Lütfen giriş yapmayı deneyin; sorun devam ederse destek@panobu.com ile iletişime geçin."
+                );
+                setLoading(false);
+                return;
             }
 
             setRegistrationSuccess(true);
-            const pendingRental = localStorage.getItem('pendingRental');
+            const pendingRental = localStorage.getItem("pendingRental");
 
             setTimeout(() => {
                 if (redirectTo && resumeRental && pendingRental) {
-                    window.location.href = redirectTo + '?resumeRental=true';
+                    window.location.href = redirectTo + "?resumeRental=true";
                 } else if (redirectTo) {
                     window.location.href = redirectTo;
                 } else if (role === "ADVERTISER") {
@@ -92,8 +121,8 @@ export default function RegisterForm() {
                 }
                 router.refresh();
             }, 3000);
-
         } catch (err) {
+            console.error(err);
             setError("Bir hata oluştu.");
         } finally {
             setLoading(false);
@@ -122,12 +151,12 @@ export default function RegisterForm() {
                         Lütfen mail kutunuzu kontrol edin ve hesabınızı doğrulayın.
                     </p>
                 </div>
-                <p className="text-sm text-neutral-500">
-                    Birkaç saniye içinde yönlendirileceksiniz...
-                </p>
+                <p className="text-sm text-neutral-500">Birkaç saniye içinde yönlendirileceksiniz...</p>
             </div>
         );
     }
+
+    const isOwner = role === "SCREEN_OWNER";
 
     return (
         <div className="space-y-6">
@@ -147,39 +176,49 @@ export default function RegisterForm() {
                 <button
                     type="button"
                     onClick={() => setRole("ADVERTISER")}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "ADVERTISER"
-                        ? "bg-neutral-900 text-white shadow-sm"
-                        : "text-neutral-600 hover:text-neutral-900"
-                        }`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                        role === "ADVERTISER"
+                            ? "bg-neutral-900 text-white shadow-sm"
+                            : "text-neutral-600 hover:text-neutral-900"
+                    }`}
                 >
                     Reklam Veren
                 </button>
                 <button
                     type="button"
                     onClick={() => setRole("SCREEN_OWNER")}
-                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${role === "SCREEN_OWNER"
-                        ? "bg-neutral-900 text-white shadow-sm"
-                        : "text-neutral-600 hover:text-neutral-900"
-                        }`}
+                    className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                        role === "SCREEN_OWNER"
+                            ? "bg-neutral-900 text-white shadow-sm"
+                            : "text-neutral-600 hover:text-neutral-900"
+                    }`}
                 >
-                    Ekran Sahibi
+                    Ünite Sahibi
                 </button>
             </div>
 
+            {isOwner && (
+                <p className="text-xs text-neutral-500 text-center">
+                    Billboard, CLP, raket, megalight veya dijital ekran sahibiyseniz bu seçenekle kaydolun.
+                </p>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <Label htmlFor="name" className="text-neutral-700">Ad Soyad</Label>
+                    <Label htmlFor="name" className="text-neutral-700">
+                        {isOwner ? "Yetkili Adı Soyadı" : "Ad Soyad"}
+                    </Label>
                     <Input id="name" name="name" required onChange={handleChange} className={inputClass} />
                 </div>
 
                 <div className="space-y-2">
                     <Label htmlFor="companyName" className="text-neutral-700">
-                        {role === "ADVERTISER" ? "Şirket Adı (Opsiyonel)" : "Şirket / İşletme Adı"}
+                        {isOwner ? "Firma / İşletme Adı" : "Şirket Adı (Opsiyonel)"}
                     </Label>
                     <Input
                         id="companyName"
                         name="companyName"
-                        required={role === "SCREEN_OWNER"}
+                        required={isOwner}
                         onChange={handleChange}
                         className={inputClass}
                     />
@@ -192,8 +231,50 @@ export default function RegisterForm() {
 
                 <div className="space-y-2">
                     <Label htmlFor="password" className="text-neutral-700">Şifre</Label>
-                    <Input id="password" name="password" type="password" required onChange={handleChange} className={inputClass} />
+                    <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        minLength={6}
+                        onChange={handleChange}
+                        className={inputClass}
+                    />
                 </div>
+
+                {isOwner && (
+                    <>
+                        <div className="space-y-2">
+                            <Label htmlFor="phone" className="text-neutral-700">Telefon</Label>
+                            <Input
+                                id="phone"
+                                name="phone"
+                                type="tel"
+                                required
+                                placeholder="05XX XXX XX XX"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                className={inputClass}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="taxId" className="text-neutral-700">Vergi Numarası (Opsiyonel)</Label>
+                            <Input
+                                id="taxId"
+                                name="taxId"
+                                value={formData.taxId}
+                                onChange={handleChange}
+                                className={inputClass}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label className="text-neutral-700">Hizmet Verdiğiniz İller</Label>
+                            <CityMultiSelect value={cities} onChange={setCities} />
+                        </div>
+                    </>
+                )}
 
                 {error && <p className="text-sm text-red-600">{error}</p>}
 

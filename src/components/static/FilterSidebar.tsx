@@ -8,6 +8,9 @@ import { X, SlidersHorizontal } from 'lucide-react';
 import { PANEL_TYPE_LABELS, TRAFFIC_LEVEL_LABELS } from '@/lib/turkey-data';
 import PanelTypeIcon from '@/components/icons/PanelTypeIcon';
 import { formatCurrency } from '@/lib/utils';
+import { useAppLocale } from '@/contexts/LocaleContext';
+import { staticBillboardsCopy } from '@/messages/staticBillboards';
+import { panelTypeLabel, trafficLevelLabel } from '@/lib/panel-labels-locale';
 
 export interface FilterState {
     priceRange: [number, number];
@@ -25,6 +28,8 @@ interface FilterSidebarProps {
 }
 
 export default function FilterSidebar({ filters, onFilterChange, onClose, isMobile = false }: FilterSidebarProps) {
+    const { locale } = useAppLocale();
+    const s = staticBillboardsCopy(locale);
     const [openSections, setOpenSections] = useState({
         price: true,
         size: true,
@@ -86,7 +91,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
             <div className="p-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <SlidersHorizontal className="w-5 h-5 text-slate-600" />
-                    <h2 className="font-bold text-lg">Filtreler</h2>
+                    <h2 className="font-bold text-lg">{s.filtersTitle}</h2>
                     {activeFilterCount > 0 && (
                         <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
                             {activeFilterCount}
@@ -108,7 +113,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                         onClick={() => toggleSection('price')}
                         className="w-full flex items-center justify-between mb-3"
                     >
-                        <Label className="text-sm font-semibold">Fiyat Aralığı</Label>
+                        <Label className="text-sm font-semibold">{s.priceRange}</Label>
                         <span className="text-xs text-slate-500">
                             {formatCurrency(filters.priceRange[0])} - {formatCurrency(filters.priceRange[1])}
                         </span>
@@ -133,7 +138,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                         onClick={() => toggleSection('size')}
                         className="w-full flex items-center justify-between mb-3"
                     >
-                        <Label className="text-sm font-semibold">Pano Boyutu (m²)</Label>
+                        <Label className="text-sm font-semibold">{s.sizeRange}</Label>
                         <span className="text-xs text-slate-500">
                             {filters.sizeRange[0]}-{filters.sizeRange[1]} m²
                         </span>
@@ -158,16 +163,14 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                         onClick={() => toggleSection('type')}
                         className="w-full flex items-center justify-between mb-3"
                     >
-                        <Label className="text-sm font-semibold">Pano Türü</Label>
+                        <Label className="text-sm font-semibold">{s.panelKind}</Label>
                         {filters.panelTypes.length > 0 && (
-                            <span className="text-xs text-blue-600 font-medium">
-                                {filters.panelTypes.length} seçili
-                            </span>
+                            <span className="text-xs text-blue-600 font-medium">{s.selected(filters.panelTypes.length)}</span>
                         )}
                     </button>
                     {openSections.type && (
                         <div className="space-y-2">
-                            {Object.entries(PANEL_TYPE_LABELS).map(([key, label]) => (
+                            {Object.keys(PANEL_TYPE_LABELS).map((key) => (
                                 <label
                                     key={key}
                                     className="flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors"
@@ -179,7 +182,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                                         className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                     />
                                     <PanelTypeIcon type={key} size={20} />
-                                    <span className="text-sm">{label}</span>
+                                    <span className="text-sm">{panelTypeLabel(key, locale)}</span>
                                 </label>
                             ))}
                         </div>
@@ -192,16 +195,14 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                         onClick={() => toggleSection('traffic')}
                         className="w-full flex items-center justify-between mb-3"
                     >
-                        <Label className="text-sm font-semibold">Trafik Yoğunluğu</Label>
+                        <Label className="text-sm font-semibold">{s.traffic}</Label>
                         {filters.trafficLevels.length > 0 && (
-                            <span className="text-xs text-blue-600 font-medium">
-                                {filters.trafficLevels.length} seçili
-                            </span>
+                            <span className="text-xs text-blue-600 font-medium">{s.selected(filters.trafficLevels.length)}</span>
                         )}
                     </button>
                     {openSections.traffic && (
                         <div className="space-y-2">
-                            {Object.entries(TRAFFIC_LEVEL_LABELS).map(([key, label]) => (
+                            {Object.keys(TRAFFIC_LEVEL_LABELS).map((key) => (
                                 <label
                                     key={key}
                                     className="flex items-center gap-2 p-2 rounded hover:bg-slate-50 cursor-pointer transition-colors"
@@ -212,7 +213,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                                         onChange={() => toggleTrafficLevel(key)}
                                         className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                                     />
-                                    <span className="text-sm">{label}</span>
+                                    <span className="text-sm">{trafficLevelLabel(key, locale)}</span>
                                 </label>
                             ))}
                         </div>
@@ -231,7 +232,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                     disabled={activeFilterCount === 0}
                 >
                     <X className="w-4 h-4 mr-2" />
-                    Filtreleri Temizle
+                    {s.resetFilters}
                 </Button>
             </div>
         </div>

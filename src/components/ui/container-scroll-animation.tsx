@@ -5,10 +5,20 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+export type HeroScrollCopy = {
+    h1Line1: string;
+    h1Line2: string;
+    subtitle: string;
+    ctaPrimary: string;
+    ctaSecondary: string;
+};
+
 export const ContainerScroll = ({
     children,
+    hero,
 }: {
     children: React.ReactNode;
+    hero: HeroScrollCopy;
 }) => {
     const containerRef = useRef<any>(null);
     const { scrollYProgress } = useScroll({
@@ -47,7 +57,7 @@ export const ContainerScroll = ({
                     perspective: "1000px",
                 }}
             >
-                <Header translate={translate} />
+                <Header translate={translate} hero={hero} />
                 <Card rotate={rotate} translate={translate} scale={scale}>
                     {children}
                 </Card>
@@ -56,7 +66,7 @@ export const ContainerScroll = ({
     );
 };
 
-export const Header = ({ translate }: { translate: any }) => {
+export const Header = ({ translate, hero }: { translate: any; hero: HeroScrollCopy }) => {
     return (
         <motion.div
             style={{
@@ -65,21 +75,20 @@ export const Header = ({ translate }: { translate: any }) => {
             className="max-w-5xl mx-auto text-center"
         >
             <h1 className="text-4xl md:text-6xl font-semibold text-neutral-900 mb-4 md:mb-6 leading-tight">
-                Şehrin Ritmini
+                {hero.h1Line1}
                 <br />
                 <span className="text-5xl md:text-[5.5rem] font-bold mt-2 md:mt-3 block leading-[1.1] text-[#11b981]">
-                    Panobu ile yakala
+                    {hero.h1Line2}
                 </span>
             </h1>
             <p className="text-neutral-600 text-lg md:text-xl max-w-2xl mx-auto mb-12">
-                Markanızı şehrin en işlek noktalarındaki billboardlarda dakikalar içinde yayınlayın.
-                Sabit fiyatlar, direkt pano sahibinden, aracısız kiralama.
+                {hero.subtitle}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
                 <Button asChild size="lg" className="w-full sm:w-auto h-14 px-8 text-lg bg-[#11b981] text-white hover:bg-[#0ea472] rounded-full transition-all hover:scale-105 shadow-md shadow-[#11b981]/25">
                     <Link href="/static-billboards">
-                        Panoları Gör <ArrowRight className="w-5 h-5 ml-2" />
+                        {hero.ctaPrimary} <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                 </Button>
                 <Button
@@ -89,7 +98,7 @@ export const Header = ({ translate }: { translate: any }) => {
                     className="w-full sm:w-auto h-14 px-8 text-lg border-2 border-neutral-300 bg-white text-neutral-900 hover:bg-neutral-50 hover:border-[#11b981] rounded-full transition-all"
                 >
                     <Link href="/static-billboards">
-                        Tümünü İncele <ArrowRight className="w-5 h-5 ml-2" />
+                        {hero.ctaSecondary} <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                 </Button>
             </div>
