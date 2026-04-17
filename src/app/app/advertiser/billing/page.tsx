@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { formatCurrency } from "@/lib/utils";
-import { CreditCard, Receipt, Clock, CheckCircle2, XCircle, ExternalLink } from "lucide-react";
+import { CreditCard, Receipt, Clock, CheckCircle2, XCircle, ExternalLink, Camera, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -35,7 +35,9 @@ export default async function BillingPage() {
             rentals = await prisma.staticRental.findMany({
                 where: { advertiserId: advertiser.id },
                 orderBy: { createdAt: "desc" },
-                include: { panel: { select: { name: true, city: true, district: true } } },
+                include: {
+                    panel: { select: { name: true, city: true, district: true } },
+                },
             });
         }
     } catch (error) {
@@ -175,6 +177,8 @@ export default async function BillingPage() {
                                 <th className="px-6 py-3 font-medium text-slate-700">Tarih Aralığı</th>
                                 <th className="px-6 py-3 font-medium text-slate-700">Tutar</th>
                                 <th className="px-6 py-3 font-medium text-slate-700">Durum</th>
+                                <th className="px-6 py-3 font-medium text-slate-700">Kanıt</th>
+                                <th className="px-6 py-3 font-medium text-slate-700"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -209,6 +213,32 @@ export default async function BillingPage() {
                                                 ? "Ödeme Bekleniyor"
                                                 : rental.status}
                                         </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <span
+                                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${
+                                                rental.proofStatus === "CONFIRMED"
+                                                    ? "bg-emerald-50 border-emerald-200 text-emerald-700"
+                                                    : rental.proofStatus === "UPLOADED"
+                                                    ? "bg-blue-50 border-blue-200 text-blue-700"
+                                                    : "bg-slate-50 border-slate-200 text-slate-500"
+                                            }`}
+                                        >
+                                            <Camera className="w-3 h-3" />
+                                            {rental.proofStatus === "CONFIRMED"
+                                                ? "Onaylı"
+                                                : rental.proofStatus === "UPLOADED"
+                                                ? "Yeni"
+                                                : "Bekliyor"}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <Link
+                                            href={`/app/advertiser/rentals/${rental.id}`}
+                                            className="inline-flex items-center text-xs text-blue-600 hover:text-blue-700 font-medium"
+                                        >
+                                            Detay <ArrowRight className="w-3 h-3 ml-1" />
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { sendOwnerApprovedEmail } from "@/lib/email";
+import { createNotification } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +29,7 @@ export async function PATCH(
 
     const owner = await prisma.screenOwner.findUnique({
         where: { id: params.id },
-        include: { user: { select: { name: true, email: true } } },
+        include: { user: { select: { id: true, name: true, email: true } } },
     });
 
     if (!owner) {
@@ -63,6 +64,14 @@ export async function PATCH(
         } catch (err) {
             console.error("[Email] owner approved notify failed:", err);
         }
+
+        await createNotification({
+            userId: owner.user.id,
+            type: "OWNER_APPROVED",
+            title: "Firmanız onaylandı",
+            body: `Artık panolarınız panobu.com'da yayımlanabilir. Mağaza sayfanız: panobu.com/medya/${updated.slug ?? ""}`,
+            link: "/app/owner/dashboard",
+        });
     }
 
     return NextResponse.json({

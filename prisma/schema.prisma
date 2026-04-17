@@ -45,6 +45,44 @@ model User {
   screenOwnerProfile ScreenOwner?
   advertiserProfile  Advertiser?
   transactions       Transaction[]
+  notifications      Notification[]
+}
+
+enum NotificationType {
+  REQUEST_NEW
+  REQUEST_APPROVED
+  REQUEST_REJECTED
+  CREATIVE_SUBMITTED
+  CREATIVE_APPROVED
+  CREATIVE_REJECTED
+  PROOF_UPLOADED
+  PROOF_CONFIRMED
+  PROOF_REMINDER
+  INQUIRY_NEW
+  OWNER_APPROVED
+  ACCOUNT_DELETION_REQUESTED
+  ADMIN_MESSAGE
+  CAMPAIGN_START
+  GENERIC
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      NotificationType
+  title     String
+  body      String?          @db.Text
+  link      String?          // hedef dashboard route
+  meta      Json?            // ek bilgi (rentalId, inquiryId, panelId vb.)
+
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+  @@map("notifications")
 }
 
 model ScreenOwner {
@@ -66,13 +104,64 @@ model ScreenOwner {
   description  String?
   slug         String?  @unique
 
+  // Banka bilgileri (payout için)
+  iban               String?
+  bankName           String?
+  bankAccountHolder  String?
+
+  // Bildirim tercihleri
+  notifyNewRequest      Boolean @default(true)
+  notifyCampaignStart   Boolean @default(true)
+  notifyProofReminder   Boolean @default(true)
+  notifyWeeklyDigest    Boolean @default(false)
+
+  // Hesap silme talebi (admin'in görmesi için)
+  deletionRequestedAt   DateTime?
+  deletionReason        String?
+
   screens      Screen[]
   panels       StaticPanel[]
   payouts      Payout[]
   balance      OwnerBalance?
+  inquiries    StoreInquiry[]
+  customerNotes OwnerCustomerNote[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+enum StoreInquiryStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+model StoreInquiry {
+  id         String              @id @default(uuid())
+  ownerId    String
+  owner      ScreenOwner         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  name       String
+  email      String
+  phone      String?
+  company    String?
+  message    String?
+
+  startDate  DateTime?
+  endDate    DateTime?
+
+  // Seçilen panoların snapshot'ı (fiyat/ad değişirse talep etkilenmesin)
+  panels     Json                @default("[]")
+
+  status     StoreInquiryStatus  @default(NEW)
+  notes      String?
+
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@map("store_inquiries")
 }
 
 model Advertiser {
@@ -81,12 +170,31 @@ model Advertiser {
   user         User     @relation(fields: [userId], references: [id])
   companyName  String?
   billingInfo  String?    // Address, Tax info etc.
-  
+
   campaigns    Campaign[]
   staticRentals StaticRental[]
+  ownerNotes   OwnerCustomerNote[]
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model OwnerCustomerNote {
+  id           String      @id @default(uuid())
+  ownerId      String
+  owner        ScreenOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  advertiserId String
+  advertiser   Advertiser  @relation(fields: [advertiserId], references: [id], onDelete: Cascade)
+
+  notes        String?     @db.Text
+  sector       String?     // saglik, gayrimenkul, yeme-icme, hizmet, egitim, perakende, otomotiv, finans, teknoloji, diger
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@unique([ownerId, advertiserId])
+  @@index([ownerId])
+  @@map("owner_customer_notes")
 }
 
 model Screen {
@@ -364,6 +472,12 @@ enum CreativeReviewStatus {
   REVISION_REQUESTED   // Revizyon istendi
 }
 
+enum ProofOfPostingStatus {
+  PENDING     // Henüz hiçbir yayın kanıtı yüklenmedi
+  UPLOADED    // En az 1 kanıt yüklendi, reklam veren onayı bekliyor
+  CONFIRMED   // Reklam veren kanıtı onayladı
+}
+
 model StaticRental {
   id            String      @id @default(uuid())
   advertiserId  String
@@ -388,6 +502,10 @@ model StaticRental {
   creativeNote        String?
   creativeReviewedAt  DateTime?
 
+  // Yayın kanıtı (proof of posting) akışı
+  proofStatus         ProofOfPostingStatus @default(PENDING)
+  proofs              ProofOfPosting[]
+
   // Analytics fields
   totalDays           Int      @default(0)
   estimatedImpressions Int     @default(0)
@@ -397,8 +515,23 @@ model StaticRental {
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
-  @@index([ownerReviewStatus])
-  @@index([panelId, startDate, endDate])
+    @@index([ownerReviewStatus])
+    @@index([panelId, startDate, endDate])
+    @@index([proofStatus])
+}
+
+model ProofOfPosting {
+  id          String       @id @default(uuid())
+  rentalId    String
+  rental      StaticRental @relation(fields: [rentalId], references: [id], onDelete: Cascade)
+  photoUrls   String[]
+  notes       String?
+  uploadedAt  DateTime     @default(now())
+  confirmedAt DateTime?
+  confirmedBy String?      // advertiser userId
+
+  @@index([rentalId])
+  @@map("proof_of_posting")
 }
 
 // Blog Posts

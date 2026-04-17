@@ -1,9 +1,23 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "./providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+    subsets: ["latin"],
+    display: "swap",
+    preload: true,
+});
+
+export const viewport: Viewport = {
+    themeColor: [
+        { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+        { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    ],
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+};
 
 export const metadata: Metadata = {
     title: {
@@ -68,6 +82,16 @@ export const metadata: Metadata = {
         canonical: "https://panobu.com",
     },
     metadataBase: new URL("https://panobu.com"),
+    manifest: "/manifest.webmanifest",
+    applicationName: "Panobu",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "Panobu",
+    },
+    formatDetection: {
+        telephone: false,
+    },
 };
 
 export default function RootLayout({

@@ -9,12 +9,13 @@ import {
     Monitor,
     PlusSquare,
     Inbox,
+    MessageSquare,
     CalendarDays,
     BarChart3,
+    Users,
     Store,
     Settings,
     LogOut,
-    Bell,
     Menu as MenuIcon,
     X as XIcon,
     ChevronDown,
@@ -23,6 +24,7 @@ import {
     ExternalLink,
 } from "lucide-react";
 import EmailVerificationBanner from "@/components/EmailVerificationBanner";
+import NotificationBell from "@/components/NotificationBell";
 import type { OwnerProfileSummary } from "@/lib/owner/profile";
 
 type Props = {
@@ -30,7 +32,7 @@ type Props = {
     children: React.ReactNode;
 };
 
-type NavKey = "requests" | null;
+type NavKey = "requests" | "inquiries" | null;
 const navItems: {
     href: string;
     label: string;
@@ -40,8 +42,10 @@ const navItems: {
     { href: "/app/owner/dashboard", label: "Ana Sayfa", icon: LayoutDashboard },
     { href: "/app/owner/units", label: "Ünitelerim", icon: Monitor },
     { href: "/app/owner/units/new", label: "Ünite Ekle", icon: PlusSquare },
-    { href: "/app/owner/requests", label: "Gelen Talepler", icon: Inbox, badgeKey: "requests" },
+    { href: "/app/owner/requests", label: "Kiralama Talepleri", icon: Inbox, badgeKey: "requests" },
+    { href: "/app/owner/inquiries", label: "Mağaza Talepleri", icon: MessageSquare, badgeKey: "inquiries" },
     { href: "/app/owner/calendar", label: "Takvim", icon: CalendarDays },
+    { href: "/app/owner/customers", label: "Müşteriler", icon: Users },
     { href: "/app/owner/reports", label: "Raporlar", icon: BarChart3 },
     { href: "/app/owner/store", label: "Mağaza Görüntüle", icon: Store },
     { href: "/app/owner/settings", label: "Ayarlar", icon: Settings },
@@ -58,12 +62,14 @@ function Sidebar({
     onClose,
     onLogout,
     pendingRequests,
+    newInquiries,
 }: {
     profile: OwnerProfileSummary;
     pathname: string;
     onClose?: () => void;
     onLogout: () => void;
     pendingRequests: number;
+    newInquiries: number;
 }) {
     return (
         <aside className="w-64 bg-white border-r border-slate-200 h-full flex flex-col">
@@ -92,7 +98,9 @@ function Sidebar({
                     const badge =
                         item.badgeKey === "requests" && pendingRequests > 0
                             ? pendingRequests
-                            : 0;
+                            : item.badgeKey === "inquiries" && newInquiries > 0
+                                ? newInquiries
+                                : 0;
                     return (
                         <Link
                             key={item.href}
@@ -146,29 +154,39 @@ export default function OwnerShell({ profile, children }: Props) {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
     const [pendingRequests, setPendingRequests] = useState(0);
+    const [newInquiries, setNewInquiries] = useState(0);
 
     useEffect(() => {
         setMobileOpen(false);
         setProfileMenuOpen(false);
     }, [pathname]);
 
-    // Bekleyen talep sayısını ilk yüklemede al ve 60 sn'de bir yenile
+    // Bekleyen talep ve mağaza sorgu sayılarını ilk yüklemede al ve 60 sn'de bir yenile
     useEffect(() => {
         let stopped = false;
-        async function fetchPending() {
+        async function fetchCounts() {
             try {
-                const res = await fetch("/api/owner/requests?status=PENDING", {
-                    cache: "no-store",
-                });
-                if (!res.ok) return;
-                const data = await res.json();
-                if (!stopped) setPendingRequests(data?.summary?.PENDING ?? 0);
+                const [reqRes, inqRes] = await Promise.all([
+                    fetch("/api/owner/requests?status=PENDING", { cache: "no-store" }),
+                    fetch("/api/owner/inquiries?status=NEW", { cache: "no-store" }),
+                ]);
+                if (!stopped) {
+                    if (reqRes.ok) {
+                        const data = await reqRes.json();
+                        setPendingRequests(data?.summary?.PENDING ?? 0);
+                    }
+                    if (inqRes.ok) {
+                        const data = await inqRes.json();
+                        const rows = Array.isArray(data?.inquiries) ? data.inquiries : [];
+                        setNewInquiries(rows.length);
+                    }
+                }
             } catch {
                 /* ignore */
             }
         }
-        fetchPending();
-        const id = setInterval(fetchPending, 60_000);
+        fetchCounts();
+        const id = setInterval(fetchCounts, 60_000);
         return () => {
             stopped = true;
             clearInterval(id);
@@ -189,6 +207,7 @@ export default function OwnerShell({ profile, children }: Props) {
                     pathname={pathname}
                     onLogout={handleLogout}
                     pendingRequests={pendingRequests}
+                    newInquiries={newInquiries}
                 />
             </div>
 
@@ -207,6 +226,7 @@ export default function OwnerShell({ profile, children }: Props) {
                             onClose={() => setMobileOpen(false)}
                             onLogout={handleLogout}
                             pendingRequests={pendingRequests}
+                            newInquiries={newInquiries}
                         />
                     </div>
                 </div>
@@ -251,18 +271,8 @@ export default function OwnerShell({ profile, children }: Props) {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <Link
-                                href="/app/owner/requests?status=PENDING"
-                                className="relative p-2 rounded-full hover:bg-slate-100 text-slate-600"
-                                aria-label="Bildirimler"
-                            >
-                                <Bell className="w-5 h-5" />
-                                {pendingRequests > 0 && (
-                                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-semibold flex items-center justify-center">
-                                        {pendingRequests > 99 ? "99+" : pendingRequests}
-                                    </span>
-                                )}
-                            </Link>
+                            <NotificationBell />
+
 
                             <div className="relative">
                                 <button

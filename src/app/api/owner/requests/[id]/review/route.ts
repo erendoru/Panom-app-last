@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { sendRequestDecisionToAdvertiser } from "@/lib/email";
+import { createNotification } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 },
             },
             advertiser: {
-                include: { user: { select: { name: true, email: true } } },
+                include: { user: { select: { id: true, name: true, email: true } } },
             },
         },
     });
@@ -92,6 +93,21 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         });
     } catch (mailErr) {
         console.error("[Email] decision notification failed:", mailErr);
+    }
+
+    // In-app bildirim: advertiser'a
+    if (rental.advertiser?.user?.id) {
+        await createNotification({
+            userId: rental.advertiser.user.id,
+            type: action === "approve" ? "REQUEST_APPROVED" : "REQUEST_REJECTED",
+            title:
+                action === "approve"
+                    ? `${rental.panel.name} için talebiniz onaylandı`
+                    : `${rental.panel.name} için talebiniz reddedildi`,
+            body: cleanNote ?? undefined,
+            link: `/app/advertiser/rentals/${rental.id}`,
+            meta: { rentalId: rental.id, panelName: rental.panel.name },
+        });
     }
 
     return NextResponse.json({

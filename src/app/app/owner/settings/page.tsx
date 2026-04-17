@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
+import SettingsClient from "./SettingsClient";
 
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Ayarlar | Panobu Partner" };
 
 export default function OwnerSettingsPage() {
-    // Faz 10'da çok tab'lı "Firma Ayarları" gelene kadar mevcut hesap sayfasına yönlendiriyoruz.
-    redirect("/app/owner/account");
+    return <SettingsClient />;
 }

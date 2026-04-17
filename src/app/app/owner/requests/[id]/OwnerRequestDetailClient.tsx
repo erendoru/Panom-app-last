@@ -18,11 +18,23 @@ import {
     Sparkles,
     AlertCircle,
     ExternalLink,
+    Camera,
+    Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import MultiImageUploader from "@/components/MultiImageUploader";
 
 type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 type CreativeStatus = "NONE" | "PENDING" | "APPROVED" | "REVISION_REQUESTED";
+type ProofStatus = "PENDING" | "UPLOADED" | "CONFIRMED";
+
+type ProofItem = {
+    id: string;
+    photoUrls: string[];
+    notes?: string | null;
+    uploadedAt: string;
+    confirmedAt?: string | null;
+};
 
 type Detail = {
     id: string;
@@ -58,6 +70,7 @@ type Detail = {
     creativeNote?: string | null;
     creativeReviewedAt?: string | null;
     designRequested?: boolean;
+    proofStatus: ProofStatus;
     createdAt: string;
 };
 
@@ -124,6 +137,28 @@ export default function OwnerRequestDetailClient({ id }: { id: string }) {
     const [revisionOpen, setRevisionOpen] = useState(false);
     const [revisionNote, setRevisionNote] = useState("");
 
+    // Yayın kanıtı (proof of posting)
+    const [proofs, setProofs] = useState<ProofItem[]>([]);
+    const [proofLoading, setProofLoading] = useState(false);
+    const [proofOpen, setProofOpen] = useState(false);
+    const [proofPhotos, setProofPhotos] = useState<string[]>([]);
+    const [proofNote, setProofNote] = useState("");
+
+    const loadProofs = useCallback(async () => {
+        setProofLoading(true);
+        try {
+            const res = await fetch(`/api/owner/requests/${id}/proof`);
+            if (res.ok) {
+                const d = await res.json();
+                setProofs(d.items || []);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setProofLoading(false);
+        }
+    }, [id]);
+
     const load = useCallback(async () => {
         setLoading(true);
         setErr(null);
@@ -144,7 +179,55 @@ export default function OwnerRequestDetailClient({ id }: { id: string }) {
 
     useEffect(() => {
         load();
-    }, [load]);
+        loadProofs();
+    }, [load, loadProofs]);
+
+    async function uploadProof() {
+        if (proofPhotos.length === 0) {
+            setErr("En az 1 fotoğraf seçin.");
+            return;
+        }
+        setBusy("proof-upload");
+        setErr(null);
+        try {
+            const res = await fetch(`/api/owner/requests/${id}/proof`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    photoUrls: proofPhotos,
+                    notes: proofNote || undefined,
+                }),
+            });
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(d?.error || "Yükleme başarısız");
+            await Promise.all([load(), loadProofs()]);
+            setProofOpen(false);
+            setProofPhotos([]);
+            setProofNote("");
+        } catch (e: any) {
+            setErr(e?.message || "Hata");
+        } finally {
+            setBusy(null);
+        }
+    }
+
+    async function deleteProof(proofId: string) {
+        if (!confirm("Bu yayın kanıtı kaldırılsın mı?")) return;
+        setBusy(`proof-del-${proofId}`);
+        try {
+            const res = await fetch(
+                `/api/owner/requests/${id}/proof?proofId=${proofId}`,
+                { method: "DELETE" }
+            );
+            const d = await res.json().catch(() => ({}));
+            if (!res.ok) throw new Error(d?.error || "Silme başarısız");
+            await Promise.all([load(), loadProofs()]);
+        } catch (e: any) {
+            setErr(e?.message || "Hata");
+        } finally {
+            setBusy(null);
+        }
+    }
 
     async function review(action: "approve" | "reject", note?: string) {
         setBusy(action);
@@ -416,6 +499,118 @@ export default function OwnerRequestDetailClient({ id }: { id: string }) {
                                     : "Henüz kampanya görseli yüklenmedi."}
                             </section>
                         )}
+
+                        {/* Yayın Kanıtı (Proof of Posting) */}
+                        {data.ownerReviewStatus === "APPROVED" && (
+                            <section className="bg-white border border-slate-200 rounded-xl p-5">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h3 className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                                        <Camera className="w-4 h-4 text-blue-600" /> Yayın Kanıtı
+                                    </h3>
+                                    <span
+                                        className={`text-xs px-2 py-0.5 rounded-full border ${
+                                            data.proofStatus === "CONFIRMED"
+                                                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                                                : data.proofStatus === "UPLOADED"
+                                                ? "bg-blue-50 border-blue-200 text-blue-800"
+                                                : "bg-amber-50 border-amber-200 text-amber-800"
+                                        }`}
+                                    >
+                                        {data.proofStatus === "CONFIRMED"
+                                            ? "Reklam veren onayladı"
+                                            : data.proofStatus === "UPLOADED"
+                                            ? "Yüklendi"
+                                            : "Bekliyor"}
+                                    </span>
+                                </div>
+
+                                {proofs.length === 0 && !proofLoading && (
+                                    <p className="text-sm text-slate-500 mb-3">
+                                        Kampanya yayına girdikten sonra panonun fotoğrafını yükleyerek
+                                        reklam verene yayın kanıtı iletebilirsiniz.
+                                    </p>
+                                )}
+
+                                {proofLoading && (
+                                    <div className="py-4 text-sm text-slate-500 flex items-center gap-2">
+                                        <Loader2 className="w-4 h-4 animate-spin" /> Yükleniyor...
+                                    </div>
+                                )}
+
+                                <div className="space-y-3">
+                                    {proofs.map((p) => (
+                                        <div
+                                            key={p.id}
+                                            className="border border-slate-200 rounded-lg p-3 bg-slate-50/40"
+                                        >
+                                            <div className="flex items-start justify-between gap-3 mb-2">
+                                                <div className="text-xs text-slate-500">
+                                                    Yüklenme: {fmtDateTime(p.uploadedAt)}
+                                                    {p.confirmedAt && (
+                                                        <span className="ml-2 text-emerald-700">
+                                                            · Onaylandı: {fmtDateTime(p.confirmedAt)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {!p.confirmedAt && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => deleteProof(p.id)}
+                                                        disabled={busy === `proof-del-${p.id}`}
+                                                        className="text-xs text-rose-600 hover:text-rose-700 inline-flex items-center gap-1"
+                                                    >
+                                                        {busy === `proof-del-${p.id}` ? (
+                                                            <Loader2 className="w-3 h-3 animate-spin" />
+                                                        ) : (
+                                                            <Trash2 className="w-3 h-3" />
+                                                        )}
+                                                        Kaldır
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                {p.photoUrls.map((u, i) => (
+                                                    <a
+                                                        key={u + i}
+                                                        href={u}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="relative aspect-video bg-slate-100 rounded overflow-hidden block"
+                                                    >
+                                                        <Image
+                                                            src={u}
+                                                            alt={`Kanıt ${i + 1}`}
+                                                            fill
+                                                            sizes="(max-width: 640px) 50vw, 33vw"
+                                                            className="object-cover"
+                                                        />
+                                                    </a>
+                                                ))}
+                                            </div>
+                                            {p.notes && (
+                                                <div className="mt-2 text-sm text-slate-700 bg-white border border-slate-200 rounded px-3 py-1.5">
+                                                    {p.notes}
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <Button
+                                    onClick={() => {
+                                        setProofOpen(true);
+                                        setProofPhotos([]);
+                                        setProofNote("");
+                                    }}
+                                    variant="outline"
+                                    className="mt-4 border-blue-300 text-blue-700 hover:bg-blue-50"
+                                    disabled={!!busy}
+                                >
+                                    <Camera className="w-4 h-4 mr-1" />
+                                    {proofs.length === 0 ? "Yayın Kanıtı Yükle" : "Yeni Kanıt Ekle"}
+                                </Button>
+                            </section>
+                        )}
                     </div>
 
                     {/* Right column — actions */}
@@ -491,8 +686,8 @@ export default function OwnerRequestDetailClient({ id }: { id: string }) {
                                     </Button>
                                 </div>
                                 <p className="text-xs text-slate-500 mt-3">
-                                    Onayladığınızda takvimde ilgili tarihler "dolu" olarak işaretlenir,
-                                    reklam verene bildirim gider (yakında).
+                                    Onayladığınızda takvimde ilgili tarihler "dolu" olarak işaretlenir
+                                    ve reklam verene e-posta ile bildirim gönderilir.
                                 </p>
                             </section>
                         )}
@@ -596,6 +791,67 @@ export default function OwnerRequestDetailClient({ id }: { id: string }) {
                                 ) : (
                                     <>
                                         <AlertCircle className="w-4 h-4 mr-1" /> Revizyon İste
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Proof upload modal */}
+            {proofOpen && (
+                <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+                        <h3 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-1.5">
+                            <Camera className="w-5 h-5 text-blue-600" /> Yayın Kanıtı Yükle
+                        </h3>
+                        <p className="text-sm text-slate-500 mb-4">
+                            Kampanya panoda yayınlandığında çektiğiniz fotoğrafları yükleyin. En fazla 3 adet.
+                            Reklam verene otomatik bildirim gönderilecektir.
+                        </p>
+                        <div className="mb-4">
+                            <MultiImageUploader
+                                images={proofPhotos}
+                                onChange={setProofPhotos}
+                                max={3}
+                                disabled={busy === "proof-upload"}
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="text-sm font-medium text-slate-700 mb-1 block">
+                                Not (opsiyonel)
+                            </label>
+                            <textarea
+                                value={proofNote}
+                                onChange={(e) => setProofNote(e.target.value)}
+                                rows={3}
+                                placeholder="Örn: Gündüz çekimi, ana cadde tarafından."
+                                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                                disabled={busy === "proof-upload"}
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => setProofOpen(false)}
+                                disabled={busy === "proof-upload"}
+                            >
+                                Vazgeç
+                            </Button>
+                            <Button
+                                onClick={uploadProof}
+                                disabled={busy === "proof-upload" || proofPhotos.length === 0}
+                                className="bg-blue-600 hover:bg-blue-700"
+                            >
+                                {busy === "proof-upload" ? (
+                                    <>
+                                        <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                        Yükleniyor
+                                    </>
+                                ) : (
+                                    <>
+                                        <Camera className="w-4 h-4 mr-1" /> Yükle ve Bildir
                                     </>
                                 )}
                             </Button>

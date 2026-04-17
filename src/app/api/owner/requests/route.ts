@@ -98,6 +98,7 @@ export async function GET(req: NextRequest) {
             creativeStatus: r.creativeStatus,
             creativeNote: r.creativeNote,
             designRequested: r.designRequested,
+            proofStatus: r.proofStatus,
             createdAt: r.createdAt.toISOString(),
         })),
         summary,

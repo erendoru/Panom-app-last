@@ -10,6 +10,10 @@ import {
     BarChart3,
     Store,
     AlertCircle,
+    Camera,
+    MessageSquare,
+    Users,
+    History,
 } from "lucide-react";
 import { getOwnerProfile } from "@/lib/owner/profile";
 import {
@@ -19,6 +23,8 @@ import {
     translateCampaignStatus,
     type RecentRequest,
 } from "@/lib/owner/stats";
+import { getReminderCustomers } from "@/lib/owner/customers";
+import prisma from "@/lib/prisma";
 import RequestTrendChart from "./RequestTrendChart";
 import { Button } from "@/components/ui/button";
 
@@ -130,10 +136,28 @@ export default async function OwnerDashboardPage() {
         return null;
     }
 
-    const [stats, recentRequests, trend] = await Promise.all([
+    async function countNewInquiries(): Promise<number> {
+        try {
+            const client = prisma as unknown as {
+                storeInquiry?: {
+                    count: (args: { where: Record<string, unknown> }) => Promise<number>;
+                };
+            };
+            if (!client.storeInquiry) return 0;
+            return await client.storeInquiry.count({
+                where: { ownerId: profile!.id, status: "NEW" },
+            });
+        } catch {
+            return 0;
+        }
+    }
+
+    const [stats, recentRequests, trend, newInquiries, reminderCustomers] = await Promise.all([
         getOwnerStats(profile.id),
         getRecentRequests(profile.id, 5),
         getMonthlyRequestTrend(profile.id),
+        countNewInquiries(),
+        getReminderCustomers(profile.id).catch(() => []),
     ]);
 
     const firstName = profile.name.split(" ")[0];
@@ -169,6 +193,24 @@ export default async function OwnerDashboardPage() {
                 </div>
             </div>
 
+            {newInquiries > 0 && (
+                <Link
+                    href="/app/owner/inquiries"
+                    className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 hover:bg-blue-100 transition-colors"
+                >
+                    <MessageSquare className="w-5 h-5 text-blue-700 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                        <p className="text-sm font-semibold text-blue-900">
+                            Mağazanıza {newInquiries} yeni teklif talebi geldi
+                        </p>
+                        <p className="text-xs text-blue-800 mt-0.5">
+                            Public mağaza sayfanızdan gelen müşteri taleplerini görüntülemek için tıklayın.
+                        </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-blue-700 mt-1" />
+                </Link>
+            )}
+
             {stats.pendingRequests > 0 && (
                 <Link
                     href="/app/owner/requests?status=PENDING"
@@ -177,7 +219,7 @@ export default async function OwnerDashboardPage() {
                     <AlertCircle className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
                     <div className="flex-1">
                         <p className="text-sm font-semibold text-amber-900">
-                            {stats.pendingRequests} yeni talep onayınızı bekliyor
+                            {stats.pendingRequests} yeni kiralama talebi onayınızı bekliyor
                         </p>
                         <p className="text-xs text-amber-800 mt-0.5">
                             Reklam verenler panolarınız için teklif gönderdi. Onaylamak veya reddetmek için tıklayın.
@@ -185,6 +227,73 @@ export default async function OwnerDashboardPage() {
                     </div>
                     <ArrowRight className="w-4 h-4 text-amber-700 mt-1" />
                 </Link>
+            )}
+
+            {stats.pendingProofs > 0 && (
+                <Link
+                    href="/app/owner/requests?status=APPROVED"
+                    className="flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 hover:bg-rose-100 transition-colors"
+                >
+                    <Camera className="w-5 h-5 text-rose-700 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                        <p className="text-sm font-semibold text-rose-900">
+                            {stats.pendingProofs} aktif kampanyada yayın kanıtı bekleniyor
+                        </p>
+                        <p className="text-xs text-rose-800 mt-0.5">
+                            Kampanya başladıktan sonra panonun fotoğrafını yükleyerek reklam verene yayın kanıtı iletin.
+                        </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-rose-700 mt-1" />
+                </Link>
+            )}
+
+            {reminderCustomers.length > 0 && (
+                <section className="rounded-xl border border-violet-200 bg-violet-50 p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                        <History className="w-5 h-5 text-violet-700 mt-0.5 shrink-0" />
+                        <div className="flex-1">
+                            <p className="text-sm font-semibold text-violet-900">
+                                Geçen dönemlerde bu ay kiralamış {reminderCustomers.length} müşteriniz var
+                            </p>
+                            <p className="text-xs text-violet-800 mt-0.5">
+                                Tekrar teklif göndermek için ideal zaman — geçmiş kampanyalarını hatırlatan bir mesaj yollayın.
+                            </p>
+                        </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        {reminderCustomers.slice(0, 6).map((c) => (
+                            <Link
+                                key={c.advertiserId}
+                                href={`/app/owner/customers/${c.advertiserId}`}
+                                className="bg-white border border-violet-200 rounded-lg px-3 py-2 hover:border-violet-400 hover:bg-violet-50/50 transition"
+                            >
+                                <div className="flex items-center justify-between gap-2">
+                                    <div className="min-w-0">
+                                        <div className="font-semibold text-slate-900 text-sm truncate">
+                                            {c.companyName || c.name}
+                                        </div>
+                                        <div className="text-[11px] text-slate-500 truncate">
+                                            {c.yearsAgo === 1
+                                                ? "Geçen yıl bu ay"
+                                                : `${c.yearsAgo} yıl önce bu ay`}
+                                            {" · "}
+                                            {c.panelName}
+                                        </div>
+                                    </div>
+                                    <ArrowRight className="w-3.5 h-3.5 text-violet-500 shrink-0" />
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                    {reminderCustomers.length > 6 && (
+                        <Link
+                            href="/app/owner/customers"
+                            className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-violet-800 hover:text-violet-900"
+                        >
+                            Tümünü gör ({reminderCustomers.length}) <ArrowRight className="w-3 h-3" />
+                        </Link>
+                    )}
+                </section>
             )}
 
             {/* Stat cards */}
@@ -279,6 +388,12 @@ export default async function OwnerDashboardPage() {
                         icon={CalendarDays}
                         label="Takvim"
                         description="Doluluk ve bloklama"
+                    />
+                    <QuickAction
+                        href="/app/owner/customers"
+                        icon={Users}
+                        label="Müşteriler"
+                        description="CRM ve tekrar teklif"
                     />
                     <QuickAction
                         href="/app/owner/reports"

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import { sendCreativeDecisionToAdvertiser } from "@/lib/email";
+import { createNotification } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -32,7 +33,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 },
             },
             advertiser: {
-                include: { user: { select: { name: true, email: true } } },
+                include: { user: { select: { id: true, name: true, email: true } } },
             },
         },
     });
@@ -101,6 +102,20 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         });
     } catch (mailErr) {
         console.error("[Email] creative notification failed:", mailErr);
+    }
+
+    if (rental.advertiser?.user?.id) {
+        await createNotification({
+            userId: rental.advertiser.user.id,
+            type: action === "approve" ? "CREATIVE_APPROVED" : "CREATIVE_REJECTED",
+            title:
+                action === "approve"
+                    ? `Görseliniz onaylandı — ${rental.panel.name}`
+                    : `Görsel revizyon istendi — ${rental.panel.name}`,
+            body: cleanNote ?? undefined,
+            link: `/app/advertiser/rentals/${rental.id}`,
+            meta: { rentalId: rental.id },
+        });
     }
 
     return NextResponse.json({

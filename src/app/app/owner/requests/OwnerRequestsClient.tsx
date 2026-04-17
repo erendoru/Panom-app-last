@@ -15,11 +15,13 @@ import {
     Clock3,
     MapPin,
     Sparkles,
+    Camera,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type ReviewStatus = "PENDING" | "APPROVED" | "REJECTED";
 type CreativeStatus = "NONE" | "PENDING" | "APPROVED" | "REVISION_REQUESTED";
+type ProofStatus = "PENDING" | "UPLOADED" | "CONFIRMED";
 
 type Request = {
     id: string;
@@ -50,6 +52,7 @@ type Request = {
     creativeStatus: CreativeStatus;
     creativeNote?: string | null;
     designRequested?: boolean;
+    proofStatus?: ProofStatus;
     createdAt: string;
 };
 
@@ -361,6 +364,24 @@ function RequestCard({ r }: { r: Request }) {
                             {r.designRequested && (
                                 <span className="text-[11px] font-medium bg-violet-50 text-violet-800 px-2 py-0.5 rounded-full border border-violet-200">
                                     Tasarım talebi
+                                </span>
+                            )}
+                            {r.ownerReviewStatus === "APPROVED" && r.proofStatus && (
+                                <span
+                                    className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border ${r.proofStatus === "CONFIRMED"
+                                        ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+                                        : r.proofStatus === "UPLOADED"
+                                            ? "bg-blue-50 border-blue-200 text-blue-800"
+                                            : "bg-amber-50 border-amber-200 text-amber-800"
+                                        }`}
+                                >
+                                    <Camera className="w-3 h-3" />
+                                    Kanıt:{" "}
+                                    {r.proofStatus === "CONFIRMED"
+                                        ? "Onaylı"
+                                        : r.proofStatus === "UPLOADED"
+                                            ? "Yüklü"
+                                            : "Bekliyor"}
                                 </span>
                             )}
                         </div>

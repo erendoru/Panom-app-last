@@ -1,8 +1,11 @@
 import { MetadataRoute } from 'next';
 import { TURKEY_CITIES } from '@/lib/turkey-data';
 import { cityToSlug } from '@/lib/city-slug';
+import prisma from '@/lib/prisma';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 3600;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://panobu.com';
     const now = new Date().toISOString();
 
@@ -42,5 +45,44 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.7,
     }));
 
-    return [...staticPages, ...cityPages, ...panelTypePages];
+    // Dinamik: onaylı medya sahibi mağazaları
+    let storePages: MetadataRoute.Sitemap = [];
+    try {
+        const owners = await prisma.screenOwner.findMany({
+            where: { approved: true, slug: { not: null } },
+            select: { slug: true, updatedAt: true },
+            take: 2000,
+        });
+        storePages = owners
+            .filter((o): o is { slug: string; updatedAt: Date } => !!o.slug)
+            .flatMap((o) => [
+                {
+                    url: `${baseUrl}/medya/${o.slug}`,
+                    lastModified: o.updatedAt.toISOString(),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.7,
+                },
+                {
+                    url: `${baseUrl}/medya/${o.slug}/panolar`,
+                    lastModified: o.updatedAt.toISOString(),
+                    changeFrequency: 'weekly' as const,
+                    priority: 0.65,
+                },
+                {
+                    url: `${baseUrl}/medya/${o.slug}/iletisim`,
+                    lastModified: o.updatedAt.toISOString(),
+                    changeFrequency: 'monthly' as const,
+                    priority: 0.5,
+                },
+            ]);
+    } catch {
+        // DB hatası sitemap'i patlatmasın
+    }
+
+    return [
+        ...staticPages,
+        ...cityPages,
+        ...panelTypePages,
+        ...storePages,
+    ];
 }

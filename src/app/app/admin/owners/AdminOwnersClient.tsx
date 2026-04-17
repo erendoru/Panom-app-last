@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import {
     Building2,
     CheckCircle2,
@@ -11,6 +12,9 @@ import {
     Phone,
     Search,
     Undo2,
+    Trash2,
+    ChevronRight,
+    AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -24,11 +28,15 @@ type Owner = {
     website?: string | null;
     cities?: string[];
     createdAt: string;
+    deletionRequestedAt: string | null;
+    deletionReason: string | null;
     user: { name: string; email: string; createdAt: string };
     counts: { screens: number; panels: number };
 };
 
-type Summary = { pending: number; approved: number; total: number };
+type Summary = { pending: number; approved: number; total: number; deletion: number };
+
+type StatusKey = "all" | "pending" | "approved" | "deletion";
 
 function fmtDate(iso: string) {
     return new Date(iso).toLocaleDateString("tr-TR", {
@@ -40,8 +48,8 @@ function fmtDate(iso: string) {
 
 export default function AdminOwnersClient() {
     const [items, setItems] = useState<Owner[]>([]);
-    const [summary, setSummary] = useState<Summary>({ pending: 0, approved: 0, total: 0 });
-    const [status, setStatus] = useState<"all" | "pending" | "approved">("pending");
+    const [summary, setSummary] = useState<Summary>({ pending: 0, approved: 0, total: 0, deletion: 0 });
+    const [status, setStatus] = useState<StatusKey>("pending");
     const [q, setQ] = useState("");
     const [loading, setLoading] = useState(true);
     const [busyId, setBusyId] = useState<string | null>(null);
@@ -58,9 +66,9 @@ export default function AdminOwnersClient() {
             if (!res.ok) throw new Error("Yüklenemedi");
             const data = await res.json();
             setItems(data.items || []);
-            setSummary(data.summary || { pending: 0, approved: 0, total: 0 });
-        } catch (e: any) {
-            setErr(e?.message || "Hata");
+            setSummary(data.summary || { pending: 0, approved: 0, total: 0, deletion: 0 });
+        } catch (e) {
+            setErr(e instanceof Error ? e.message : "Hata");
         } finally {
             setLoading(false);
         }
@@ -85,8 +93,8 @@ export default function AdminOwnersClient() {
                 throw new Error(d?.error || "İşlem başarısız");
             }
             await load();
-        } catch (e: any) {
-            setErr(e?.message || "Hata");
+        } catch (e) {
+            setErr(e instanceof Error ? e.message : "Hata");
         } finally {
             setBusyId(null);
         }
@@ -97,9 +105,17 @@ export default function AdminOwnersClient() {
             all: summary.total,
             pending: summary.pending,
             approved: summary.approved,
+            deletion: summary.deletion,
         }),
         [summary]
     );
+
+    const TABS: { key: StatusKey; label: string; count: number; tone?: string }[] = [
+        { key: "pending", label: "Bekleyen", count: counts.pending },
+        { key: "approved", label: "Onaylı", count: counts.approved },
+        { key: "deletion", label: "Silme Talebi", count: counts.deletion, tone: "rose" },
+        { key: "all", label: "Tümü", count: counts.all },
+    ];
 
     return (
         <div className="max-w-7xl mx-auto">
@@ -109,34 +125,48 @@ export default function AdminOwnersClient() {
                         <Building2 className="w-7 h-7 text-blue-600" /> Medya Sahipleri
                     </h1>
                     <p className="text-slate-600 mt-1 text-sm">
-                        Yeni başvuruları inceleyin; firmaları onayladıktan sonra panoları Panobu.com'da
-                        görünmeye başlar.
+                        Yeni başvuruları inceleyin, onayladığınız firmaların panoları panobu.com'da yayımlanır.
                     </p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-5">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                 <Stat label="Toplam" value={counts.all} tone="slate" />
                 <Stat label="Onay Bekliyor" value={counts.pending} tone="amber" />
                 <Stat label="Onaylı" value={counts.approved} tone="emerald" />
+                <Stat label="Silme Talebi" value={counts.deletion} tone="rose" />
             </div>
 
+            {counts.deletion > 0 && status !== "deletion" && (
+                <button
+                    type="button"
+                    onClick={() => setStatus("deletion")}
+                    className="w-full mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-left hover:bg-rose-100 transition flex items-center gap-3"
+                >
+                    <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
+                    <div className="flex-1 text-sm text-rose-900">
+                        <strong>{counts.deletion} medya sahibi hesap silme talebinde bulundu.</strong>
+                        <div className="text-xs text-rose-700 mt-0.5">İncelemek için tıklayın.</div>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-rose-600" />
+                </button>
+            )}
+
             <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-4 mb-4 flex flex-col md:flex-row md:items-center gap-3">
-                <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 w-full md:w-auto">
-                    {(["pending", "approved", "all"] as const).map((s) => (
+                <div className="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-50 w-full md:w-auto overflow-x-auto">
+                    {TABS.map((t) => (
                         <button
-                            key={s}
-                            onClick={() => setStatus(s)}
-                            className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap ${status === s
-                                ? "bg-white text-slate-900 shadow-sm font-medium"
-                                : "text-slate-600 hover:text-slate-900"
-                                }`}
+                            key={t.key}
+                            onClick={() => setStatus(t.key)}
+                            className={`px-3 py-1.5 text-sm rounded-md whitespace-nowrap ${
+                                status === t.key
+                                    ? "bg-white text-slate-900 shadow-sm font-medium"
+                                    : t.tone === "rose"
+                                        ? "text-rose-700 hover:text-rose-800"
+                                        : "text-slate-600 hover:text-slate-900"
+                            }`}
                         >
-                            {s === "pending"
-                                ? `Bekleyen (${counts.pending})`
-                                : s === "approved"
-                                    ? `Onaylı (${counts.approved})`
-                                    : `Tümü (${counts.all})`}
+                            {t.label} ({t.count})
                         </button>
                     ))}
                 </div>
@@ -166,9 +196,7 @@ export default function AdminOwnersClient() {
                 <div className="bg-white border border-slate-200 rounded-xl p-10 text-center">
                     <Building2 className="w-10 h-10 mx-auto text-slate-300 mb-3" />
                     <h3 className="text-lg font-semibold text-slate-900">Kayıt bulunamadı</h3>
-                    <p className="text-sm text-slate-500 mt-1">
-                        Seçili filtreye uyan medya sahibi yok.
-                    </p>
+                    <p className="text-sm text-slate-500 mt-1">Seçili filtreye uyan medya sahibi yok.</p>
                 </div>
             ) : (
                 <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
@@ -176,9 +204,12 @@ export default function AdminOwnersClient() {
                         {items.map((o) => (
                             <div
                                 key={o.id}
-                                className="p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4"
+                                className="p-4 md:p-5 flex flex-col md:flex-row md:items-center gap-4 hover:bg-slate-50"
                             >
-                                <div className="flex-1 min-w-0">
+                                <Link
+                                    href={`/app/admin/owners/${o.id}`}
+                                    className="flex-1 min-w-0"
+                                >
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <h3 className="font-semibold text-slate-900 truncate">
                                             {o.companyName}
@@ -192,20 +223,17 @@ export default function AdminOwnersClient() {
                                                 <Clock3 className="w-3 h-3" /> Beklemede
                                             </span>
                                         )}
-                                        {o.slug && (
-                                            <a
-                                                href={`/medya/${o.slug}`}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="text-xs text-blue-600 hover:text-blue-700 inline-flex items-center"
-                                            >
-                                                /medya/{o.slug}
-                                                <ExternalLink className="w-3 h-3 ml-0.5" />
-                                            </a>
+                                        {o.deletionRequestedAt && (
+                                            <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border bg-rose-50 border-rose-200 text-rose-800">
+                                                <Trash2 className="w-3 h-3" /> Silme talebi
+                                            </span>
                                         )}
                                     </div>
                                     <div className="text-xs text-slate-500 mt-1">
-                                        Yetkili: <span className="text-slate-700 font-medium">{o.user.name}</span>
+                                        Yetkili:{" "}
+                                        <span className="text-slate-700 font-medium">
+                                            {o.user.name}
+                                        </span>
                                         {" · "}
                                         Başvuru: {fmtDate(o.user.createdAt)}
                                     </div>
@@ -220,32 +248,34 @@ export default function AdminOwnersClient() {
                                                 {o.phone}
                                             </span>
                                         )}
-                                        {o.website && (
-                                            <a
-                                                href={o.website}
-                                                target="_blank"
-                                                rel="noreferrer"
-                                                className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700"
-                                            >
-                                                <ExternalLink className="w-3.5 h-3.5" />
-                                                {o.website.replace(/^https?:\/\//, "")}
-                                            </a>
-                                        )}
                                     </div>
-                                    {o.cities && o.cities.length > 0 && (
-                                        <div className="mt-1 text-xs text-slate-500">
-                                            Şehirler: {o.cities.join(", ")}
-                                        </div>
-                                    )}
                                     <div className="mt-1 text-xs text-slate-500">
                                         Panolar: {o.counts.panels} · Ekranlar: {o.counts.screens}
                                     </div>
-                                </div>
+                                    {o.deletionRequestedAt && o.deletionReason && (
+                                        <div className="mt-2 text-xs text-rose-800 bg-rose-50 border border-rose-200 rounded-md p-2 line-clamp-2">
+                                            <strong>Silme sebebi:</strong> {o.deletionReason}
+                                        </div>
+                                    )}
+                                </Link>
 
                                 <div className="flex items-center gap-2 shrink-0">
+                                    {o.slug && (
+                                        <a
+                                            href={`/medya/${o.slug}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="text-xs text-blue-600 hover:text-blue-700 inline-flex items-center gap-1"
+                                        >
+                                            Mağaza <ExternalLink className="w-3 h-3" />
+                                        </a>
+                                    )}
                                     {!o.approved ? (
                                         <Button
-                                            onClick={() => approve(o, true)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                approve(o, true);
+                                            }}
                                             disabled={busyId === o.id}
                                             className="bg-emerald-600 hover:bg-emerald-700"
                                         >
@@ -259,7 +289,10 @@ export default function AdminOwnersClient() {
                                     ) : (
                                         <Button
                                             variant="outline"
-                                            onClick={() => approve(o, false)}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                approve(o, false);
+                                            }}
                                             disabled={busyId === o.id}
                                         >
                                             {busyId === o.id ? (
@@ -270,6 +303,13 @@ export default function AdminOwnersClient() {
                                             Onayı Geri Al
                                         </Button>
                                     )}
+                                    <Link
+                                        href={`/app/admin/owners/${o.id}`}
+                                        className="p-2 rounded-lg hover:bg-slate-100 text-slate-500"
+                                        aria-label="Detay"
+                                    >
+                                        <ChevronRight className="w-5 h-5" />
+                                    </Link>
                                 </div>
                             </div>
                         ))}
@@ -287,12 +327,13 @@ function Stat({
 }: {
     label: string;
     value: number;
-    tone: "slate" | "amber" | "emerald";
+    tone: "slate" | "amber" | "emerald" | "rose";
 }) {
     const colorMap = {
         slate: "bg-slate-50 border-slate-200 text-slate-900",
         amber: "bg-amber-50 border-amber-200 text-amber-900",
         emerald: "bg-emerald-50 border-emerald-200 text-emerald-900",
+        rose: "bg-rose-50 border-rose-200 text-rose-900",
     } as const;
     return (
         <div className={`rounded-xl border px-4 py-3 ${colorMap[tone]}`}>

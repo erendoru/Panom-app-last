@@ -115,7 +115,7 @@ Mevcut projenin tasarım dilini (renk, font, spacing) koru. Dashboard profesyone
 ```
 Medya sahibinin kendi ünitelerini görebildiği ve yeni ünite ekleyebildiği sayfaları oluştur.
 
-ÖNEMLİ: Mevcut admin panelindeki pano ekleme formu ve harita pin bileşenlerini yeniden kullan. Sıfırdan yazmak yerine, mevcut bileşenleri adapte et.
+ÖNEMLİ: Mevcut admin panelindeki pano ekleme formu ve harita pin bileşenlerini yeniden kullan. Sıfırdan yazmak yerine, mevcut bileşenleri adapte et. ve burada insanların eklediği bütün panolar admin tarafında genel panobu.com'a eklenmek için pasif olarak ADMIN dashboardına gözükmeli. biz isteyince oradan aktif yapıp panobu.com genelinde yayınlayabilelim. ünite sahibinin panolarını ama ünite sahibinde zaten gözüksün
 
 1. ÜNİTELERİM SAYFASI (/dashboard/media-owner/units):
 - Medya sahibine ait tüm panoların listesi (tablo veya kart görünümü, toggle ile değiştirilebilir)

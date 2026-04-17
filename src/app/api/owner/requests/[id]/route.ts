@@ -57,6 +57,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
         creativeNote: rental.creativeNote,
         creativeReviewedAt: rental.creativeReviewedAt?.toISOString() ?? null,
         designRequested: rental.designRequested,
+        proofStatus: rental.proofStatus,
         createdAt: rental.createdAt.toISOString(),
     });
 }

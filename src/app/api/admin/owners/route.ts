@@ -20,9 +20,11 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status") || "all";
     const q = (searchParams.get("q") || "").trim();
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
     if (status === "pending") where.approved = false;
     if (status === "approved") where.approved = true;
+    if (status === "deletion")
+        where.deletionRequestedAt = { not: null };
     if (q) {
         where.OR = [
             { companyName: { contains: q, mode: "insensitive" } },
@@ -40,10 +42,11 @@ export async function GET(req: NextRequest) {
         },
     });
 
-    const [pending, approved, total] = await Promise.all([
+    const [pending, approved, total, deletion] = await Promise.all([
         prisma.screenOwner.count({ where: { approved: false } }),
         prisma.screenOwner.count({ where: { approved: true } }),
         prisma.screenOwner.count(),
+        prisma.screenOwner.count({ where: { deletionRequestedAt: { not: null } } }),
     ]);
 
     return NextResponse.json({
@@ -57,6 +60,8 @@ export async function GET(req: NextRequest) {
             website: o.website,
             cities: o.cities,
             createdAt: o.createdAt.toISOString(),
+            deletionRequestedAt: o.deletionRequestedAt?.toISOString() ?? null,
+            deletionReason: o.deletionReason,
             user: {
                 name: o.user.name,
                 email: o.user.email,
@@ -64,6 +69,6 @@ export async function GET(req: NextRequest) {
             },
             counts: { screens: o._count.screens, panels: o._count.panels },
         })),
-        summary: { pending, approved, total },
+        summary: { pending, approved, total, deletion },
     });
 }

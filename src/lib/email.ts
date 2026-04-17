@@ -612,6 +612,82 @@ export async function sendCreativeDecisionToAdvertiser(
     });
 }
 
+/**
+ * Medya sahibi yayın kanıtı yüklediğinde reklam verene gider.
+ */
+export async function sendProofUploadedToAdvertiser(params: {
+    rentalId: string;
+    photoUrls: string[];
+    notes?: string | null;
+    panel: { name: string; city?: string | null; district?: string | null };
+    owner: { name: string; companyName?: string | null };
+    advertiser: { name: string; companyName?: string | null; email?: string | null };
+    startDate: Date | string;
+    endDate: Date | string;
+}): Promise<boolean> {
+    if (!params.advertiser.email) {
+        console.log('[Email] Advertiser email yok, yayın kanıtı bildirimi atlandı');
+        return true;
+    }
+
+    const owner = params.owner.companyName || params.owner.name;
+    const detailUrl = `${APP_URL}/app/advertiser/rentals/${params.rentalId}`;
+    const photosHtml = params.photoUrls
+        .slice(0, 3)
+        .map(
+            (url) => `
+        <td align="center" style="padding:6px;">
+            <a href="${escapeHtml(url)}" style="text-decoration:none;">
+                <img src="${escapeHtml(url)}" alt="Yayın kanıtı"
+                    style="display:block;width:100%;max-width:200px;height:140px;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb;" />
+            </a>
+        </td>`
+        )
+        .join('');
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(
+            params.advertiser.name
+        )}</strong>,</p>
+        <p style="margin:0 0 18px;">
+            <strong>${escapeHtml(owner)}</strong>, <strong>${escapeHtml(params.panel.name)}</strong>
+            panosu için yayın kanıtı fotoğraflarını yükledi. Kampanyanızın fiilen yayında olduğunu
+            gösteren görselleri aşağıda bulabilirsiniz.
+        </p>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${infoRow('Pano', params.panel.name)}
+            ${infoRow('Medya Sahibi', owner)}
+            ${infoRow(
+                'Tarih Aralığı',
+                `${fmtDateTR(params.startDate)} → ${fmtDateTR(params.endDate)}`
+            )}
+        </table>
+        <div style="margin:0 0 18px;">
+            <table width="100%" cellspacing="0" cellpadding="0"><tr>${photosHtml}</tr></table>
+        </div>
+        ${
+            params.notes
+                ? `<div style="background:#f0f9ff;border-left:4px solid #38bdf8;padding:12px 14px;border-radius:4px;margin:0 0 18px;">
+                    <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Medya sahibinden not</div>
+                    <div style="color:#111827;white-space:pre-wrap;">${escapeHtml(params.notes)}</div>
+                </div>`
+                : ''
+        }
+        ${button(detailUrl, 'Kampanyamı Görüntüle', '#0ea5e9')}
+    `;
+
+    return sendEmail({
+        to: params.advertiser.email,
+        subject: `Yayın kanıtı yüklendi — ${params.panel.name}`,
+        html: wrap({
+            title: 'Kampanyanız Yayında',
+            preheader: 'Medya sahibi yayın kanıtı fotoğraflarını yükledi.',
+            accent: 'blue',
+            body,
+        }),
+    });
+}
+
 // =================================================================
 // Hesap bildirimleri (welcome, admin notify, onay)
 // =================================================================
@@ -773,6 +849,170 @@ export async function sendNewOwnerRegistrationToAdmin(params: {
         subject: `[Yeni Başvuru] ${params.companyName}`,
         html: wrap({
             title: 'Yeni Medya Sahibi Başvurusu',
+            accent: 'blue',
+            body,
+        }),
+    });
+}
+
+export async function sendStoreInquiryToOwner(params: {
+    ownerEmail: string;
+    ownerName: string;
+    companyName: string;
+    slug: string;
+    customer: {
+        name: string;
+        email: string;
+        phone?: string | null;
+        company?: string | null;
+    };
+    period?: {
+        startDate?: string | null;
+        endDate?: string | null;
+    };
+    message?: string | null;
+    panels: Array<{
+        id: string;
+        name: string;
+        type: string;
+        city: string;
+        district: string;
+        priceWeekly: number;
+    }>;
+}): Promise<boolean> {
+    const storeUrl = `${APP_URL}/medya/${params.slug}`;
+    const dashboardUrl = `${APP_URL}/app/owner/dashboard`;
+
+    const total = params.panels.reduce((s, p) => s + (Number(p.priceWeekly) || 0), 0);
+
+    const itemsHtml = params.panels.length
+        ? `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 16px;">
+            ${params.panels
+                .map(
+                    (p) => `
+                <tr>
+                    <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;">
+                        <strong>${escapeHtml(p.name)}</strong><br>
+                        <span style="color:#6b7280;font-size:12px;">${escapeHtml(p.type)} — ${escapeHtml(p.district)}, ${escapeHtml(p.city)}</span>
+                    </td>
+                    <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap;font-weight:600;">
+                        ${fmtPriceTR(p.priceWeekly)} <span style="color:#9ca3af;font-weight:400;font-size:12px;">/ hafta</span>
+                    </td>
+                </tr>`
+                )
+                .join('')}
+            <tr>
+                <td style="padding:12px;text-align:right;color:#6b7280;">Toplam (haftalık)</td>
+                <td style="padding:12px;text-align:right;font-weight:700;font-size:16px;">${fmtPriceTR(total)}</td>
+            </tr>
+        </table>`
+        : '';
+
+    const customerRows = [
+        infoRow('Ad Soyad', params.customer.name),
+        infoRow('E-posta', params.customer.email),
+        params.customer.phone ? infoRow('Telefon', params.customer.phone) : '',
+        params.customer.company ? infoRow('Firma', params.customer.company) : '',
+        params.period?.startDate
+            ? infoRow(
+                'Hedef Dönem',
+                `${fmtDateTR(params.period.startDate)}${
+                    params.period.endDate ? ' → ' + fmtDateTR(params.period.endDate) : ''
+                }`
+            )
+            : '',
+    ]
+        .filter(Boolean)
+        .join('');
+
+    const messageHtml = params.message
+        ? `<div style="margin:0 0 18px;padding:14px 16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;">
+            <div style="font-weight:600;color:#9a3412;margin-bottom:6px;">Müşteri Notu</div>
+            <div style="white-space:pre-line;color:#1f2937;">${escapeHtml(params.message)}</div>
+        </div>`
+        : '';
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba ${escapeHtml(params.ownerName)},</p>
+        <p style="margin:0 0 14px;"><strong>${escapeHtml(params.companyName)}</strong> mağaza sayfanız üzerinden yeni bir teklif talebi aldınız.</p>
+        <h3 style="margin:18px 0 8px;color:#111827;">Müşteri Bilgileri</h3>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${customerRows}
+        </table>
+        ${messageHtml}
+        <h3 style="margin:18px 0 8px;color:#111827;">Seçilen Üniteler (${params.panels.length})</h3>
+        ${itemsHtml}
+        <p style="margin:0 0 6px;color:#6b7280;font-size:12px;">Müşteriye yanıtınızı doğrudan e-postaya "yanıtla" ile iletebilirsiniz.</p>
+        ${button(dashboardUrl, 'Panobu Panelini Aç')}
+        <p style="margin:16px 0 0;color:#9ca3af;font-size:12px;text-align:center;">
+            Mağaza sayfanız: <a href="${storeUrl}" style="color:#6b7280;">${escapeHtml(storeUrl)}</a>
+        </p>
+    `;
+
+    return sendEmail({
+        to: params.ownerEmail,
+        replyTo: params.customer.email,
+        subject: `[Teklif Talebi] ${params.customer.name} — ${params.panels.length} ünite`,
+        html: wrap({
+            title: 'Yeni Teklif Talebi',
+            preheader: `${params.customer.name} — ${params.panels.length} ünite için teklif istiyor`,
+            accent: 'emerald',
+            body,
+        }),
+    });
+}
+
+/**
+ * Medya sahibinin müşterisine tekrar-teklif / yeniden iletişim e-postası.
+ */
+export async function sendReengagementEmail(params: {
+    customerEmail: string;
+    customerName: string;
+    ownerCompanyName: string;
+    ownerContactName: string;
+    ownerEmail?: string | null;
+    ownerPhone?: string | null;
+    ownerStoreSlug?: string | null;
+    message: string;
+}): Promise<boolean> {
+    const storeUrl = params.ownerStoreSlug
+        ? `${APP_URL}/medya/${params.ownerStoreSlug}`
+        : null;
+
+    const contactLines = [
+        params.ownerEmail ? `E-posta: ${escapeHtml(params.ownerEmail)}` : '',
+        params.ownerPhone ? `Telefon: ${escapeHtml(params.ownerPhone)}` : '',
+    ]
+        .filter(Boolean)
+        .join(' · ');
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba ${escapeHtml(params.customerName)},</p>
+        <p style="margin:0 0 14px;">
+            <strong>${escapeHtml(params.ownerCompanyName)}</strong> olarak sizinle tekrar iletişime geçmek istedik.
+        </p>
+        <div style="margin:0 0 18px;padding:14px 16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;white-space:pre-line;color:#1f2937;">
+            ${escapeHtml(params.message)}
+        </div>
+        ${
+            storeUrl
+                ? button(storeUrl, 'Güncel Panolarımıza Göz Atın')
+                : ''
+        }
+        <p style="margin:18px 0 0;color:#6b7280;font-size:13px;">
+            <strong>${escapeHtml(params.ownerContactName)}</strong><br>
+            ${escapeHtml(params.ownerCompanyName)}<br>
+            ${contactLines}
+        </p>
+    `;
+
+    return sendEmail({
+        to: params.customerEmail,
+        replyTo: params.ownerEmail || undefined,
+        subject: `${params.ownerCompanyName} — Yeni Dönem Teklif Fırsatı`,
+        html: wrap({
+            title: 'Yeniden iletişime geçmek isteriz',
+            preheader: `${params.ownerCompanyName} size özel bir teklif hatırlatması gönderdi`,
             accent: 'blue',
             body,
         }),

@@ -6,6 +6,7 @@ export type OwnerDashboardStats = {
     requestsLast30Days: number;
     occupancyPercent: number;
     pendingRequests: number;
+    pendingProofs: number;
 };
 
 export type RecentRequest = {
@@ -34,71 +35,148 @@ const MONTH_LABELS_TR = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu
  *  - Requests = Campaigns booked against the owner's screens (CampaignScreen join)
  *  - Occupancy = share of owner screen-weeks that are booked in the current week-of-year window
  */
+const EMPTY_STATS: OwnerDashboardStats = {
+    totalUnits: 0,
+    activeUnits: 0,
+    requestsLast30Days: 0,
+    occupancyPercent: 0,
+    pendingRequests: 0,
+    pendingProofs: 0,
+};
+
+async function safe<T>(p: Promise<T>, fallback: T, label: string): Promise<T> {
+    try {
+        return await p;
+    } catch (err) {
+        console.error(`[owner/stats] ${label} failed:`, (err as Error)?.message || err);
+        return fallback;
+    }
+}
+
 export async function getOwnerStats(ownerId: string): Promise<OwnerDashboardStats> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [screens, panels, activeScreens, activePanels, campaignsLast30, rentalsLast30, pendingRentals, occupancyPercent] = await Promise.all([
-        prisma.screen.count({ where: { ownerId } }),
-        prisma.staticPanel.count({ where: { ownerId } }),
-        prisma.screen.count({ where: { ownerId, active: true } }),
-        prisma.staticPanel.count({ where: { ownerId, active: true, reviewStatus: "APPROVED", ownerStatus: "ACTIVE" } }),
-        prisma.campaign.count({
-            where: {
-                createdAt: { gte: thirtyDaysAgo },
-                campaignScreens: { some: { screen: { ownerId } } },
-            },
-        }),
-        prisma.staticRental.count({
-            where: { createdAt: { gte: thirtyDaysAgo }, panel: { ownerId } },
-        }),
-        prisma.staticRental.count({
-            where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
-        }),
-        computeCurrentOccupancy(ownerId),
-    ]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    return {
-        totalUnits: screens + panels,
-        activeUnits: activeScreens + activePanels,
-        requestsLast30Days: campaignsLast30 + rentalsLast30,
-        occupancyPercent,
-        pendingRequests: pendingRentals,
-    };
+    try {
+        const [screens, panels, activeScreens, activePanels, campaignsLast30, rentalsLast30, pendingRentals, pendingProofs, occupancyPercent] = await Promise.all([
+            safe(prisma.screen.count({ where: { ownerId } }), 0, "screens"),
+            safe(prisma.staticPanel.count({ where: { ownerId } }), 0, "panels"),
+            safe(prisma.screen.count({ where: { ownerId, active: true } }), 0, "activeScreens"),
+            safe(
+                prisma.staticPanel.count({
+                    where: { ownerId, active: true, reviewStatus: "APPROVED", ownerStatus: "ACTIVE" },
+                }),
+                0,
+                "activePanels"
+            ),
+            safe(
+                prisma.campaign.count({
+                    where: {
+                        createdAt: { gte: thirtyDaysAgo },
+                        campaignScreens: { some: { screen: { ownerId } } },
+                    },
+                }),
+                0,
+                "campaignsLast30"
+            ),
+            safe(
+                prisma.staticRental.count({
+                    where: { createdAt: { gte: thirtyDaysAgo }, panel: { ownerId } },
+                }),
+                0,
+                "rentalsLast30"
+            ),
+            safe(
+                prisma.staticRental.count({
+                    where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
+                }),
+                0,
+                "pendingRentals"
+            ),
+            // Yayın kanıtı bekleyen aktif kampanyalar
+            safe(
+                prisma.staticRental.count({
+                    where: {
+                        panel: { ownerId },
+                        ownerReviewStatus: "APPROVED",
+                        startDate: { lte: today },
+                        endDate: { gte: today },
+                        proofStatus: "PENDING",
+                    },
+                }),
+                0,
+                "pendingProofs"
+            ),
+            safe(computeCurrentOccupancy(ownerId), 0, "occupancy"),
+        ]);
+
+        return {
+            totalUnits: screens + panels,
+            activeUnits: activeScreens + activePanels,
+            requestsLast30Days: campaignsLast30 + rentalsLast30,
+            occupancyPercent,
+            pendingRequests: pendingRentals,
+            pendingProofs,
+        };
+    } catch (err) {
+        console.error("[owner/stats] getOwnerStats failed:", (err as Error)?.message || err);
+        return EMPTY_STATS;
+    }
 }
 
 export async function getPendingRequestsCount(ownerId: string): Promise<number> {
-    return prisma.staticRental.count({
-        where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
-    });
+    try {
+        return await prisma.staticRental.count({
+            where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
+        });
+    } catch (err) {
+        console.error("[owner/stats] getPendingRequestsCount failed:", (err as Error)?.message || err);
+        return 0;
+    }
 }
 
 async function computeCurrentOccupancy(ownerId: string): Promise<number> {
-    // Consider the next 4 weeks as the window. For each screen, count weeks that
-    // overlap at least one campaign booking -> divide by (screens * 4).
-    const totalScreens = await prisma.screen.count({ where: { ownerId } });
+    let totalScreens = 0;
+    try {
+        totalScreens = await prisma.screen.count({ where: { ownerId } });
+    } catch {
+        return 0;
+    }
     if (totalScreens === 0) return 0;
 
     const now = new Date();
     const windowEnd = new Date();
     windowEnd.setDate(now.getDate() + 28);
 
-    const bookings = await prisma.campaign.findMany({
-        where: {
-            campaignScreens: { some: { screen: { ownerId } } },
-            startDate: { lte: windowEnd },
-            endDate: { gte: now },
-            status: { in: ["ACTIVE", "APPROVED", "RUNNING", "SCHEDULED"] },
-        },
-        select: {
-            startDate: true,
-            endDate: true,
-            campaignScreens: {
-                where: { screen: { ownerId } },
-                select: { screenId: true },
+    let bookings: Array<{
+        startDate: Date;
+        endDate: Date;
+        campaignScreens: { screenId: string }[];
+    }> = [];
+    try {
+        bookings = await prisma.campaign.findMany({
+            where: {
+                campaignScreens: { some: { screen: { ownerId } } },
+                startDate: { lte: windowEnd },
+                endDate: { gte: now },
+                status: { in: ["ACTIVE", "APPROVED", "RUNNING", "SCHEDULED"] },
             },
-        },
-    });
+            select: {
+                startDate: true,
+                endDate: true,
+                campaignScreens: {
+                    where: { screen: { ownerId } },
+                    select: { screenId: true },
+                },
+            },
+        });
+    } catch (err) {
+        console.error("[owner/stats] computeCurrentOccupancy bookings failed:", (err as Error)?.message || err);
+        return 0;
+    }
 
     // Map screenId -> set of occupied week indices (0..3)
     const occupied = new Map<string, Set<number>>();
@@ -127,10 +205,11 @@ async function computeCurrentOccupancy(ownerId: string): Promise<number> {
 }
 
 export async function getRecentRequests(ownerId: string, limit = 5): Promise<RecentRequest[]> {
-    const rows = await prisma.staticRental.findMany({
-        where: { panel: { ownerId } },
-        orderBy: { createdAt: "desc" },
-        take: limit,
+    try {
+        const rows = await prisma.staticRental.findMany({
+            where: { panel: { ownerId } },
+            orderBy: { createdAt: "desc" },
+            take: limit,
         select: {
             id: true,
             createdAt: true,
@@ -148,29 +227,25 @@ export async function getRecentRequests(ownerId: string, limit = 5): Promise<Rec
         },
     });
 
-    return rows.map((r) => ({
-        id: r.id,
-        createdAt: r.createdAt,
-        advertiserName: r.advertiser?.companyName || r.advertiser?.user?.name || "Reklam Veren",
-        unitName: r.panel?.name ?? "Ünite",
-        status: r.ownerReviewStatus,
-        startDate: r.startDate,
-        endDate: r.endDate,
-        amount: r.totalPrice ? Number(r.totalPrice) : null,
-    }));
+        return rows.map((r) => ({
+            id: r.id,
+            createdAt: r.createdAt,
+            advertiserName: r.advertiser?.companyName || r.advertiser?.user?.name || "Reklam Veren",
+            unitName: r.panel?.name ?? "Ünite",
+            status: r.ownerReviewStatus,
+            startDate: r.startDate,
+            endDate: r.endDate,
+            amount: r.totalPrice ? Number(r.totalPrice) : null,
+        }));
+    } catch (err) {
+        console.error("[owner/stats] getRecentRequests failed:", (err as Error)?.message || err);
+        return [];
+    }
 }
 
 export async function getMonthlyRequestTrend(ownerId: string): Promise<MonthlyRequestPoint[]> {
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
-
-    const rows = await prisma.staticRental.findMany({
-        where: {
-            createdAt: { gte: start },
-            panel: { ownerId },
-        },
-        select: { createdAt: true },
-    });
 
     const buckets = new Map<string, number>();
     for (let i = 0; i < 6; i++) {
@@ -178,10 +253,23 @@ export async function getMonthlyRequestTrend(ownerId: string): Promise<MonthlyRe
         const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
         buckets.set(key, 0);
     }
-    for (const row of rows) {
-        const d = row.createdAt;
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-        if (buckets.has(key)) buckets.set(key, (buckets.get(key) || 0) + 1);
+
+    try {
+        const rows = await prisma.staticRental.findMany({
+            where: {
+                createdAt: { gte: start },
+                panel: { ownerId },
+            },
+            select: { createdAt: true },
+        });
+
+        for (const row of rows) {
+            const d = row.createdAt;
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+            if (buckets.has(key)) buckets.set(key, (buckets.get(key) || 0) + 1);
+        }
+    } catch (err) {
+        console.error("[owner/stats] getMonthlyRequestTrend failed:", (err as Error)?.message || err);
     }
 
     const points: MonthlyRequestPoint[] = [];
