@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { triggerTrafficComputeInBackground } from '@/lib/traffic/computeForPanel';
 
 // Helper to check if user has admin access
 function hasAdminAccess(session: any) {
@@ -112,6 +113,12 @@ export async function PUT(
         }
     }
 
+    // T2: Mevcut durumu al (lat/lng veya trafficScore durumuna göre tetikleme için)
+    const preUpdate = await prisma.staticPanel.findUnique({
+        where: { id: params.id },
+        select: { latitude: true, longitude: true, trafficScore: true, priceWeekly: true },
+    });
+
     try {
         const body = await req.json();
         console.log('PUT Body:', JSON.stringify(body, null, 2));
@@ -202,6 +209,19 @@ export async function PUT(
                     : {}),
             }
         });
+
+        // T2: Koordinat/fiyat değiştiyse veya skor henüz yoksa arka planda hesapla
+        if (panel.latitude && panel.longitude) {
+            const latChanged = preUpdate && preUpdate.latitude !== panel.latitude;
+            const lngChanged = preUpdate && preUpdate.longitude !== panel.longitude;
+            const priceChanged =
+                preUpdate &&
+                Number(preUpdate.priceWeekly) !== Number(panel.priceWeekly);
+            const neverScored = !preUpdate?.trafficScore;
+            if (latChanged || lngChanged || priceChanged || neverScored) {
+                triggerTrafficComputeInBackground(panel.id);
+            }
+        }
 
         return NextResponse.json(panel);
     } catch (error: any) {

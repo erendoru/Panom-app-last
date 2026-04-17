@@ -30,6 +30,15 @@ enum TrafficLevel {
   VERY_HIGH
 }
 
+// T2: Yol tipi (OSM highway tag'inden türetilir)
+enum RoadType {
+  HIGHWAY          // otoyol / motorway / trunk
+  MAIN_ROAD        // primary
+  SECONDARY_ROAD   // secondary / tertiary
+  RESIDENTIAL      // residential / unclassified / service
+  PEDESTRIAN       // pedestrian / footway / living_street
+}
+
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -399,6 +408,14 @@ model StaticPanel {
   estimatedCpm               Decimal?       @db.Decimal(10, 2)
   nearbyTags                 String[]       @default([])
   trafficLevel               TrafficLevel   @default(MEDIUM)
+  // T1/T2: Trafik veri katmanı
+  trafficScore               Int?
+  trafficDataUpdatedAt       DateTime?
+  estimatedWeeklyImpressions Int?
+  roadType                   RoadType?
+  visibilityScore            Decimal?      @db.Decimal(3, 2) // 0.00 - 1.00
+  manualDailyTraffic         Int?          // owner/admin manuel override (günlük araç)
+  nearbyPoiCount             Int?          // 500m POI sayısı (okul, hastane, avm vs.)
   blockedDates               Json?          // Array of {startDate, endDate} objects
   
   // Pano Sahibi Bilgileri (Admin görür)

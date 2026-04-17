@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic'; // Fix for Vercel build error
 
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { triggerTrafficComputeInBackground } from '@/lib/traffic/computeForPanel';
 
 // Helper to check if user has admin access
 function hasAdminAccess(session: any) {
@@ -193,6 +194,11 @@ export async function POST(req: NextRequest) {
                         : parseFloat(String(estimatedCpm)),
             }
         });
+
+        // T2: Yeni pano için trafik skorunu arka planda hesapla (fire-and-forget)
+        if (panel.latitude && panel.longitude) {
+            triggerTrafficComputeInBackground(panel.id);
+        }
 
         return NextResponse.json(panel, { status: 201 });
     } catch (error: any) {

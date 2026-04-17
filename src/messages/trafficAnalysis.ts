@@ -1,0 +1,97 @@
+import type { AppLocale } from "@/messages/publicNav";
+import type { RoadTypeKey } from "@/lib/traffic/score";
+
+/**
+ * UI metinleri — T3: pano detay sayfası ve haritadaki detay panelinde
+ * Trafik & Etki Analizi bölümü için.
+ */
+export function trafficCopy(locale: AppLocale) {
+    const e = locale === "en";
+    return {
+        sectionTitle: e ? "Visibility & Impact Analysis" : "Görünürlük & Etki Analizi",
+        trafficScore: e ? "Traffic Score" : "Trafik Skoru",
+        outOf100: e ? "/ 100" : "/ 100",
+        scorePending: e ? "Traffic data is being prepared" : "Trafik verisi hazırlanıyor",
+        computeHint: e
+            ? "This panel's traffic score will be calculated soon."
+            : "Bu pano için trafik skoru kısa süre içinde hesaplanacak.",
+        levelHigh: e ? "High traffic" : "Yüksek trafik",
+        levelMedium: e ? "Medium traffic" : "Orta trafik",
+        levelLow: e ? "Low traffic" : "Düşük trafik",
+        roadType: e ? "Road type" : "Yol tipi",
+        poiCount: e ? "POI within 500m" : "500m içinde POI",
+        poiHint: e
+            ? "Number of shops, schools, hospitals etc. nearby."
+            : "Yakındaki dükkan, okul, hastane, AVM vb. sayısı.",
+        daily: e ? "Daily" : "Günlük",
+        weekly: e ? "Weekly" : "Haftalık",
+        monthly: e ? "Monthly" : "Aylık",
+        impressions: e ? "impressions" : "gösterim",
+        impressionsTitle: e ? "Estimated Impressions" : "Tahmini Gösterim",
+        estimated: e ? "Estimated" : "Tahmini",
+        cpm: "CPM",
+        cpmLabel: e ? "Cost per 1,000 impressions" : "1.000 gösterim başına maliyet",
+        cpmVsDigital: e
+            ? "Average Google/Meta digital ad CPM: ₺80–₺250"
+            : "Ortalama dijital reklam CPM: 80₺–250₺",
+        cpmAdvantageLow: e
+            ? "Below digital ads — excellent value."
+            : "Dijital reklamın altında — mükemmel verim.",
+        cpmAdvantageMid: e
+            ? "Competitive with digital ads — balanced."
+            : "Dijital reklamla rekabetçi — dengeli.",
+        cpmAdvantageHigh: e
+            ? "Above average — high visibility location."
+            : "Ortalamanın üstünde — yüksek görünürlüklü lokasyon.",
+        dataUpdated: e ? "Data updated" : "Veri güncellendi",
+        methodologyNote: e
+            ? "Calculated from road type (OpenStreetMap), nearby POI density and panel type visibility factors."
+            : "Yol tipi (OpenStreetMap), yakın POI yoğunluğu ve pano tipi görünürlük katsayıları ile hesaplandı.",
+        viewFullDetails: e ? "View full details" : "Tüm detayları gör",
+        backToMap: e ? "Back to map" : "Haritaya dön",
+        shareThisPanel: e ? "Share this panel" : "Bu panoyu paylaş",
+        panelSummaryTitle: e ? "Panel Overview" : "Pano Özeti",
+        locationOnMap: e ? "Location" : "Konum",
+        openInGoogleMaps: e ? "Open in Google Maps" : "Google Haritalar'da aç",
+        breadcrumbHome: e ? "Home" : "Ana Sayfa",
+        breadcrumbBillboards: e ? "Ad Units" : "Reklam Üniteleri",
+        notFound: e ? "Panel not found" : "Pano bulunamadı",
+        notFoundHint: e
+            ? "This panel may be inactive or removed."
+            : "Bu pano pasif olabilir veya kaldırılmış olabilir.",
+    };
+}
+
+/** Yol tipi etiketleri (locale'e göre) */
+export function roadTypeLabel(
+    roadType: RoadTypeKey | null | undefined,
+    locale: AppLocale,
+): string {
+    if (!roadType) return locale === "en" ? "Unknown" : "Bilinmiyor";
+    if (locale === "en") {
+        const m: Record<RoadTypeKey, string> = {
+            HIGHWAY: "Highway / Motorway",
+            MAIN_ROAD: "Main road",
+            SECONDARY_ROAD: "Secondary road",
+            RESIDENTIAL: "Residential street",
+            PEDESTRIAN: "Pedestrian zone",
+        };
+        return m[roadType] ?? roadType;
+    }
+    const m: Record<RoadTypeKey, string> = {
+        HIGHWAY: "Otoyol / Ana arter",
+        MAIN_ROAD: "Ana cadde",
+        SECONDARY_ROAD: "Tali yol",
+        RESIDENTIAL: "Ara sokak",
+        PEDESTRIAN: "Yaya bölgesi",
+    };
+    return m[roadType] ?? roadType;
+}
+
+/** Skora göre renk + seviye */
+export function scoreVisual(score: number | null | undefined) {
+    if (score == null) return { color: "#94a3b8", ring: "#e2e8f0", level: "pending" as const };
+    if (score >= 70) return { color: "#16a34a", ring: "#bbf7d0", level: "high" as const };
+    if (score >= 40) return { color: "#f59e0b", ring: "#fde68a", level: "mid" as const };
+    return { color: "#ef4444", ring: "#fecaca", level: "low" as const };
+}

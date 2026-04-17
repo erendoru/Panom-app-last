@@ -40,6 +40,12 @@ export async function GET(request: NextRequest) {
                 trafficLevel: true,
                 socialGrade: true,
                 locationType: true,
+                // T2: Trafik verileri (harita halkaları + kart badge'leri)
+                trafficScore: true,
+                roadType: true,
+                estimatedDailyImpressions: true,
+                estimatedWeeklyImpressions: true,
+                estimatedCpm: true,
             }
         });
 

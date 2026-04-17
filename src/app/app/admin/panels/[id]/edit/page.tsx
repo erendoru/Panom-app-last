@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Save, ChevronUp, ChevronDown, Activity, RefreshCw, Loader2 } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
 import TagsInput from '@/components/form/TagsInput';
 import {
@@ -62,6 +62,29 @@ export default function EditPanelPage() {
     // Panel navigation state
     const [panelIds, setPanelIds] = useState<string[]>([]);
     const [currentIndex, setCurrentIndex] = useState(-1);
+
+    // T2: Traffic score state
+    type TrafficInfo = {
+        trafficScore: number | null;
+        roadType: string | null;
+        visibilityScore: number | null;
+        estimatedWeeklyImpressions: number | null;
+        nearbyPoiCount: number | null;
+        manualDailyTraffic: number | null;
+        trafficDataUpdatedAt: string | null;
+    };
+    const [trafficInfo, setTrafficInfo] = useState<TrafficInfo>({
+        trafficScore: null,
+        roadType: null,
+        visibilityScore: null,
+        estimatedWeeklyImpressions: null,
+        nearbyPoiCount: null,
+        manualDailyTraffic: null,
+        trafficDataUpdatedAt: null,
+    });
+    const [manualTrafficInput, setManualTrafficInput] = useState('');
+    const [trafficBusy, setTrafficBusy] = useState(false);
+    const [trafficMessage, setTrafficMessage] = useState<string | null>(null);
 
     // Fetch all panel IDs for navigation
     useEffect(() => {
@@ -158,11 +181,79 @@ export default function EditPanelPage() {
                 nearbyTags: Array.isArray(data.nearbyTags) ? data.nearbyTags : [],
                 blockedDates: (data.blockedDates as BlockedDateRange[]) || []
             });
+
+            setTrafficInfo({
+                trafficScore: typeof data.trafficScore === 'number' ? data.trafficScore : null,
+                roadType: data.roadType || null,
+                visibilityScore:
+                    data.visibilityScore != null ? Number(data.visibilityScore) : null,
+                estimatedWeeklyImpressions:
+                    typeof data.estimatedWeeklyImpressions === 'number'
+                        ? data.estimatedWeeklyImpressions
+                        : null,
+                nearbyPoiCount:
+                    typeof data.nearbyPoiCount === 'number' ? data.nearbyPoiCount : null,
+                manualDailyTraffic:
+                    typeof data.manualDailyTraffic === 'number'
+                        ? data.manualDailyTraffic
+                        : null,
+                trafficDataUpdatedAt: data.trafficDataUpdatedAt || null,
+            });
+            setManualTrafficInput(
+                typeof data.manualDailyTraffic === 'number'
+                    ? String(data.manualDailyTraffic)
+                    : ''
+            );
         } catch (error) {
             console.error('Error fetching panel:', error);
             alert('Pano yüklenemedi');
         } finally {
             setFetching(false);
+        }
+    };
+
+    const computeTraffic = async () => {
+        if (trafficBusy) return;
+        setTrafficBusy(true);
+        setTrafficMessage(null);
+        try {
+            const body: any = {};
+            const manualNum = parseInt(manualTrafficInput, 10);
+            if (!Number.isNaN(manualNum) && manualNum > 0) {
+                body.manualDailyTraffic = manualNum;
+            }
+            const res = await fetch(`/api/admin/panels/${params.id}/traffic-score`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'Hesaplama başarısız');
+            setTrafficInfo({
+                trafficScore: data.panel.trafficScore,
+                roadType: data.panel.roadType,
+                visibilityScore:
+                    data.panel.visibilityScore != null
+                        ? Number(data.panel.visibilityScore)
+                        : null,
+                estimatedWeeklyImpressions: data.panel.estimatedWeeklyImpressions,
+                nearbyPoiCount: data.panel.nearbyPoiCount,
+                manualDailyTraffic: data.panel.manualDailyTraffic,
+                trafficDataUpdatedAt: data.panel.trafficDataUpdatedAt,
+            });
+            setFormData((prev) => ({
+                ...prev,
+                estimatedDailyImpressions: String(data.panel.estimatedDailyImpressions || ''),
+                estimatedCpm:
+                    data.panel.estimatedCpm != null ? String(data.panel.estimatedCpm) : '',
+            }));
+            setTrafficMessage(
+                `Skor: ${data.panel.trafficScore} · Haftalık ~${(data.compute.weeklyImpressions / 1000).toFixed(1)}K gösterim${data.compute.cpm ? ` · CPM ${data.compute.cpm} ₺` : ''}`
+            );
+        } catch (err: any) {
+            setTrafficMessage(`Hata: ${err?.message || 'bilinmeyen'}`);
+        } finally {
+            setTrafficBusy(false);
         }
     };
 
@@ -611,6 +702,106 @@ export default function EditPanelPage() {
                                 />
                                 <p className="text-xs text-slate-500 mt-1">1000 gösterim başına tahmini maliyet</p>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* T2: Trafik Skoru (Otomatik / Hibrit) */}
+                    <div className="border border-blue-200 rounded-xl p-5 bg-gradient-to-br from-blue-50 to-white">
+                        <div className="flex items-start justify-between gap-3 mb-4">
+                            <div>
+                                <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                                    <Activity className="w-5 h-5 text-blue-600" />
+                                    Trafik Skoru (Otomatik Hesaplama)
+                                </h2>
+                                <p className="text-xs text-slate-500 mt-1">
+                                    OpenStreetMap verisinden yol tipi ve çevre POI'leri çekilip skor & CPM hesaplanır. Manuel günlük trafik girerseniz onu kullanır.
+                                </p>
+                            </div>
+                            <Button
+                                type="button"
+                                onClick={computeTraffic}
+                                disabled={trafficBusy}
+                                className="bg-blue-600 hover:bg-blue-700 text-white shrink-0"
+                            >
+                                {trafficBusy ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                ) : (
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                )}
+                                {trafficInfo.trafficScore ? 'Yeniden Hesapla' : 'Şimdi Hesapla'}
+                            </Button>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                            <div className="bg-white rounded-lg p-3 border border-slate-200">
+                                <div className="text-[11px] text-slate-500 uppercase tracking-wide">Trafik Skoru</div>
+                                <div className={`text-2xl font-bold mt-1 ${
+                                    trafficInfo.trafficScore == null ? 'text-slate-300' :
+                                    trafficInfo.trafficScore >= 70 ? 'text-green-600' :
+                                    trafficInfo.trafficScore >= 40 ? 'text-amber-600' : 'text-red-600'
+                                }`}>
+                                    {trafficInfo.trafficScore ?? '—'}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-lg p-3 border border-slate-200">
+                                <div className="text-[11px] text-slate-500 uppercase tracking-wide">Yol Tipi</div>
+                                <div className="text-sm font-semibold text-slate-800 mt-1">
+                                    {trafficInfo.roadType === 'HIGHWAY' ? 'Otoyol / Ana arter' :
+                                     trafficInfo.roadType === 'MAIN_ROAD' ? 'Ana cadde' :
+                                     trafficInfo.roadType === 'SECONDARY_ROAD' ? 'Tali yol' :
+                                     trafficInfo.roadType === 'RESIDENTIAL' ? 'Ara sokak' :
+                                     trafficInfo.roadType === 'PEDESTRIAN' ? 'Yaya bölgesi' : '—'}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-lg p-3 border border-slate-200">
+                                <div className="text-[11px] text-slate-500 uppercase tracking-wide">Haftalık Gösterim</div>
+                                <div className="text-sm font-semibold text-slate-800 mt-1">
+                                    {trafficInfo.estimatedWeeklyImpressions != null
+                                        ? `~${(trafficInfo.estimatedWeeklyImpressions / 1000).toFixed(1)}K`
+                                        : '—'}
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-lg p-3 border border-slate-200">
+                                <div className="text-[11px] text-slate-500 uppercase tracking-wide">500m POI</div>
+                                <div className="text-sm font-semibold text-slate-800 mt-1">
+                                    {trafficInfo.nearbyPoiCount ?? '—'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Manuel Günlük Ortalama Trafik (opsiyonel)
+                            </label>
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    value={manualTrafficInput}
+                                    onChange={(e) => setManualTrafficInput(e.target.value)}
+                                    placeholder="Örn: 35000 (araç/yaya)"
+                                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+                            <p className="text-xs text-slate-500 mt-1">
+                                Bölgeyi tanıyorsan buraya günlük trafik tahmininizi yazabilirsin; hesapla butonuna bastığında bu değer kullanılır.
+                                {trafficInfo.trafficDataUpdatedAt && (
+                                    <>
+                                        {' '}Son güncelleme:{' '}
+                                        <span className="font-medium">
+                                            {new Date(trafficInfo.trafficDataUpdatedAt).toLocaleString('tr-TR')}
+                                        </span>
+                                    </>
+                                )}
+                            </p>
+                            {trafficMessage && (
+                                <div className={`mt-2 text-xs rounded-md px-3 py-2 ${
+                                    trafficMessage.startsWith('Hata')
+                                        ? 'bg-red-50 text-red-700 border border-red-200'
+                                        : 'bg-green-50 text-green-800 border border-green-200'
+                                }`}>
+                                    {trafficMessage}
+                                </div>
+                            )}
                         </div>
                     </div>
 

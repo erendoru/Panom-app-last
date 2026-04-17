@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { X, MapPin, CheckCircle2, Navigation, ShoppingCart, Loader2 } from "lucide-react";
+import { X, MapPin, CheckCircle2, Navigation, ShoppingCart, Loader2, ExternalLink } from "lucide-react";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { formatCurrency } from "@/lib/utils";
 import { useAppLocale } from "@/contexts/LocaleContext";
 import { staticBillboardsCopy } from "@/messages/staticBillboards";
 import { locationTypeLabel, panelTypeLabel } from "@/lib/panel-labels-locale";
+import TrafficAnalysis from "@/components/static/TrafficAnalysis";
+import { trafficCopy } from "@/messages/trafficAnalysis";
 
 interface PanelDetailSidebarProps {
     panel: any;
@@ -30,6 +33,7 @@ function getSessionId(): string {
 export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDetailSidebarProps) {
     const { locale } = useAppLocale();
     const s = staticBillboardsCopy(locale);
+    const tr = trafficCopy(locale);
     const numLocale = locale === "en" ? "en-US" : "tr-TR";
     const [cartLoading, setCartLoading] = useState(false);
     const [addedToCart, setAddedToCart] = useState(false);
@@ -208,6 +212,40 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                         <dd className="font-medium text-slate-900">LED</dd>
                     </div>
                 </dl>
+
+                {/* T3: Trafik & Etki Analizi (compact) */}
+                {(panel.trafficScore != null ||
+                    panel.roadType ||
+                    panel.estimatedDailyImpressions > 0) && (
+                    <div className="mt-3">
+                        <h3 className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                            {tr.sectionTitle}
+                        </h3>
+                        <TrafficAnalysis
+                            variant="compact"
+                            data={{
+                                trafficScore: panel.trafficScore,
+                                roadType: panel.roadType,
+                                nearbyPoiCount: panel.nearbyPoiCount,
+                                estimatedDailyImpressions: panel.estimatedDailyImpressions,
+                                estimatedWeeklyImpressions: panel.estimatedWeeklyImpressions,
+                                estimatedCpm: panel.estimatedCpm,
+                                trafficDataUpdatedAt: panel.trafficDataUpdatedAt,
+                            }}
+                        />
+                    </div>
+                )}
+
+                {/* T3: Tüm detayları gör linki */}
+                {panel.id && (
+                    <Link
+                        href={`/panel/${panel.id}`}
+                        className="mt-2.5 inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-700 transition-colors hover:bg-slate-50"
+                    >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        {tr.viewFullDetails}
+                    </Link>
+                )}
 
                 {panel.address && (
                     <div className="mt-2.5 flex gap-2 rounded-md border border-slate-100 bg-slate-50/50 p-2 text-[11px] leading-snug text-slate-600">

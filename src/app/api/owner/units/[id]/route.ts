@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { triggerTrafficComputeInBackground } from "@/lib/traffic/computeForPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -129,6 +130,15 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             where: { id: params.id },
             data,
         });
+
+        // T2: lat/lng veya priceWeekly değiştiyse arka planda trafik skorunu yenile
+        const latChanged = data.latitude !== undefined;
+        const lngChanged = data.longitude !== undefined;
+        const priceChanged = data.priceWeekly !== undefined;
+        if ((latChanged || lngChanged || priceChanged) && updated.latitude && updated.longitude) {
+            triggerTrafficComputeInBackground(updated.id);
+        }
+
         return NextResponse.json({ panel: updated });
     } catch (error: any) {
         console.error("owner update panel error:", error);

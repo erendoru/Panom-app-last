@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import { triggerTrafficComputeInBackground } from "@/lib/traffic/computeForPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -161,6 +162,11 @@ export async function POST(req: NextRequest) {
                 submittedAt: new Date(),
             },
         });
+
+        // T2: Yeni pano için arka planda trafik skoru hesapla
+        if (created.latitude && created.longitude) {
+            triggerTrafficComputeInBackground(created.id);
+        }
 
         return NextResponse.json({ panel: created }, { status: 201 });
     } catch (error: any) {

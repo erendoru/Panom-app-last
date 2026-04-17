@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -9,7 +9,8 @@ import { formatCurrency } from "@/lib/utils";
 import { renderToStaticMarkup } from "react-dom/server";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Activity } from "lucide-react";
 
 // Component to handle map view updates
 function MapController({ center, zoom }: { center: [number, number], zoom: number }) {
@@ -63,6 +64,13 @@ function createClusterCustomIcon(cluster: any) {
     });
 }
 
+// Trafik skorunu renge çevir (yeşil/sarı/kırmızı)
+function trafficColor(score: number): { stroke: string; fill: string } {
+    if (score >= 70) return { stroke: "#16a34a", fill: "#22c55e" }; // yüksek → yeşil
+    if (score >= 40) return { stroke: "#d97706", fill: "#f59e0b" }; // orta → sarı
+    return { stroke: "#dc2626", fill: "#ef4444" }; // düşük → kırmızı
+}
+
 export default function Map({
     panels,
     selectedPanel,
@@ -76,6 +84,20 @@ export default function Map({
     center?: [number, number],
     zoom?: number
 }) {
+    const [showTraffic, setShowTraffic] = useState(false);
+
+    const trafficPanels = useMemo(
+        () =>
+            panels.filter(
+                (p) =>
+                    typeof p.trafficScore === "number" &&
+                    p.trafficScore > 0 &&
+                    typeof p.latitude === "number" &&
+                    typeof p.longitude === "number"
+            ),
+        [panels]
+    );
+
     return (
         <>
             <style jsx global>{`
@@ -102,13 +124,78 @@ export default function Map({
                     transition: transform 0.2s;
                 }
             `}</style>
-            <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
-                <MapController center={center} zoom={zoom} />
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                />
-                <MarkerClusterGroup
+            <div className="relative h-full w-full">
+                {/* Trafik Göster toggle — sağ üst */}
+                <button
+                    type="button"
+                    onClick={() => setShowTraffic((v) => !v)}
+                    aria-pressed={showTraffic}
+                    className={`absolute top-3 right-3 z-[500] inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium shadow-md border transition-colors ${
+                        showTraffic
+                            ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                            : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                    }`}
+                    title={showTraffic ? "Trafik katmanını kapat" : "Trafik katmanını aç"}
+                >
+                    <Activity className="w-3.5 h-3.5" />
+                    <span>Trafik {showTraffic ? "Açık" : "Göster"}</span>
+                </button>
+
+                {/* Legend — sol alt, sadece toggle açıkken */}
+                {showTraffic && (
+                    <div className="absolute bottom-3 left-3 z-[500] bg-white/95 backdrop-blur rounded-lg shadow-md border border-slate-200 p-2.5 text-[11px] text-slate-700 max-w-[220px]">
+                        <div className="font-semibold text-slate-900 mb-1.5">Trafik Yoğunluğu</div>
+                        <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-green-500 shrink-0" />
+                                <span>Yüksek (70-100)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-amber-500 shrink-0" />
+                                <span>Orta (40-69)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
+                                <span>Düşük (1-39)</span>
+                            </div>
+                        </div>
+                        {trafficPanels.length === 0 && (
+                            <div className="mt-2 pt-2 border-t border-slate-200 text-slate-500">
+                                Bu bölgede henüz trafik verisi hesaplanmamış.
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
+                    <MapController center={center} zoom={zoom} />
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                    />
+
+                    {/* Trafik halkaları — her panonun etrafına zoom-bağımsız küçük halo */}
+                    {showTraffic &&
+                        trafficPanels.map((panel) => {
+                            const { stroke, fill } = trafficColor(panel.trafficScore as number);
+                            return (
+                                <CircleMarker
+                                    key={`traffic-${panel.id}`}
+                                    center={[panel.latitude, panel.longitude]}
+                                    radius={16}
+                                    pathOptions={{
+                                        color: stroke,
+                                        fillColor: fill,
+                                        fillOpacity: 0.35,
+                                        weight: 2,
+                                        opacity: 0.9,
+                                        interactive: false,
+                                    }}
+                                />
+                            );
+                        })}
+
+                    <MarkerClusterGroup
                     chunkedLoading
                     iconCreateFunction={createClusterCustomIcon}
                     maxClusterRadius={50}
@@ -186,8 +273,9 @@ export default function Map({
                             </Popup>
                         </Marker>
                     ))}
-                </MarkerClusterGroup>
-            </MapContainer>
+                    </MarkerClusterGroup>
+                </MapContainer>
+            </div>
         </>
     );
 }

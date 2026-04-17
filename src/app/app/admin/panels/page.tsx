@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload, Images, Loader2, Crop } from 'lucide-react';
+import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload, Images, Loader2, Activity, RefreshCw } from 'lucide-react';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -70,8 +70,12 @@ export default function AdminPanelsPage() {
     const [mirrorHasKey, setMirrorHasKey] = useState(true);
     const [mirrorBusy, setMirrorBusy] = useState(false);
 
-    const [cropPending, setCropPending] = useState<number | null>(null);
-    const [cropBusy, setCropBusy] = useState(false);
+    // T2: Traffic score batch
+    const [trafficMissing, setTrafficMissing] = useState<number | null>(null);
+    const [trafficTotal, setTrafficTotal] = useState<number | null>(null);
+    const [trafficBusy, setTrafficBusy] = useState(false);
+    const [trafficAllBusy, setTrafficAllBusy] = useState(false);
+    const [trafficProgress, setTrafficProgress] = useState<{ done: number; total: number; updated: number; failed: number } | null>(null);
 
     // Filters
     const [selectedCity, setSelectedCity] = useState('');
@@ -96,12 +100,13 @@ export default function AdminPanelsPage() {
         }
     }, []);
 
-    const refreshCropPending = useCallback(async () => {
+    const refreshTrafficStatus = useCallback(async () => {
         try {
-            const res = await fetch('/api/admin/panels/crop-images');
+            const res = await fetch('/api/admin/panels/traffic-scores');
             const data = await res.json();
-            if (res.ok && typeof data.pending === 'number') {
-                setCropPending(data.pending);
+            if (res.ok) {
+                if (typeof data.withoutScore === 'number') setTrafficMissing(data.withoutScore);
+                if (typeof data.total === 'number') setTrafficTotal(data.total);
             }
         } catch {
             /* ignore */
@@ -110,8 +115,35 @@ export default function AdminPanelsPage() {
 
     useEffect(() => {
         refreshMirrorPending();
-        refreshCropPending();
-    }, [refreshMirrorPending, refreshCropPending, panels.length]);
+        refreshTrafficStatus();
+    }, [refreshMirrorPending, refreshTrafficStatus, panels.length]);
+
+    const runTrafficBatch = async () => {
+        if (trafficBusy) return;
+        const confirmed = window.confirm(
+            `Trafik skoru olmayan ${trafficMissing ?? 0} pano için skor hesaplansın mı?\n\nOpenStreetMap'ten veri çekilecek; tahmini süre ~${Math.ceil(((trafficMissing ?? 0) * 0.6))} saniye.`
+        );
+        if (!confirmed) return;
+        setTrafficBusy(true);
+        try {
+            const res = await fetch('/api/admin/panels/traffic-scores', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit: 40 }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'Hesaplama başarısız');
+            alert(
+                `Tamamlandı:\n• İşlenen: ${data.processed}\n• Güncellenen: ${data.updated}\n• Hata: ${data.failed}`
+            );
+            refreshTrafficStatus();
+            fetchPanels();
+        } catch (err: any) {
+            alert(`Hata: ${err?.message || 'bilinmeyen'}`);
+        } finally {
+            setTrafficBusy(false);
+        }
+    };
 
     const runMirrorExternalImages = async () => {
         if (!mirrorHasKey) {
@@ -144,7 +176,6 @@ export default function AdminPanelsPage() {
             alert([data.message, failed.length > 8 ? `…ve ${failed.length - 8} hata daha` : '', '', ...lines].filter(Boolean).join('\n'));
             await fetchPanels();
             await refreshMirrorPending();
-            await refreshCropPending();
         } catch {
             alert('Bağlantı hatası');
         } finally {
@@ -152,75 +183,73 @@ export default function AdminPanelsPage() {
         }
     };
 
-    const runCropPanelImages = async () => {
-        if (!mirrorHasKey) {
-            alert('SUPABASE_SERVICE_ROLE_KEY gerekli (görseller depoda olmalı).');
-            return;
-        }
-        if (
-            !confirm(
-                'Depodaki görsellerin dört kenarından eşit %30 kesilecek (ortada yaklaşık %40×%40 alan). Devam?'
-            )
-        ) {
-            return;
-        }
-        setCropBusy(true);
-        try {
-            const res = await fetch('/api/admin/panels/crop-images', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ edgeFraction: 0.3, limit: 80 }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                alert(data.error || 'Kırpma başarısız');
-                return;
-            }
-            const failed = (data.results || []).filter((r: { ok: boolean }) => !r.ok) as { name: string; error?: string }[];
-            const lines = failed.slice(0, 6).map((r) => `• ${r.name}: ${r.error || '?'}`);
-            alert([data.message, '', ...lines].filter(Boolean).join('\n'));
-            await fetchPanels();
-            await refreshCropPending();
-        } catch {
-            alert('Bağlantı hatası');
-        } finally {
-            setCropBusy(false);
-        }
-    };
+    const runTrafficBatchAll = async () => {
+        if (trafficAllBusy || trafficBusy) return;
 
-    const runCropHeavyRight = async () => {
-        if (!mirrorHasKey) {
-            alert('SUPABASE_SERVICE_ROLE_KEY gerekli.');
+        const totalPanels = trafficTotal ?? panels.length;
+        if (totalPanels === 0) {
+            alert('Hesaplanacak pano bulunamadı.');
             return;
         }
-        if (
-            !confirm(
-                'Sağdan daha fazla kesim: sol ~%24, üst/alt ~%26, sağ ~%48 (medyapano şeridi vb. için). Orta alan daralır. Devam?'
-            )
-        ) {
-            return;
-        }
-        setCropBusy(true);
+
+        const estSec = Math.ceil(totalPanels * 0.6);
+        const confirmed = window.confirm(
+            `Tüm ${totalPanels} pano için trafik skoru YENİDEN hesaplanacak.\n` +
+            `(Zaten skoru olanlar da yeniden hesaplanır — OSM'den güncel veri çekilir)\n\n` +
+            `Tahmini süre: ~${Math.floor(estSec / 60)} dk ${estSec % 60} sn\n\n` +
+            `Devam edilsin mi?`
+        );
+        if (!confirmed) return;
+
+        setTrafficAllBusy(true);
+        setTrafficProgress({ done: 0, total: totalPanels, updated: 0, failed: 0 });
+
         try {
-            const res = await fetch('/api/admin/panels/crop-images', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ preset: 'heavyRight', limit: 80 }),
-            });
-            const data = await res.json();
-            if (!res.ok) {
-                alert(data.error || 'Kırpma başarısız');
-                return;
+            // Tüm panel ID'lerini çek
+            const listRes = await fetch('/api/admin/panels');
+            const list = await listRes.json();
+            if (!Array.isArray(list)) throw new Error('Pano listesi alınamadı');
+
+            const ids: string[] = list.map((p: { id: string }) => p.id);
+            const BATCH = 40; // API tarafında rate-limit (500ms/OSM req) ile uyumlu
+            let doneTotal = 0;
+            let updatedTotal = 0;
+            let failedTotal = 0;
+
+            for (let i = 0; i < ids.length; i += BATCH) {
+                const slice = ids.slice(i, i + BATCH);
+                try {
+                    const res = await fetch('/api/admin/panels/traffic-scores', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ panelIds: slice, limit: BATCH }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data?.error || `Batch ${i / BATCH + 1} başarısız`);
+                    doneTotal += data.processed || slice.length;
+                    updatedTotal += data.updated || 0;
+                    failedTotal += data.failed || 0;
+                } catch (err) {
+                    console.error('Batch error:', err);
+                    failedTotal += slice.length;
+                    doneTotal += slice.length;
+                }
+                setTrafficProgress({ done: doneTotal, total: ids.length, updated: updatedTotal, failed: failedTotal });
             }
-            const failed = (data.results || []).filter((r: { ok: boolean }) => !r.ok) as { name: string; error?: string }[];
-            const lines = failed.slice(0, 6).map((r) => `• ${r.name}: ${r.error || '?'}`);
-            alert([data.message, '', ...lines].filter(Boolean).join('\n'));
+
+            alert(
+                `Tüm panolar için hesaplama tamamlandı:\n` +
+                `• Toplam: ${doneTotal}\n` +
+                `• Güncellenen: ${updatedTotal}\n` +
+                `• Hata: ${failedTotal}`
+            );
+            await refreshTrafficStatus();
             await fetchPanels();
-            await refreshCropPending();
-        } catch {
-            alert('Bağlantı hatası');
+        } catch (err: any) {
+            alert(`Hata: ${err?.message || 'bilinmeyen'}`);
         } finally {
-            setCropBusy(false);
+            setTrafficAllBusy(false);
+            setTrafficProgress(null);
         }
     };
 
@@ -461,6 +490,40 @@ export default function AdminPanelsPage() {
                         <p className="text-slate-600 mt-1 text-sm md:text-base">Tüm klasik panoları görüntüleyin ve yönetin</p>
                     </div>
                     <div className="flex gap-2 w-full sm:w-auto flex-wrap">
+                        {trafficMissing !== null && trafficMissing > 0 && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="border-blue-500 text-blue-800 hover:bg-blue-50 flex-1 sm:flex-none"
+                                disabled={trafficBusy || trafficAllBusy}
+                                onClick={runTrafficBatch}
+                                title="Yalnızca trafik skoru olmayan panolar için hesapla"
+                            >
+                                {trafficBusy ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                                ) : (
+                                    <Activity className="w-4 h-4 mr-2 shrink-0" />
+                                )}
+                                Eksikleri Hesapla ({trafficMissing})
+                            </Button>
+                        )}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-indigo-500 text-indigo-800 hover:bg-indigo-50 flex-1 sm:flex-none"
+                            disabled={trafficBusy || trafficAllBusy}
+                            onClick={runTrafficBatchAll}
+                            title="Tüm panolar için OSM'den veri çekip trafik skorlarını yeniden hesapla"
+                        >
+                            {trafficAllBusy ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                            ) : (
+                                <RefreshCw className="w-4 h-4 mr-2 shrink-0" />
+                            )}
+                            {trafficAllBusy && trafficProgress
+                                ? `Hesaplanıyor ${trafficProgress.done}/${trafficProgress.total}`
+                                : `Tümünü Hesapla${trafficTotal ? ` (${trafficTotal})` : ''}`}
+                        </Button>
                         {mirrorPending !== null && mirrorPending > 0 && (
                             <Button
                                 type="button"
@@ -476,38 +539,6 @@ export default function AdminPanelsPage() {
                                 )}
                                 Görselleri depoya taşı ({mirrorPending})
                             </Button>
-                        )}
-                        {cropPending !== null && cropPending > 0 && (
-                            <>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-slate-600 text-slate-800 hover:bg-slate-100 flex-1 sm:flex-none"
-                                    disabled={cropBusy || !mirrorHasKey}
-                                    onClick={runCropPanelImages}
-                                >
-                                    {cropBusy ? (
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
-                                    ) : (
-                                        <Crop className="w-4 h-4 mr-2 shrink-0" />
-                                    )}
-                                    Eşit %30 ({cropPending})
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    className="border-blue-600 text-blue-800 hover:bg-blue-50 flex-1 sm:flex-none"
-                                    disabled={cropBusy || !mirrorHasKey}
-                                    onClick={runCropHeavyRight}
-                                >
-                                    {cropBusy ? (
-                                        <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
-                                    ) : (
-                                        <Crop className="w-4 h-4 mr-2 shrink-0" />
-                                    )}
-                                    Sağ ağırlıklı kırp ({cropPending})
-                                </Button>
-                            </>
                         )}
                         <Button asChild variant="outline" className="border-purple-500 text-purple-600 hover:bg-purple-50 flex-1 sm:flex-none">
                             <Link href="/app/admin/panels/import">
@@ -532,30 +563,19 @@ export default function AdminPanelsPage() {
 
                 <PendingPanelsBanner />
 
-                {(mirrorPending !== null && mirrorPending > 0) || (cropPending !== null && cropPending > 0) ? (
-                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 space-y-2">
-                        {mirrorPending !== null && mirrorPending > 0 && (
-                            <p>
-                                <strong className="font-semibold">Harici görseller:</strong> {mirrorPending} pano — Google
-                                URL&apos;si.{' '}
-                                {!mirrorHasKey ? (
-                                    <span className="text-red-800">
-                                        <code className="rounded bg-white/80 px-1">SUPABASE_SERVICE_ROLE_KEY</code> ekleyin.
-                                    </span>
-                                ) : (
-                                    <span>«Görselleri depoya taşı» ile Supabase&apos;e alın.</span>
-                                )}
-                            </p>
-                        )}
-                        {cropPending !== null && cropPending > 0 && (
-                            <p>
-                                <strong className="font-semibold">Kenar markaları:</strong> {cropPending} pano — depoda
-                                ham görsel. <strong>«Eşit %30»</strong> dört kenarı aynı keser; sağdaki medyapano.com şeridi
-                                için <strong>«Sağ ağırlıklı kırp»</strong> (sağ ~%48, sol ~%24, üst/alt ~%26) daha uygundur.
-                                API ile özel oran: <code className="rounded bg-white/80 px-1">edges: {'{'} left, top, right, bottom {'}'}</code>.
-                                Henüz kırpılmamış kayıtlar sayılır; bir kez kırptıktan sonra aynı panoda tekrar kırpma yok.
-                            </p>
-                        )}
+                {mirrorPending !== null && mirrorPending > 0 ? (
+                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+                        <p>
+                            <strong className="font-semibold">Harici görseller:</strong> {mirrorPending} pano — Google
+                            URL&apos;si.{' '}
+                            {!mirrorHasKey ? (
+                                <span className="text-red-800">
+                                    <code className="rounded bg-white/80 px-1">SUPABASE_SERVICE_ROLE_KEY</code> ekleyin.
+                                </span>
+                            ) : (
+                                <span>«Görselleri depoya taşı» ile Supabase&apos;e alın.</span>
+                            )}
+                        </p>
                     </div>
                 ) : null}
 
