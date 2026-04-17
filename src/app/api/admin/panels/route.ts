@@ -122,6 +122,8 @@ export async function POST(req: NextRequest) {
             trafficLevel,
             imageUrl,
             active,
+            nearbyTags,
+            estimatedCpm,
             isDraft // For quick add feature
         } = body;
 
@@ -178,7 +180,17 @@ export async function POST(req: NextRequest) {
                 trafficLevel: trafficLevel || 'MEDIUM',
                 imageUrl: imageUrl || '',
                 active: isDraft ? true : (active !== undefined ? Boolean(active) : true), // Quick add is also active
-                blockedDates: [] // Initialize empty blocked dates array
+                blockedDates: [], // Initialize empty blocked dates array
+                nearbyTags: Array.isArray(nearbyTags)
+                    ? nearbyTags
+                          .map((t: unknown) => String(t || '').trim())
+                          .filter((t: string) => t.length > 0)
+                          .slice(0, 30)
+                    : [],
+                estimatedCpm:
+                    estimatedCpm === undefined || estimatedCpm === null || estimatedCpm === ''
+                        ? null
+                        : parseFloat(String(estimatedCpm)),
             }
         });
 

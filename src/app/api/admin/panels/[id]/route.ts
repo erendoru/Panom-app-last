@@ -136,7 +136,9 @@ export async function PUT(
             imageUrl,
             active,
             ownerName,
-            ownerPhone
+            ownerPhone,
+            nearbyTags,
+            estimatedCpm
         } = body;
 
         // Regional admin cannot change city to a different city
@@ -181,7 +183,23 @@ export async function PUT(
                 active: active !== undefined ? Boolean(active) : true,
                 ownerName: ownerName || '',
                 ownerPhone: ownerPhone || '',
-                blockedDates: body.blockedDates || []
+                blockedDates: body.blockedDates || [],
+                ...(Array.isArray(nearbyTags)
+                    ? {
+                          nearbyTags: nearbyTags
+                              .map((t: unknown) => String(t || '').trim())
+                              .filter((t: string) => t.length > 0)
+                              .slice(0, 30),
+                      }
+                    : {}),
+                ...(estimatedCpm !== undefined
+                    ? {
+                          estimatedCpm:
+                              estimatedCpm === '' || estimatedCpm === null
+                                  ? null
+                                  : safeParseFloat(estimatedCpm),
+                      }
+                    : {}),
             }
         });
 

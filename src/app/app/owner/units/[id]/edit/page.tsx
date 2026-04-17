@@ -43,6 +43,7 @@ export default async function OwnerUnitEditPage({
                     : "",
                 estimatedCpm: panel.estimatedCpm ? String(panel.estimatedCpm) : "",
                 description: panel.description ?? "",
+                isStartingPrice: Boolean(panel.isStartingPrice),
             }}
             initialImages={
                 panel.imageUrls && panel.imageUrls.length > 0

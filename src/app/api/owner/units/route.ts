@@ -76,6 +76,7 @@ export async function POST(req: NextRequest) {
             nearbyTags,
             imageUrls,
             description,
+            isStartingPrice,
         } = body;
 
         if (!name || !type || !city || !district || !address) {
@@ -149,6 +150,7 @@ export async function POST(req: NextRequest) {
                 description: description || null,
                 trafficLevel: "MEDIUM",
                 blockedDates: [],
+                isStartingPrice: Boolean(isStartingPrice),
 
                 ownerId: owner.id,
                 ownerName: ownerDisplayName,

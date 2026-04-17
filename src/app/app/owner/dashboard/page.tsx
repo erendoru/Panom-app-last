@@ -9,6 +9,7 @@ import {
     CalendarDays,
     BarChart3,
     Store,
+    AlertCircle,
 } from "lucide-react";
 import { getOwnerProfile } from "@/lib/owner/profile";
 import {
@@ -155,13 +156,36 @@ export default async function OwnerDashboardPage() {
                         </Button>
                     </Link>
                     <Link href="/app/owner/requests">
-                        <Button variant="outline">
+                        <Button variant="outline" className="relative">
                             <Inbox className="w-4 h-4 mr-2" />
                             Gelen Talepler
+                            {stats.pendingRequests > 0 && (
+                                <span className="ml-2 inline-flex items-center justify-center min-w-[20px] h-5 text-[11px] font-semibold bg-amber-500 text-white rounded-full px-1.5">
+                                    {stats.pendingRequests}
+                                </span>
+                            )}
                         </Button>
                     </Link>
                 </div>
             </div>
+
+            {stats.pendingRequests > 0 && (
+                <Link
+                    href="/app/owner/requests?status=PENDING"
+                    className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 hover:bg-amber-100 transition-colors"
+                >
+                    <AlertCircle className="w-5 h-5 text-amber-700 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                        <p className="text-sm font-semibold text-amber-900">
+                            {stats.pendingRequests} yeni talep onayınızı bekliyor
+                        </p>
+                        <p className="text-xs text-amber-800 mt-0.5">
+                            Reklam verenler panolarınız için teklif gönderdi. Onaylamak veya reddetmek için tıklayın.
+                        </p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-amber-700 mt-1" />
+                </Link>
+            )}
 
             {/* Stat cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">

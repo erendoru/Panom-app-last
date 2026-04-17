@@ -30,11 +30,17 @@ type Props = {
     children: React.ReactNode;
 };
 
-const navItems = [
+type NavKey = "requests" | null;
+const navItems: {
+    href: string;
+    label: string;
+    icon: any;
+    badgeKey?: NavKey;
+}[] = [
     { href: "/app/owner/dashboard", label: "Ana Sayfa", icon: LayoutDashboard },
     { href: "/app/owner/units", label: "Ünitelerim", icon: Monitor },
     { href: "/app/owner/units/new", label: "Ünite Ekle", icon: PlusSquare },
-    { href: "/app/owner/requests", label: "Gelen Talepler", icon: Inbox },
+    { href: "/app/owner/requests", label: "Gelen Talepler", icon: Inbox, badgeKey: "requests" },
     { href: "/app/owner/calendar", label: "Takvim", icon: CalendarDays },
     { href: "/app/owner/reports", label: "Raporlar", icon: BarChart3 },
     { href: "/app/owner/store", label: "Mağaza Görüntüle", icon: Store },
@@ -51,11 +57,13 @@ function Sidebar({
     pathname,
     onClose,
     onLogout,
+    pendingRequests,
 }: {
     profile: OwnerProfileSummary;
     pathname: string;
     onClose?: () => void;
     onLogout: () => void;
+    pendingRequests: number;
 }) {
     return (
         <aside className="w-64 bg-white border-r border-slate-200 h-full flex flex-col">
@@ -81,6 +89,10 @@ function Sidebar({
                         item.href === "/app/owner/dashboard"
                             ? pathname === item.href
                             : pathname === item.href || pathname.startsWith(item.href + "/");
+                    const badge =
+                        item.badgeKey === "requests" && pendingRequests > 0
+                            ? pendingRequests
+                            : 0;
                     return (
                         <Link
                             key={item.href}
@@ -93,7 +105,12 @@ function Sidebar({
                             }`}
                         >
                             <Icon className="w-4 h-4" />
-                            {item.label}
+                            <span className="flex-1">{item.label}</span>
+                            {badge > 0 && (
+                                <span className="inline-flex items-center justify-center min-w-[20px] h-5 text-[11px] font-semibold bg-amber-500 text-white rounded-full px-1.5">
+                                    {badge > 99 ? "99+" : badge}
+                                </span>
+                            )}
                         </Link>
                     );
                 })}
@@ -128,10 +145,34 @@ export default function OwnerShell({ profile, children }: Props) {
     const router = useRouter();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [pendingRequests, setPendingRequests] = useState(0);
 
     useEffect(() => {
         setMobileOpen(false);
         setProfileMenuOpen(false);
+    }, [pathname]);
+
+    // Bekleyen talep sayısını ilk yüklemede al ve 60 sn'de bir yenile
+    useEffect(() => {
+        let stopped = false;
+        async function fetchPending() {
+            try {
+                const res = await fetch("/api/owner/requests?status=PENDING", {
+                    cache: "no-store",
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!stopped) setPendingRequests(data?.summary?.PENDING ?? 0);
+            } catch {
+                /* ignore */
+            }
+        }
+        fetchPending();
+        const id = setInterval(fetchPending, 60_000);
+        return () => {
+            stopped = true;
+            clearInterval(id);
+        };
     }, [pathname]);
 
     async function handleLogout() {
@@ -143,7 +184,12 @@ export default function OwnerShell({ profile, children }: Props) {
         <div className="min-h-screen bg-slate-50 flex">
             {/* Desktop sidebar */}
             <div className="hidden lg:flex fixed inset-y-0 left-0 z-20">
-                <Sidebar profile={profile} pathname={pathname} onLogout={handleLogout} />
+                <Sidebar
+                    profile={profile}
+                    pathname={pathname}
+                    onLogout={handleLogout}
+                    pendingRequests={pendingRequests}
+                />
             </div>
 
             {/* Mobile sidebar */}
@@ -160,6 +206,7 @@ export default function OwnerShell({ profile, children }: Props) {
                             pathname={pathname}
                             onClose={() => setMobileOpen(false)}
                             onLogout={handleLogout}
+                            pendingRequests={pendingRequests}
                         />
                     </div>
                 </div>
@@ -204,13 +251,18 @@ export default function OwnerShell({ profile, children }: Props) {
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <button
+                            <Link
+                                href="/app/owner/requests?status=PENDING"
                                 className="relative p-2 rounded-full hover:bg-slate-100 text-slate-600"
                                 aria-label="Bildirimler"
                             >
                                 <Bell className="w-5 h-5" />
-                                {/* Bildirim sayısı bağlanınca gösterilecek */}
-                            </button>
+                                {pendingRequests > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-amber-500 text-white text-[10px] font-semibold flex items-center justify-center">
+                                        {pendingRequests > 99 ? "99+" : pendingRequests}
+                                    </span>
+                                )}
+                            </Link>
 
                             <div className="relative">
                                 <button

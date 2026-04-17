@@ -230,7 +230,11 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
 
                 <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
                     <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{s.weeklyRental}</div>
-                    <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">{formatCurrency(Number(panel.priceWeekly))}</div>
+                    <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">
+                        {panel.isStartingPrice && locale === "en" ? `${s.startingFrom} ` : ""}
+                        {formatCurrency(Number(panel.priceWeekly))}
+                        {panel.isStartingPrice && locale !== "en" ? `${s.startingFrom}` : ""}
+                    </div>
                     <div className="text-[10px] text-slate-400">{s.plusVat}</div>
                 </div>
             </div>

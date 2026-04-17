@@ -16,7 +16,8 @@ import {
     Sparkles,
     Zap,
     ShoppingBag,
-    MapPin
+    MapPin,
+    Building2
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -75,6 +76,7 @@ export default function AdminLayout({
         { href: "/app/admin/panels", label: "Panolar", icon: LayoutGrid },
         { href: "/app/admin/pricing-rules", label: "Fiyatlandırma", icon: Zap },
         { href: "/app/admin/availability", label: "Müsaitlik", icon: CalendarDays },
+        { href: "/app/admin/owners", label: "Medya Sahipleri", icon: Building2 },
         { href: "/app/admin/users", label: "Kullanıcılar", icon: Users },
         { href: "/app/admin/screens", label: "Tüm Ekranlar", icon: Monitor },
         { href: "/app/admin/blog", label: "Blog", icon: FileText },

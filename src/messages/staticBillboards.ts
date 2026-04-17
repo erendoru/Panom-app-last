@@ -48,6 +48,7 @@ export function staticBillboardsCopy(locale: AppLocale) {
         days: e ? "days" : "gün",
         lighting: e ? "Lighting" : "Aydınlatma",
         weeklyRental: e ? "Weekly rental" : "Haftalık kiralama",
+        startingFrom: e ? "Starting from" : "’den başlayan",
         plusVat: e ? "+ VAT" : "+ KDV",
         addToCart: e ? "Add to cart" : "Sepete ekle",
         addedToCart: e ? "Added to cart" : "Sepete eklendi",

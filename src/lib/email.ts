@@ -10,6 +10,149 @@ function getResend(): Resend | null {
     return _resend;
 }
 
+export const MAIL_FROM = process.env.MAIL_FROM || 'Panobu <bildirim@panobu.com>';
+export const MAIL_REPLY_TO = process.env.MAIL_REPLY_TO || 'destek@panobu.com';
+export const APP_URL =
+    process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://panobu.com';
+
+type SendEmailInput = {
+    to: string | string[];
+    subject: string;
+    html: string;
+    replyTo?: string;
+    from?: string;
+};
+
+/**
+ * Generic email sender. RESEND_API_KEY yoksa sessizce no-op döner (dev/test için güvenli).
+ * Hatalar log'lanır ama fırlatılmaz — çağıran endpoint'leri bozmaz.
+ */
+export async function sendEmail(input: SendEmailInput): Promise<boolean> {
+    const resend = getResend();
+    if (!resend) {
+        console.log(
+            '[Email] RESEND_API_KEY yok — mail atlandı:',
+            input.subject,
+            '→',
+            input.to
+        );
+        return true;
+    }
+    try {
+        const { data, error } = await resend.emails.send({
+            from: input.from || MAIL_FROM,
+            to: Array.isArray(input.to) ? input.to : [input.to],
+            subject: input.subject,
+            html: input.html,
+            replyTo: input.replyTo || MAIL_REPLY_TO,
+        });
+        if (error) {
+            console.error('[Email] send error:', error);
+            return false;
+        }
+        console.log('[Email] sent:', data?.id, '→', input.to);
+        return true;
+    } catch (err) {
+        console.error('[Email] exception:', err);
+        return false;
+    }
+}
+
+// --- Ortak wrapper + util'ler ---
+
+function fmtDateTR(d: Date | string): string {
+    return new Intl.DateTimeFormat('tr-TR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    }).format(new Date(d));
+}
+
+function fmtPriceTR(n: number | string, currency = 'TRY'): string {
+    return new Intl.NumberFormat('tr-TR', {
+        style: 'currency',
+        currency: currency || 'TRY',
+        maximumFractionDigits: 0,
+    }).format(Number(n));
+}
+
+function escapeHtml(s: string): string {
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+type WrapperOpts = {
+    title: string;
+    preheader?: string;
+    accent?: 'blue' | 'emerald' | 'rose' | 'amber' | 'violet';
+    body: string;
+};
+
+function wrap(opts: WrapperOpts): string {
+    const accentMap = {
+        blue: { from: '#3b82f6', to: '#1e40af' },
+        emerald: { from: '#10b981', to: '#065f46' },
+        rose: { from: '#ef4444', to: '#991b1b' },
+        amber: { from: '#f59e0b', to: '#92400e' },
+        violet: { from: '#8b5cf6', to: '#5b21b6' },
+    } as const;
+    const a = accentMap[opts.accent || 'blue'];
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>${escapeHtml(opts.title)}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color:#f3f4f6; margin:0; padding:20px;">
+    ${opts.preheader
+            ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${escapeHtml(
+                opts.preheader
+            )}</div>`
+            : ''
+        }
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;">
+        <tr>
+            <td style="background:linear-gradient(135deg,${a.from} 0%,${a.to} 100%);padding:28px;text-align:center;border-radius:12px 12px 0 0;">
+                <div style="color:#fff;font-size:22px;font-weight:700;margin:0;">${escapeHtml(
+                    opts.title
+                )}</div>
+            </td>
+        </tr>
+        <tr>
+            <td style="background:#fff;padding:28px;border-radius:0 0 12px 12px;color:#1f2937;font-size:14px;line-height:1.6;">
+                ${opts.body}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding:20px;text-align:center;color:#9ca3af;font-size:12px;">
+                Bu e-posta Panobu tarafından otomatik gönderilmiştir.<br>
+                <a href="${APP_URL}" style="color:#6b7280;text-decoration:none;">panobu.com</a>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+}
+
+function button(href: string, label: string, color = '#3b82f6'): string {
+    return `<div style="text-align:center;margin:24px 0 8px;">
+        <a href="${href}" style="display:inline-block;background:${color};color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;">
+            ${escapeHtml(label)}
+        </a>
+    </div>`;
+}
+
+function infoRow(label: string, value: string): string {
+    return `<tr>
+        <td style="padding:6px 0;color:#6b7280;width:40%;">${escapeHtml(label)}</td>
+        <td style="padding:6px 0;color:#111827;font-weight:600;">${escapeHtml(value)}</td>
+    </tr>`;
+}
+
 interface OrderItem {
     panel: {
         name: string;
@@ -258,4 +401,380 @@ export async function sendOrderConfirmationToCustomer(order: OrderDetails): Prom
         console.error('[Email] Error sending customer confirmation:', error);
         return false;
     }
+}
+
+// =================================================================
+// Faz 5 — Talep ve Onay Sistemi bildirimleri
+// =================================================================
+
+export type RequestEmailContext = {
+    rentalId: string;
+    panel: { name: string; city?: string | null; district?: string | null };
+    advertiser: { name: string; companyName?: string | null; email?: string | null };
+    owner: { name: string; companyName?: string | null; email?: string | null };
+    startDate: Date | string;
+    endDate: Date | string;
+    totalPrice: number | string;
+    currency?: string;
+};
+
+/**
+ * Reklam veren yeni bir kiralama talebi oluşturduğunda medya sahibine gider.
+ */
+export async function sendNewRequestToOwner(ctx: RequestEmailContext): Promise<boolean> {
+    if (!ctx.owner.email) {
+        console.log('[Email] Owner email yok, yeni talep bildirimi atlandı');
+        return true;
+    }
+
+    const actor = ctx.advertiser.companyName || ctx.advertiser.name;
+    const panelLoc = [ctx.panel.city, ctx.panel.district].filter(Boolean).join(' · ');
+    const detailUrl = `${APP_URL}/app/owner/requests/${ctx.rentalId}`;
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(
+        ctx.owner.name
+    )}</strong>,</p>
+        <p style="margin:0 0 18px;">
+            <strong>${escapeHtml(actor)}</strong> panonuz için yeni bir kiralama talebi gönderdi.
+            İncelemeniz ve onaylamanız bekleniyor.
+        </p>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${infoRow('Pano', ctx.panel.name)}
+            ${panelLoc ? infoRow('Konum', panelLoc) : ''}
+            ${infoRow('Reklam Veren', actor)}
+            ${infoRow(
+        'Tarih Aralığı',
+        `${fmtDateTR(ctx.startDate)} → ${fmtDateTR(ctx.endDate)}`
+    )}
+            ${infoRow('Teklif', fmtPriceTR(ctx.totalPrice, ctx.currency))}
+        </table>
+        <p style="margin:0 0 6px;color:#4b5563;">
+            Talebi onaylarsanız bu tarih aralığı takviminizde dolu olarak işaretlenir.
+            Reddederseniz reklam verene bildirilir ve takvim boş kalır.
+        </p>
+        ${button(detailUrl, 'Talebi İncele →')}
+    `;
+
+    return sendEmail({
+        to: ctx.owner.email,
+        subject: `Yeni kiralama talebi — ${ctx.panel.name}`,
+        html: wrap({
+            title: 'Yeni Kiralama Talebi',
+            preheader: `${actor} — ${fmtDateTR(ctx.startDate)} → ${fmtDateTR(ctx.endDate)}`,
+            accent: 'blue',
+            body,
+        }),
+    });
+}
+
+/**
+ * Medya sahibi talebi onayladığında/reddettiğinde reklam verene gider.
+ */
+export async function sendRequestDecisionToAdvertiser(
+    ctx: RequestEmailContext & {
+        decision: 'approve' | 'reject';
+        note?: string | null;
+    }
+): Promise<boolean> {
+    if (!ctx.advertiser.email) {
+        console.log('[Email] Advertiser email yok, karar bildirimi atlandı');
+        return true;
+    }
+    const approved = ctx.decision === 'approve';
+    const owner = ctx.owner.companyName || ctx.owner.name;
+    const panelLoc = [ctx.panel.city, ctx.panel.district].filter(Boolean).join(' · ');
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(
+        ctx.advertiser.name
+    )}</strong>,</p>
+        <p style="margin:0 0 18px;">
+            <strong>${escapeHtml(ctx.panel.name)}</strong> panosu için gönderdiğiniz talep
+            <strong style="color:${approved ? '#047857' : '#b91c1c'};">
+                ${approved ? 'onaylandı' : 'reddedildi'}
+            </strong>.
+        </p>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${infoRow('Pano', ctx.panel.name)}
+            ${panelLoc ? infoRow('Konum', panelLoc) : ''}
+            ${infoRow('Medya Sahibi', owner)}
+            ${infoRow(
+        'Tarih Aralığı',
+        `${fmtDateTR(ctx.startDate)} → ${fmtDateTR(ctx.endDate)}`
+    )}
+            ${infoRow('Tutar', fmtPriceTR(ctx.totalPrice, ctx.currency))}
+        </table>
+        ${ctx.note
+            ? `<div style="background:${approved ? '#ecfdf5' : '#fef2f2'};border-left:4px solid ${approved ? '#10b981' : '#ef4444'};padding:12px 14px;border-radius:4px;margin:0 0 18px;">
+                    <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">
+                        ${approved ? 'Medya sahibinden not' : 'Red gerekçesi'}
+                    </div>
+                    <div style="color:#111827;">${escapeHtml(ctx.note)}</div>
+                </div>`
+            : ''
+        }
+        <p style="margin:0;color:#4b5563;">
+            ${approved
+            ? 'Bir sonraki adımlar için yakında sizinle iletişime geçeceğiz. Kampanya görselinizi henüz yüklemediyseniz, en kısa sürede yükleyebilirsiniz.'
+            : 'Dilerseniz başka tarihlerle veya farklı panolarla yeni bir talep oluşturabilirsiniz.'
+        }
+        </p>
+        ${button(
+            approved ? `${APP_URL}/dashboard/advertiser` : `${APP_URL}/static-billboards`,
+            approved ? 'Panomu Görüntüle' : 'Yeni Talep Oluştur',
+            approved ? '#10b981' : '#3b82f6'
+        )}
+    `;
+
+    return sendEmail({
+        to: ctx.advertiser.email,
+        subject: approved
+            ? `Talebiniz onaylandı — ${ctx.panel.name}`
+            : `Talebiniz reddedildi — ${ctx.panel.name}`,
+        html: wrap({
+            title: approved ? 'Talebiniz Onaylandı' : 'Talebiniz Reddedildi',
+            preheader: `${ctx.panel.name} — ${fmtDateTR(ctx.startDate)} → ${fmtDateTR(
+                ctx.endDate
+            )}`,
+            accent: approved ? 'emerald' : 'rose',
+            body,
+        }),
+    });
+}
+
+/**
+ * Medya sahibi kampanya görselini onayladığında veya revizyon istediğinde reklam verene gider.
+ */
+export async function sendCreativeDecisionToAdvertiser(
+    ctx: RequestEmailContext & {
+        decision: 'approve' | 'revision';
+        note?: string | null;
+    }
+): Promise<boolean> {
+    if (!ctx.advertiser.email) {
+        console.log('[Email] Advertiser email yok, creative bildirimi atlandı');
+        return true;
+    }
+    const approved = ctx.decision === 'approve';
+    const owner = ctx.owner.companyName || ctx.owner.name;
+
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(
+        ctx.advertiser.name
+    )}</strong>,</p>
+        <p style="margin:0 0 18px;">
+            <strong>${escapeHtml(ctx.panel.name)}</strong> panosu için yüklediğiniz kampanya görseli
+            ${approved
+            ? '<strong style="color:#047857;">onaylandı</strong>. Yayın hazırlığına geçebiliriz.'
+            : '<strong style="color:#b45309;">için revizyon istendi</strong>. Aşağıdaki notu dikkate alarak güncel görseli iletmeniz rica olunur.'
+        }
+        </p>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${infoRow('Pano', ctx.panel.name)}
+            ${infoRow('Medya Sahibi', owner)}
+            ${infoRow(
+        'Tarih Aralığı',
+        `${fmtDateTR(ctx.startDate)} → ${fmtDateTR(ctx.endDate)}`
+    )}
+        </table>
+        ${!approved && ctx.note
+            ? `<div style="background:#fff7ed;border-left:4px solid #f97316;padding:12px 14px;border-radius:4px;margin:0 0 18px;">
+                    <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Revizyon notu</div>
+                    <div style="color:#111827;white-space:pre-wrap;">${escapeHtml(ctx.note)}</div>
+                </div>`
+            : ''
+        }
+        ${approved && ctx.note
+            ? `<div style="background:#ecfdf5;border-left:4px solid #10b981;padding:12px 14px;border-radius:4px;margin:0 0 18px;">
+                    <div style="font-size:12px;color:#6b7280;margin-bottom:4px;">Medya sahibinden not</div>
+                    <div style="color:#111827;white-space:pre-wrap;">${escapeHtml(ctx.note)}</div>
+                </div>`
+            : ''
+        }
+        ${button(
+            `${APP_URL}/dashboard/advertiser`,
+            approved ? 'Kampanyamı Görüntüle' : 'Yeni Görsel Yükle',
+            approved ? '#10b981' : '#f97316'
+        )}
+    `;
+
+    return sendEmail({
+        to: ctx.advertiser.email,
+        subject: approved
+            ? `Görseliniz onaylandı — ${ctx.panel.name}`
+            : `Görselinizde revizyon istendi — ${ctx.panel.name}`,
+        html: wrap({
+            title: approved ? 'Kampanya Görseliniz Onaylandı' : 'Görselde Revizyon İstendi',
+            accent: approved ? 'emerald' : 'amber',
+            body,
+        }),
+    });
+}
+
+// =================================================================
+// Hesap bildirimleri (welcome, admin notify, onay)
+// =================================================================
+
+/**
+ * Yeni bir medya sahibi kaydolduğunda onaya hazırlık maili.
+ * Hesap henüz admin tarafından onaylanmadıysa bu mail gönderilir.
+ */
+export async function sendOwnerWelcomeEmail(params: {
+    to: string;
+    name: string;
+    companyName: string;
+}): Promise<boolean> {
+    const dashboardUrl = `${APP_URL}/app/owner/dashboard`;
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(params.name)}</strong>,</p>
+        <p style="margin:0 0 16px;">
+            <strong>${escapeHtml(params.companyName)}</strong> firması Panobu medya sahibi ağına hoş geldiniz!
+            Kaydınız başarıyla alındı; ekibimiz firmanızı kısa süre içinde inceleyip onaylayacak.
+        </p>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:14px 16px;margin:0 0 16px;">
+            <div style="font-size:13px;color:#0369a1;font-weight:600;margin-bottom:4px;">Sonraki adımlar</div>
+            <ol style="margin:0;padding-left:18px;color:#0c4a6e;">
+                <li>Panonuza giriş yapıp firma profilinizi, logonuzu ve iletişim bilgilerinizi tamamlayın.</li>
+                <li>Panolarınızı ve dijital ekranlarınızı ekleyin — dilediğiniz kadar yükleyebilirsiniz.</li>
+                <li>Onay sonrası panolarınız Panobu.com üzerinde reklam verenlere görünür hale gelir.</li>
+            </ol>
+        </div>
+        <p style="margin:0 0 8px;color:#4b5563;">
+            Onay süreci devam ederken dashboard'unuza giriş yapabilir, ünitelerinizi önceden hazırlayabilirsiniz.
+        </p>
+        ${button(dashboardUrl, 'Dashboard\'a Git')}
+    `;
+    return sendEmail({
+        to: params.to,
+        subject: 'Panobu\'ya Hoş Geldiniz — Başvurunuz alındı',
+        html: wrap({
+            title: 'Panobu\'ya Hoş Geldiniz',
+            preheader: 'Başvurunuz alındı. Firma onayı kısa süre içinde tamamlanacak.',
+            accent: 'blue',
+            body,
+        }),
+    });
+}
+
+/**
+ * Yeni bir reklam veren kaydolduğunda gönderilir.
+ */
+export async function sendAdvertiserWelcomeEmail(params: {
+    to: string;
+    name: string;
+}): Promise<boolean> {
+    const exploreUrl = `${APP_URL}/static-billboards`;
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(params.name)}</strong>,</p>
+        <p style="margin:0 0 16px;">
+            Panobu'ya hoş geldiniz! Hesabınız hazır — şehrinizin en iyi billboard ve dijital
+            ekranlarını keşfedip hemen rezerve edebilirsiniz.
+        </p>
+        <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:14px 16px;margin:0 0 16px;color:#4c1d95;">
+            <ul style="margin:0;padding-left:18px;">
+                <li>Harita üzerinden panoları gezin, fiyat ve boyutları karşılaştırın.</li>
+                <li>Tarih seçin, görselinizi yükleyin veya tasarım desteği isteyin.</li>
+                <li>Talebiniz onaylandığında e-posta ile haberdar olursunuz.</li>
+            </ul>
+        </div>
+        ${button(exploreUrl, 'Panoları Keşfet')}
+    `;
+    return sendEmail({
+        to: params.to,
+        subject: 'Panobu\'ya Hoş Geldiniz',
+        html: wrap({
+            title: 'Panobu\'ya Hoş Geldiniz',
+            accent: 'violet',
+            body,
+        }),
+    });
+}
+
+/**
+ * Medya sahibi firması admin tarafından onaylandığında gönderilir.
+ */
+export async function sendOwnerApprovedEmail(params: {
+    to: string;
+    name: string;
+    companyName: string;
+    slug?: string | null;
+}): Promise<boolean> {
+    const dashboardUrl = `${APP_URL}/app/owner/dashboard`;
+    const storeUrl = params.slug ? `${APP_URL}/medya/${params.slug}` : null;
+    const body = `
+        <p style="margin:0 0 14px;">Merhaba <strong>${escapeHtml(params.name)}</strong>,</p>
+        <p style="margin:0 0 16px;">
+            Tebrikler! <strong>${escapeHtml(params.companyName)}</strong> firmanız onaylandı.
+            Panolarınız artık reklam verenler tarafından görülebilir, talep alabilir ve rezerve edilebilir.
+        </p>
+        <div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:14px 16px;margin:0 0 16px;color:#065f46;">
+            <div style="font-weight:600;margin-bottom:4px;">Neler yapabilirsiniz?</div>
+            <ul style="margin:0;padding-left:18px;">
+                <li>Dashboard'da gelen talepleri inceleyip onaylayın veya reddedin.</li>
+                <li>Takviminizden müsaitlik durumunu yönetin, dönemsel fiyat tanımlayın.</li>
+                <li>Raporlar üzerinden gelir ve doluluk oranlarınızı takip edin.</li>
+            </ul>
+        </div>
+        ${button(dashboardUrl, 'Dashboard\'a Git', '#10b981')}
+        ${storeUrl
+            ? `<p style="text-align:center;margin:12px 0 0;color:#6b7280;font-size:13px;">
+                    Public mağaza linkiniz:
+                    <a href="${storeUrl}" style="color:#10b981;">${escapeHtml(storeUrl)}</a>
+                </p>`
+            : ''
+        }
+    `;
+    return sendEmail({
+        to: params.to,
+        subject: `${params.companyName} — firmanız onaylandı`,
+        html: wrap({
+            title: 'Firmanız Onaylandı',
+            preheader: 'Panolarınız artık reklam verenlere görünür.',
+            accent: 'emerald',
+            body,
+        }),
+    });
+}
+
+/**
+ * Yeni bir medya sahibi kaydolduğunda Panobu ekibine bildirim.
+ */
+export async function sendNewOwnerRegistrationToAdmin(params: {
+    adminEmails: string[];
+    name: string;
+    email: string;
+    companyName: string;
+    phone?: string | null;
+    website?: string | null;
+    cities?: string[];
+}): Promise<boolean> {
+    if (!params.adminEmails.length) return true;
+    const reviewUrl = `${APP_URL}/app/admin/owners`;
+    const rows = [
+        infoRow('Firma', params.companyName),
+        infoRow('Yetkili', params.name),
+        infoRow('E-posta', params.email),
+        params.phone ? infoRow('Telefon', params.phone) : '',
+        params.website ? infoRow('Web', params.website) : '',
+        params.cities && params.cities.length ? infoRow('Şehirler', params.cities.join(', ')) : '',
+    ]
+        .filter(Boolean)
+        .join('');
+    const body = `
+        <p style="margin:0 0 14px;">Yeni bir medya sahibi kaydı alındı. İnceleme bekliyor.</p>
+        <table width="100%" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin:0 0 18px;">
+            ${rows}
+        </table>
+        ${button(reviewUrl, 'Admin Panosuna Git')}
+    `;
+    return sendEmail({
+        to: params.adminEmails,
+        subject: `[Yeni Başvuru] ${params.companyName}`,
+        html: wrap({
+            title: 'Yeni Medya Sahibi Başvurusu',
+            accent: 'blue',
+            body,
+        }),
+    });
 }

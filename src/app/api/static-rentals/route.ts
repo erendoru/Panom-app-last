@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/prisma";
 import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
+import { sendNewRequestToOwner } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
     try {
@@ -90,8 +91,56 @@ export async function POST(request: NextRequest) {
                 creativeUrl,
                 designRequested: designRequested || false,
                 status: "PENDING_PAYMENT",
+                ownerReviewStatus: "PENDING",
+                creativeStatus: creativeUrl ? "PENDING" : "NONE",
             },
         });
+
+        // 5. Notify owner (best-effort)
+        try {
+            const full = await prisma.staticRental.findUnique({
+                where: { id: rental.id },
+                include: {
+                    panel: {
+                        include: {
+                            owner: {
+                                include: { user: { select: { name: true, email: true } } },
+                            },
+                        },
+                    },
+                    advertiser: {
+                        include: { user: { select: { name: true, email: true } } },
+                    },
+                },
+            });
+
+            if (full && full.panel.owner?.user) {
+                await sendNewRequestToOwner({
+                    rentalId: full.id,
+                    panel: {
+                        name: full.panel.name,
+                        city: full.panel.city,
+                        district: full.panel.district,
+                    },
+                    owner: {
+                        name: full.panel.owner.user.name || "Medya Sahibi",
+                        companyName: full.panel.owner.companyName,
+                        email: full.panel.owner.contactEmail || full.panel.owner.user.email,
+                    },
+                    advertiser: {
+                        name: full.advertiser?.user?.name || "Reklam Veren",
+                        companyName: full.advertiser?.companyName ?? null,
+                        email: full.advertiser?.user?.email ?? null,
+                    },
+                    startDate: full.startDate,
+                    endDate: full.endDate,
+                    totalPrice: full.totalPrice.toString(),
+                    currency: full.currency,
+                });
+            }
+        } catch (mailErr) {
+            console.error("[Email] new request notification failed:", mailErr);
+        }
 
         return NextResponse.json(rental);
 

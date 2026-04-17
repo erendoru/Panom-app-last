@@ -5,6 +5,7 @@ export type OwnerDashboardStats = {
     activeUnits: number;
     requestsLast30Days: number;
     occupancyPercent: number;
+    pendingRequests: number;
 };
 
 export type RecentRequest = {
@@ -37,19 +38,39 @@ export async function getOwnerStats(ownerId: string): Promise<OwnerDashboardStat
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const [totalUnits, activeUnits, requestsLast30Days, occupancyPercent] = await Promise.all([
+    const [screens, panels, activeScreens, activePanels, campaignsLast30, rentalsLast30, pendingRentals, occupancyPercent] = await Promise.all([
         prisma.screen.count({ where: { ownerId } }),
+        prisma.staticPanel.count({ where: { ownerId } }),
         prisma.screen.count({ where: { ownerId, active: true } }),
+        prisma.staticPanel.count({ where: { ownerId, active: true, reviewStatus: "APPROVED", ownerStatus: "ACTIVE" } }),
         prisma.campaign.count({
             where: {
                 createdAt: { gte: thirtyDaysAgo },
                 campaignScreens: { some: { screen: { ownerId } } },
             },
         }),
+        prisma.staticRental.count({
+            where: { createdAt: { gte: thirtyDaysAgo }, panel: { ownerId } },
+        }),
+        prisma.staticRental.count({
+            where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
+        }),
         computeCurrentOccupancy(ownerId),
     ]);
 
-    return { totalUnits, activeUnits, requestsLast30Days, occupancyPercent };
+    return {
+        totalUnits: screens + panels,
+        activeUnits: activeScreens + activePanels,
+        requestsLast30Days: campaignsLast30 + rentalsLast30,
+        occupancyPercent,
+        pendingRequests: pendingRentals,
+    };
+}
+
+export async function getPendingRequestsCount(ownerId: string): Promise<number> {
+    return prisma.staticRental.count({
+        where: { ownerReviewStatus: "PENDING", panel: { ownerId } },
+    });
 }
 
 async function computeCurrentOccupancy(ownerId: string): Promise<number> {
@@ -106,29 +127,24 @@ async function computeCurrentOccupancy(ownerId: string): Promise<number> {
 }
 
 export async function getRecentRequests(ownerId: string, limit = 5): Promise<RecentRequest[]> {
-    const rows = await prisma.campaign.findMany({
-        where: { campaignScreens: { some: { screen: { ownerId } } } },
+    const rows = await prisma.staticRental.findMany({
+        where: { panel: { ownerId } },
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {
             id: true,
             createdAt: true,
-            name: true,
-            status: true,
+            ownerReviewStatus: true,
             startDate: true,
             endDate: true,
-            totalBudget: true,
+            totalPrice: true,
             advertiser: {
                 select: {
                     companyName: true,
                     user: { select: { name: true } },
                 },
             },
-            campaignScreens: {
-                where: { screen: { ownerId } },
-                take: 1,
-                select: { screen: { select: { name: true } } },
-            },
+            panel: { select: { name: true } },
         },
     });
 
@@ -136,11 +152,11 @@ export async function getRecentRequests(ownerId: string, limit = 5): Promise<Rec
         id: r.id,
         createdAt: r.createdAt,
         advertiserName: r.advertiser?.companyName || r.advertiser?.user?.name || "Reklam Veren",
-        unitName: r.campaignScreens[0]?.screen.name ?? r.name,
-        status: r.status,
+        unitName: r.panel?.name ?? "Ünite",
+        status: r.ownerReviewStatus,
         startDate: r.startDate,
         endDate: r.endDate,
-        amount: r.totalBudget ? Number(r.totalBudget) : null,
+        amount: r.totalPrice ? Number(r.totalPrice) : null,
     }));
 }
 
@@ -148,10 +164,10 @@ export async function getMonthlyRequestTrend(ownerId: string): Promise<MonthlyRe
     const now = new Date();
     const start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
 
-    const rows = await prisma.campaign.findMany({
+    const rows = await prisma.staticRental.findMany({
         where: {
             createdAt: { gte: start },
-            campaignScreens: { some: { screen: { ownerId } } },
+            panel: { ownerId },
         },
         select: { createdAt: true },
     });

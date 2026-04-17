@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { slugify } from "@/lib/slug";
+import {
+    sendOwnerWelcomeEmail,
+    sendAdvertiserWelcomeEmail,
+    sendNewOwnerRegistrationToAdmin,
+} from "@/lib/email";
 
 export const dynamic = "force-dynamic";
 
@@ -88,6 +93,45 @@ export async function POST(request: NextRequest) {
             },
             select: { id: true, email: true, role: true },
         });
+
+        // Welcome + admin notify (best-effort)
+        try {
+            if (isOwner) {
+                await sendOwnerWelcomeEmail({
+                    to: email,
+                    name,
+                    companyName: ownerData?.companyName || name,
+                });
+
+                // Adminleri bilgilendir
+                const admins = await prisma.user.findMany({
+                    where: { role: { in: ["ADMIN", "REGIONAL_ADMIN"] } },
+                    select: { email: true },
+                });
+                const envAdmins = (process.env.ADMIN_NOTIFY_EMAILS || "")
+                    .split(",")
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+                const adminEmails = Array.from(
+                    new Set([...admins.map((a) => a.email).filter(Boolean), ...envAdmins])
+                );
+                if (adminEmails.length) {
+                    await sendNewOwnerRegistrationToAdmin({
+                        adminEmails,
+                        name,
+                        email,
+                        companyName: ownerData?.companyName || name,
+                        phone: phone?.trim() || null,
+                        website: website?.trim() || null,
+                        cities: Array.isArray(cities) ? cities.filter(Boolean) : [],
+                    });
+                }
+            } else if (role === "ADVERTISER") {
+                await sendAdvertiserWelcomeEmail({ to: email, name });
+            }
+        } catch (mailErr) {
+            console.error("[Email] welcome/admin notify failed:", mailErr);
+        }
 
         return NextResponse.json({ success: true, user });
     } catch (error) {

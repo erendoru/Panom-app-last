@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Save } from "lucide-react";
 import MultiImageUploader from "@/components/MultiImageUploader";
 import TagsInput from "@/components/form/TagsInput";
+import SeasonalPricingManager from "./SeasonalPricingManager";
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -44,6 +45,7 @@ type FormState = {
     estimatedDailyImpressions: string;
     estimatedCpm: string;
     description: string;
+    isStartingPrice: boolean;
 };
 
 const INITIAL: FormState = {
@@ -65,6 +67,7 @@ const INITIAL: FormState = {
     estimatedDailyImpressions: "",
     estimatedCpm: "",
     description: "",
+    isStartingPrice: false,
 };
 
 export default function OwnerUnitForm({
@@ -124,6 +127,7 @@ export default function OwnerUnitForm({
                 faceCount: Number(form.faceCount) || 1,
                 imageUrls: images,
                 nearbyTags,
+                isStartingPrice: Boolean(form.isStartingPrice),
             };
 
             const url =
@@ -380,8 +384,36 @@ export default function OwnerUnitForm({
                                 className={inputClass}
                             />
                         </Field>
+                        <div className="md:col-span-2">
+                            <label className="flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={form.isStartingPrice}
+                                    onChange={(e) => change("isStartingPrice", e.target.checked)}
+                                    className="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                                />
+                                <span className="text-sm">
+                                    <span className="font-medium text-slate-900">
+                                        "…&apos;den başlayan" olarak göster
+                                    </span>
+                                    <span className="block text-xs text-slate-500 mt-0.5">
+                                        İşaretlenirse Panobu&apos;da pano fiyatı "15.000 ₺&apos;den başlayan" şeklinde gösterilir. Dönemsel fiyatlarınız varsa bu seçenek önerilir.
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
                     </div>
                 </Section>
+
+                {mode === "edit" && panelId && (
+                    <Section title="Dönemsel Fiyatlar">
+                        <p className="text-xs text-slate-500 mb-3">
+                            Belirli tarih aralıkları için özel fiyat tanımlayın (bayram, seçim dönemi,
+                            yaz sezonu vb.). Bu aralıklardaki fiyatlar standart fiyatınızı geçersiz kılar.
+                        </p>
+                        <SeasonalPricingManager panelId={panelId} />
+                    </Section>
+                )}
 
                 <Section title="Tahmini Performans">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

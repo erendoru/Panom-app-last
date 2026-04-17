@@ -310,15 +310,58 @@ model StaticPanel {
   // Sahip tarafından yayın durumu (sahip kendi panelinden yönetir)
   ownerStatus                PanelOwnerStatus  @default(ACTIVE)
 
+  // Fiyat sunum stili ("...'den başlayan" gibi)
+  isStartingPrice            Boolean        @default(false)
+
   createdAt                  DateTime       @default(now())
   updatedAt                  DateTime       @updatedAt
   rentals                    StaticRental[]
   cartItems                  CartItem[]
   orderItems                 OrderItem[]
+  pricings                   PanelPricing[]
 
   @@index([ownerId])
   @@index([reviewStatus])
   @@map("static_panels")
+}
+
+enum PanelPricingType {
+  STANDARD     // Varsayılan/standart fiyat (genelde tek kayıt, referans)
+  SEASONAL     // Dönemsel (bayram, seçim)
+  PROMOTIONAL  // Kampanya/indirim
+}
+
+model PanelPricing {
+  id           String           @id @default(uuid())
+  panelId      String
+  panel        StaticPanel      @relation(fields: [panelId], references: [id], onDelete: Cascade)
+  name         String
+  priceType    PanelPricingType @default(SEASONAL)
+  priceWeekly  Float
+  priceDaily   Float?
+  startDate    DateTime
+  endDate      DateTime
+  priority     Int              @default(0)
+  active       Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([panelId])
+  @@index([startDate, endDate])
+  @@map("panel_pricings")
+}
+
+enum OwnerReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CreativeReviewStatus {
+  NONE                 // Henüz creative yüklenmedi
+  PENDING              // Yüklendi, inceleme bekliyor
+  APPROVED             // Uygun
+  REVISION_REQUESTED   // Revizyon istendi
 }
 
 model StaticRental {
@@ -334,15 +377,28 @@ model StaticRental {
   status        String      @default("PENDING_PAYMENT") // PENDING_PAYMENT, ACTIVE, COMPLETED, CANCELLED
   creativeUrl   String?
   designRequested Boolean @default(false)
-  
+
+  // Ünite sahibi tarafından onay akışı (Faz 5)
+  ownerReviewStatus   OwnerReviewStatus    @default(PENDING)
+  ownerReviewNote     String?
+  ownerReviewedAt     DateTime?
+
+  // Kampanya görseli onay akışı
+  creativeStatus      CreativeReviewStatus @default(NONE)
+  creativeNote        String?
+  creativeReviewedAt  DateTime?
+
   // Analytics fields
   totalDays           Int      @default(0)
   estimatedImpressions Int     @default(0)
   actualImpressions   Int?     // Optional actual data
   impressionsByDate   Json?    // {"2024-01-01": 1500, "2024-01-02": 1600}
-  
+
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@index([ownerReviewStatus])
+  @@index([panelId, startDate, endDate])
 }
 
 // Blog Posts

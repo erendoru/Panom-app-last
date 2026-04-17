@@ -100,6 +100,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
                 .filter((t: string) => t.length > 0)
                 .slice(0, 30);
         }
+        if (body.isStartingPrice !== undefined) {
+            data.isStartingPrice = Boolean(body.isStartingPrice);
+        }
         if (Array.isArray(body.imageUrls)) {
             if (body.imageUrls.length < 1 || body.imageUrls.length > 5) {
                 return NextResponse.json(

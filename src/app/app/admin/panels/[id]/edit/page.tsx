@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, ChevronUp, ChevronDown } from 'lucide-react';
 import ImageUploader from '@/components/ImageUploader';
+import TagsInput from '@/components/form/TagsInput';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -48,11 +49,13 @@ export default function EditPanelPage() {
         isAVM: false,
         avmName: '',
         estimatedDailyImpressions: '',
+        estimatedCpm: '',
         trafficLevel: 'MEDIUM',
         imageUrl: '',
         active: true,
         ownerName: '',
         ownerPhone: '',
+        nearbyTags: [] as string[],
         blockedDates: [] as BlockedDateRange[]
     });
 
@@ -146,11 +149,13 @@ export default function EditPanelPage() {
                 isAVM: data.isAVM || false,
                 avmName: data.avmName || '',
                 estimatedDailyImpressions: String(data.estimatedDailyImpressions || ''),
+                estimatedCpm: data.estimatedCpm ? String(data.estimatedCpm) : '',
                 trafficLevel: data.trafficLevel || 'MEDIUM',
                 imageUrl: data.imageUrl || '',
                 active: data.active !== undefined ? data.active : true,
                 ownerName: data.ownerName || '',
                 ownerPhone: data.ownerPhone || '',
+                nearbyTags: Array.isArray(data.nearbyTags) ? data.nearbyTags : [],
                 blockedDates: (data.blockedDates as BlockedDateRange[]) || []
             });
         } catch (error) {
@@ -590,7 +595,36 @@ export default function EditPanelPage() {
                                     <option value="VERY_HIGH">Çok Yüksek Trafik</option>
                                 </select>
                             </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Tahmini CPM (₺)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="estimatedCpm"
+                                    value={formData.estimatedCpm}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 25"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <p className="text-xs text-slate-500 mt-1">1000 gösterim başına tahmini maliyet</p>
+                            </div>
                         </div>
+                    </div>
+
+                    {/* Çevredeki Dükkanlar / Noktalar */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-slate-900 mb-2">Çevredeki Dükkanlar / Noktalar</h2>
+                        <p className="text-xs text-slate-500 mb-4">
+                            Pano çevresindeki işletme/nokta kategorileri. Sadece admin panelinde görünür, müşterilere gösterilmez. Öneri motoru için kullanılır.
+                        </p>
+                        <TagsInput
+                            value={formData.nearbyTags}
+                            onChange={(tags) => setFormData(prev => ({ ...prev, nearbyTags: tags }))}
+                            disabled={loading}
+                        />
                     </div>
 
                     {/* AVM */}
