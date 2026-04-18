@@ -86,7 +86,7 @@ const TR: LandingMainStrings = {
     overlayImpressionsLabel: "Günlük Gösterim",
     stats: {
         units: "Reklam Ünitesi",
-        allTurkey: "Veriye Göre",
+        allTurkey: "Verilerle",
         globalSoon: "Reklam",
         bestPrice: "En Uygun",
         priceGuarantee: "Fiyat Garantisi",
