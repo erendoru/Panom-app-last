@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Twitter, Instagram, Linkedin, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck, Calculator } from "lucide-react";
+import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Instagram, Linkedin, Youtube, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck, Calculator } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
 import LiveActivityTicker from "@/components/home/LiveActivityTicker";
+import DataDrivenBanner from "@/components/home/DataDrivenBanner";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useAppLocale } from "@/contexts/LocaleContext";
 import { navLabel } from "@/messages/publicNav";
@@ -331,6 +332,11 @@ export default function LandingPage() {
                     </div>
                 </section>
 
+                {/* Data-driven advertising banner */}
+                <section className="py-12 md:py-16 bg-white">
+                    <DataDrivenBanner />
+                </section>
+
                 {/* Product Cards */}
                 <section className="py-20 bg-white">
                     <div className="container mx-auto px-4">
@@ -519,111 +525,6 @@ export default function LandingPage() {
                     </div>
                 </section>
 
-                {/* How It Works */}
-                <section className="py-24 bg-white text-slate-900">
-                    <div className="container mx-auto px-4">
-                        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
-                            <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-sm font-medium mb-4">{lm.how.badge}</span>
-                            <h2 className="text-3xl md:text-5xl font-bold mb-6">{lm.how.title}</h2>
-                            <p className="text-slate-500 max-w-2xl mx-auto text-lg">{lm.how.subtitle}</p>
-                        </motion.div>
-
-                        <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
-                            <div className="space-y-10">
-                                {lm.how.steps.map((stepText, i) => {
-                                    const meta = [
-                                        { step: "1", icon: MapPin, color: "blue" as const },
-                                        { step: "2", icon: CalendarCheck, color: "indigo" as const },
-                                        { step: "3", icon: Layers, color: "emerald" as const },
-                                        { step: "4", icon: Zap, color: "amber" as const },
-                                    ][i];
-                                    const item = { ...meta, title: stepText.title, desc: stepText.desc };
-                                    return (
-                                    <motion.div
-                                        key={i}
-                                        initial={{ opacity: 0, x: -20 }}
-                                        whileInView={{ opacity: 1, x: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ delay: i * 0.1 }}
-                                        className="flex gap-5"
-                                    >
-                                        <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center ${
-                                            item.color === 'blue' ? 'bg-blue-100' : item.color === 'indigo' ? 'bg-indigo-100' : item.color === 'emerald' ? 'bg-emerald-100' : 'bg-amber-100'
-                                        }`}>
-                                            <item.icon className={`w-6 h-6 ${
-                                                item.color === 'blue' ? 'text-blue-600' : item.color === 'indigo' ? 'text-indigo-600' : item.color === 'emerald' ? 'text-emerald-600' : 'text-amber-600'
-                                            }`} />
-                                        </div>
-                                        <div>
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 text-neutral-600 text-xs font-semibold mb-3 border border-neutral-200">
-                                                <item.icon className="w-4 h-4" />
-                                                <span>{locale === "en" ? `Step ${item.step}` : `Adım ${item.step}`}</span>
-                                            </div>
-                                            <h3 className="text-lg font-bold mb-1.5 text-slate-900">{item.title}</h3>
-                                            <p className="text-slate-500 leading-relaxed text-sm">{item.desc}</p>
-                                        </div>
-                                    </motion.div>
-                                );
-                                })}
-                            </div>
-
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                className="relative h-[550px] w-full rounded-3xl overflow-hidden border border-slate-200 shadow-2xl"
-                            >
-                                <img src="/images/how-it-works-billboard.png" alt="" className="w-full h-full object-cover" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
-
-                                <motion.div
-                                    animate={{ y: [0, -10, 0] }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                                    className="absolute top-6 right-6 bg-white/95 backdrop-blur-md p-3 rounded-xl shadow-lg flex items-center gap-3 z-10"
-                                >
-                                    <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center">
-                                        <TrendingUp className="w-4 h-4 text-emerald-600" />
-                                    </div>
-                                    <div>
-                                        <div className="text-[10px] text-slate-500 font-medium">{lm.how.overlayImp}</div>
-                                        <div className="text-base font-bold text-slate-900">45.2K</div>
-                                    </div>
-                                </motion.div>
-
-                                <motion.div
-                                    animate={{ y: [0, -8, 0] }}
-                                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                                    className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full shadow-lg flex items-center gap-2 z-10"
-                                >
-                                    <Zap className="w-4 h-4 text-blue-600" />
-                                    <span className="font-semibold text-slate-800 text-sm">{lm.how.overlayEasy}</span>
-                                </motion.div>
-                            </motion.div>
-                        </div>
-
-                        <div className="grid md:grid-cols-3 gap-6">
-                            {[
-                                { title: lm.how.bottomCards[0].title, desc: lm.how.bottomCards[0].desc, icon: ShieldCheck },
-                                { title: lm.how.bottomCards[1].title, desc: lm.how.bottomCards[1].desc, icon: Target },
-                                { title: lm.how.bottomCards[2].title, desc: lm.how.bottomCards[2].desc, icon: MapPin },
-                            ].map((item, i) => (
-                                <motion.div
-                                    key={i}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.1 }}
-                                    className="bg-slate-50 p-7 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow"
-                                >
-                                    <item.icon className="w-6 h-6 text-blue-600 mb-3" />
-                                    <h3 className="text-base font-bold mb-2 text-slate-900">{item.title}</h3>
-                                    <p className="text-slate-500 text-sm leading-relaxed">{item.desc}</p>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
                 {/* Enterprise Section */}
                 <section className="py-24 bg-white relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
@@ -744,10 +645,33 @@ export default function LandingPage() {
                         <div className="space-y-6">
                             <Link href="/" className="text-3xl font-bold block tracking-tight">PANOBU</Link>
                             <div className="flex gap-3">
-                                <Link href="#" className="bg-neutral-100 p-2.5 rounded-full hover:bg-neutral-100 transition-colors"><Globe className="w-4 h-4" /></Link>
-                                <Link href="#" className="bg-neutral-100 p-2.5 rounded-full hover:bg-neutral-100 transition-colors"><Twitter className="w-4 h-4" /></Link>
-                                <Link href="#" className="bg-neutral-100 p-2.5 rounded-full hover:bg-neutral-100 transition-colors"><Instagram className="w-4 h-4" /></Link>
-                                <Link href="#" className="bg-neutral-100 p-2.5 rounded-full hover:bg-neutral-100 transition-colors"><Linkedin className="w-4 h-4" /></Link>
+                                <Link
+                                    href="https://www.linkedin.com/company/panobu/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn"
+                                    className="bg-neutral-100 p-2.5 rounded-full text-neutral-700 hover:bg-neutral-200 hover:text-[#0A66C2] transition-colors"
+                                >
+                                    <Linkedin className="w-4 h-4" />
+                                </Link>
+                                <Link
+                                    href="https://www.instagram.com/panobutr/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Instagram"
+                                    className="bg-neutral-100 p-2.5 rounded-full text-neutral-700 hover:bg-neutral-200 hover:text-[#E1306C] transition-colors"
+                                >
+                                    <Instagram className="w-4 h-4" />
+                                </Link>
+                                <Link
+                                    href="https://youtube.com/@panobuad"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="YouTube"
+                                    className="bg-neutral-100 p-2.5 rounded-full text-neutral-700 hover:bg-neutral-200 hover:text-[#FF0000] transition-colors"
+                                >
+                                    <Youtube className="w-4 h-4" />
+                                </Link>
                             </div>
                             <Button asChild className="bg-[#11b981] hover:bg-[#0ea472] text-white rounded-full px-6 py-5 font-bold text-base shadow-lg shadow-[#11b981]/30 w-full md:w-auto">
                                 <Link href="https://calendly.com/erendoru/30dk" target="_blank">

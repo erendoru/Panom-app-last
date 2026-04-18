@@ -9,6 +9,7 @@ import {
     CheckCircle, ArrowRight, Building2, Monitor
 } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
+import DataDrivenBanner from "@/components/home/DataDrivenBanner";
 
 const fadeInUp = {
     initial: { opacity: 0, y: 20 },
@@ -45,6 +46,11 @@ export default function HowItWorksPage() {
                         </Link>
                     </motion.div>
                 </div>
+            </section>
+
+            {/* DATA-DRIVEN ADVERTISING BANNER */}
+            <section className="pb-4 pt-2">
+                <DataDrivenBanner />
             </section>
 
             {/* Main Steps */}

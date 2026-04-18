@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Globe, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Menu, X, Instagram, Linkedin, Youtube } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { CartProvider } from "@/contexts/CartContext";
@@ -133,28 +133,31 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                             </Link>
                             <div className="flex gap-4">
                                 <Link
-                                    href="#"
-                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                    href="https://www.linkedin.com/company/panobu/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="LinkedIn"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 hover:text-[#0A66C2] transition-colors"
                                 >
-                                    <Globe className="w-5 h-5" />
+                                    <Linkedin className="w-5 h-5" />
                                 </Link>
                                 <Link
-                                    href="#"
-                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
-                                >
-                                    <Twitter className="w-5 h-5" />
-                                </Link>
-                                <Link
-                                    href="#"
-                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                    href="https://www.instagram.com/panobutr/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Instagram"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 hover:text-[#E1306C] transition-colors"
                                 >
                                     <Instagram className="w-5 h-5" />
                                 </Link>
                                 <Link
-                                    href="#"
-                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 transition-colors"
+                                    href="https://youtube.com/@panobuad"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="YouTube"
+                                    className="bg-neutral-200/80 p-2 rounded-full text-neutral-700 hover:bg-neutral-300 hover:text-[#FF0000] transition-colors"
                                 >
-                                    <Linkedin className="w-5 h-5" />
+                                    <Youtube className="w-5 h-5" />
                                 </Link>
                             </div>
                             <Button
