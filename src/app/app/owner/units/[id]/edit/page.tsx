@@ -44,6 +44,14 @@ export default async function OwnerUnitEditPage({
                 estimatedCpm: panel.estimatedCpm ? String(panel.estimatedCpm) : "",
                 description: panel.description ?? "",
                 isStartingPrice: Boolean(panel.isStartingPrice),
+                placementContext: panel.placementContext ?? "",
+                manualRoadType: panel.manualRoadType ?? "",
+                manualDailyTraffic: panel.manualDailyTraffic
+                    ? String(panel.manualDailyTraffic)
+                    : "",
+                manualPoiCount: panel.manualPoiCount
+                    ? String(panel.manualPoiCount)
+                    : "",
             }}
             initialImages={
                 panel.imageUrls && panel.imageUrls.length > 0

@@ -104,6 +104,24 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (body.isStartingPrice !== undefined) {
             data.isStartingPrice = Boolean(body.isStartingPrice);
         }
+        if (body.placementContext !== undefined) {
+            data.placementContext = body.placementContext || null;
+        }
+        if (body.manualRoadType !== undefined) {
+            data.manualRoadType = body.manualRoadType || null;
+        }
+        if (body.manualDailyTraffic !== undefined) {
+            data.manualDailyTraffic =
+                body.manualDailyTraffic === null || body.manualDailyTraffic === ""
+                    ? null
+                    : parseInt(String(body.manualDailyTraffic)) || null;
+        }
+        if (body.manualPoiCount !== undefined) {
+            data.manualPoiCount =
+                body.manualPoiCount === null || body.manualPoiCount === ""
+                    ? null
+                    : parseInt(String(body.manualPoiCount)) || null;
+        }
         if (Array.isArray(body.imageUrls)) {
             if (body.imageUrls.length < 1 || body.imageUrls.length > 5) {
                 return NextResponse.json(
@@ -131,11 +149,25 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
             data,
         });
 
-        // T2: lat/lng veya priceWeekly değiştiyse arka planda trafik skorunu yenile
+        // T2: lat/lng/fiyat/override değiştiyse arka planda trafik skorunu yenile
         const latChanged = data.latitude !== undefined;
         const lngChanged = data.longitude !== undefined;
         const priceChanged = data.priceWeekly !== undefined;
-        if ((latChanged || lngChanged || priceChanged) && updated.latitude && updated.longitude) {
+        const placementChanged = data.placementContext !== undefined;
+        const manualRoadChanged = data.manualRoadType !== undefined;
+        const manualPoiChanged = data.manualPoiCount !== undefined;
+        const manualDailyChanged = data.manualDailyTraffic !== undefined;
+        if (
+            (latChanged ||
+                lngChanged ||
+                priceChanged ||
+                placementChanged ||
+                manualRoadChanged ||
+                manualPoiChanged ||
+                manualDailyChanged) &&
+            updated.latitude &&
+            updated.longitude
+        ) {
             triggerTrafficComputeInBackground(updated.id);
         }
 

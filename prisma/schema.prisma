@@ -39,6 +39,18 @@ enum RoadType {
   PEDESTRIAN       // pedestrian / footway / living_street
 }
 
+// T2+: Pano yerleşim bağlamı (admin/sahip manuel seçer — OSM'den bağımsız, en güçlü sinyal)
+enum PlacementContext {
+  HIGHWAY_SIDE       // otoyol/çevre yolu kenarı
+  MAIN_JUNCTION      // ana cadde kavşağı / ana arter kesişimi
+  URBAN_MAIN         // ana cadde / bulvar üstü
+  SQUARE             // meydan, forum önü, plaza
+  BUILDING_WRAP      // bina giydirme / cephe
+  MALL_OUTDOOR       // AVM önü / otopark girişi
+  PEDESTRIAN         // yaya bölgesi / çarşı içi
+  RESIDENTIAL_EDGE   // mahalle kenarı / servis yolu
+}
+
 model User {
   id            String    @id @default(uuid())
   email         String    @unique
@@ -416,6 +428,12 @@ model StaticPanel {
   visibilityScore            Decimal?      @db.Decimal(3, 2) // 0.00 - 1.00
   manualDailyTraffic         Int?          // owner/admin manuel override (günlük araç)
   nearbyPoiCount             Int?          // 500m POI sayısı (okul, hastane, avm vs.)
+  // T2+: Yerleşim bağlamı & manuel override (OSM yanlış yorumladığında öncelikli)
+  placementContext           PlacementContext?
+  manualRoadType             RoadType?     // OSM'in bulduğuna itiraz — admin override
+  manualPoiCount             Int?          // OSM POI'yi bypass et
+  osmRoadType                RoadType?     // referans: OSM'in ham bulgusu (debug/ui için)
+  osmRoadName                String?       // "D-100", "İstanbul Cd." vb.
   blockedDates               Json?          // Array of {startDate, endDate} objects
   
   // Pano Sahibi Bilgileri (Admin görür)

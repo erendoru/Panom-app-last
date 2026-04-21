@@ -116,7 +116,16 @@ export async function PUT(
     // T2: Mevcut durumu al (lat/lng veya trafficScore durumuna göre tetikleme için)
     const preUpdate = await prisma.staticPanel.findUnique({
         where: { id: params.id },
-        select: { latitude: true, longitude: true, trafficScore: true, priceWeekly: true },
+        select: {
+            latitude: true,
+            longitude: true,
+            trafficScore: true,
+            priceWeekly: true,
+            placementContext: true,
+            manualRoadType: true,
+            manualPoiCount: true,
+            manualDailyTraffic: true,
+        },
     });
 
     try {
@@ -145,7 +154,11 @@ export async function PUT(
             ownerName,
             ownerPhone,
             nearbyTags,
-            estimatedCpm
+            estimatedCpm,
+            placementContext,
+            manualRoadType,
+            manualPoiCount,
+            manualDailyTraffic,
         } = body;
 
         // Regional admin cannot change city to a different city
@@ -207,10 +220,32 @@ export async function PUT(
                                   : safeParseFloat(estimatedCpm),
                       }
                     : {}),
+                ...(placementContext !== undefined
+                    ? { placementContext: placementContext || null }
+                    : {}),
+                ...(manualRoadType !== undefined
+                    ? { manualRoadType: manualRoadType || null }
+                    : {}),
+                ...(manualPoiCount !== undefined
+                    ? {
+                          manualPoiCount:
+                              manualPoiCount === '' || manualPoiCount === null
+                                  ? null
+                                  : safeParseInt(manualPoiCount, 0),
+                      }
+                    : {}),
+                ...(manualDailyTraffic !== undefined
+                    ? {
+                          manualDailyTraffic:
+                              manualDailyTraffic === '' || manualDailyTraffic === null
+                                  ? null
+                                  : safeParseInt(manualDailyTraffic, 0),
+                      }
+                    : {}),
             }
         });
 
-        // T2: Koordinat/fiyat değiştiyse veya skor henüz yoksa arka planda hesapla
+        // T2: Koordinat/fiyat/override değiştiyse veya skor henüz yoksa arka planda hesapla
         if (panel.latitude && panel.longitude) {
             const latChanged = preUpdate && preUpdate.latitude !== panel.latitude;
             const lngChanged = preUpdate && preUpdate.longitude !== panel.longitude;
@@ -218,7 +253,24 @@ export async function PUT(
                 preUpdate &&
                 Number(preUpdate.priceWeekly) !== Number(panel.priceWeekly);
             const neverScored = !preUpdate?.trafficScore;
-            if (latChanged || lngChanged || priceChanged || neverScored) {
+            const placementChanged =
+                preUpdate && preUpdate.placementContext !== panel.placementContext;
+            const manualRoadChanged =
+                preUpdate && preUpdate.manualRoadType !== panel.manualRoadType;
+            const manualPoiChanged =
+                preUpdate && preUpdate.manualPoiCount !== panel.manualPoiCount;
+            const manualDailyChanged =
+                preUpdate && preUpdate.manualDailyTraffic !== panel.manualDailyTraffic;
+            if (
+                latChanged ||
+                lngChanged ||
+                priceChanged ||
+                neverScored ||
+                placementChanged ||
+                manualRoadChanged ||
+                manualPoiChanged ||
+                manualDailyChanged
+            ) {
                 triggerTrafficComputeInBackground(panel.id);
             }
         }

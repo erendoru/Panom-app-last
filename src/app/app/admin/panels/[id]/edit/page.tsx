@@ -72,6 +72,11 @@ export default function EditPanelPage() {
         nearbyPoiCount: number | null;
         manualDailyTraffic: number | null;
         trafficDataUpdatedAt: string | null;
+        placementContext: string | null;
+        manualRoadType: string | null;
+        manualPoiCount: number | null;
+        osmRoadType: string | null;
+        osmRoadName: string | null;
     };
     const [trafficInfo, setTrafficInfo] = useState<TrafficInfo>({
         trafficScore: null,
@@ -81,8 +86,16 @@ export default function EditPanelPage() {
         nearbyPoiCount: null,
         manualDailyTraffic: null,
         trafficDataUpdatedAt: null,
+        placementContext: null,
+        manualRoadType: null,
+        manualPoiCount: null,
+        osmRoadType: null,
+        osmRoadName: null,
     });
     const [manualTrafficInput, setManualTrafficInput] = useState('');
+    const [manualPoiInput, setManualPoiInput] = useState('');
+    const [placementInput, setPlacementInput] = useState<string>('');
+    const [manualRoadInput, setManualRoadInput] = useState<string>('');
     const [trafficBusy, setTrafficBusy] = useState(false);
     const [trafficMessage, setTrafficMessage] = useState<string | null>(null);
 
@@ -198,12 +211,25 @@ export default function EditPanelPage() {
                         ? data.manualDailyTraffic
                         : null,
                 trafficDataUpdatedAt: data.trafficDataUpdatedAt || null,
+                placementContext: data.placementContext || null,
+                manualRoadType: data.manualRoadType || null,
+                manualPoiCount:
+                    typeof data.manualPoiCount === 'number' ? data.manualPoiCount : null,
+                osmRoadType: data.osmRoadType || null,
+                osmRoadName: data.osmRoadName || null,
             });
             setManualTrafficInput(
                 typeof data.manualDailyTraffic === 'number'
                     ? String(data.manualDailyTraffic)
                     : ''
             );
+            setManualPoiInput(
+                typeof data.manualPoiCount === 'number'
+                    ? String(data.manualPoiCount)
+                    : ''
+            );
+            setPlacementInput(data.placementContext || '');
+            setManualRoadInput(data.manualRoadType || '');
         } catch (error) {
             console.error('Error fetching panel:', error);
             alert('Pano yüklenemedi');
@@ -218,10 +244,29 @@ export default function EditPanelPage() {
         setTrafficMessage(null);
         try {
             const body: any = {};
-            const manualNum = parseInt(manualTrafficInput, 10);
-            if (!Number.isNaN(manualNum) && manualNum > 0) {
-                body.manualDailyTraffic = manualNum;
+            // manualDailyTraffic
+            if (manualTrafficInput.trim() === '') {
+                body.manualDailyTraffic = null; // clear
+            } else {
+                const manualNum = parseInt(manualTrafficInput, 10);
+                if (!Number.isNaN(manualNum) && manualNum > 0) {
+                    body.manualDailyTraffic = manualNum;
+                }
             }
+            // manualPoiCount
+            if (manualPoiInput.trim() === '') {
+                body.manualPoiCount = null;
+            } else {
+                const poiNum = parseInt(manualPoiInput, 10);
+                if (!Number.isNaN(poiNum) && poiNum >= 0) {
+                    body.manualPoiCount = poiNum;
+                }
+            }
+            // placementContext
+            body.placementContext = placementInput || null;
+            // manualRoadType
+            body.manualRoadType = manualRoadInput || null;
+
             const res = await fetch(`/api/admin/panels/${params.id}/traffic-score`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -240,6 +285,11 @@ export default function EditPanelPage() {
                 nearbyPoiCount: data.panel.nearbyPoiCount,
                 manualDailyTraffic: data.panel.manualDailyTraffic,
                 trafficDataUpdatedAt: data.panel.trafficDataUpdatedAt,
+                placementContext: data.panel.placementContext,
+                manualRoadType: data.panel.manualRoadType,
+                manualPoiCount: data.panel.manualPoiCount,
+                osmRoadType: data.panel.osmRoadType,
+                osmRoadName: data.panel.osmRoadName,
             });
             setFormData((prev) => ({
                 ...prev,
@@ -286,10 +336,20 @@ export default function EditPanelPage() {
         setSaveSuccess(false);
 
         try {
+            const submitBody: any = {
+                ...formData,
+                placementContext: placementInput || null,
+                manualRoadType: manualRoadInput || null,
+                manualPoiCount: manualPoiInput === '' ? null : parseInt(manualPoiInput, 10) || null,
+                manualDailyTraffic:
+                    manualTrafficInput === ''
+                        ? null
+                        : parseInt(manualTrafficInput, 10) || null,
+            };
             const res = await fetch(`/api/admin/panels/${params.id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(submitBody),
             });
 
             if (res.ok) {
@@ -769,24 +829,128 @@ export default function EditPanelPage() {
                             </div>
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-2">
-                                Manuel Günlük Ortalama Trafik (opsiyonel)
-                            </label>
-                            <div className="flex gap-2">
+                        {/* OSM bulgusu (readonly bilgi kartı) */}
+                        {(trafficInfo.osmRoadType || trafficInfo.osmRoadName) && (
+                            <div className="mb-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                                <div className="font-semibold text-slate-700 mb-1">
+                                    OSM bulgusu (referans)
+                                </div>
+                                <div className="flex flex-wrap gap-x-4 gap-y-1">
+                                    {trafficInfo.osmRoadType && (
+                                        <span>
+                                            Yol:{' '}
+                                            <strong className="text-slate-800">
+                                                {trafficInfo.osmRoadType}
+                                            </strong>
+                                        </span>
+                                    )}
+                                    {trafficInfo.osmRoadName && (
+                                        <span>
+                                            Ad/ref:{' '}
+                                            <strong className="text-slate-800">
+                                                {trafficInfo.osmRoadName}
+                                            </strong>
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="mt-1 text-[11px] text-slate-500">
+                                    Yanlış görünüyorsa aşağıdan &quot;Yerleşim Bağlamı&quot; veya
+                                    &quot;Manuel Yol Tipi&quot; override edin — OSM ezilir.
+                                </p>
+                            </div>
+                        )}
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Yerleşim Bağlamı
+                                    <span className="ml-1 text-[10px] text-indigo-600 uppercase tracking-wide">
+                                        en güçlü
+                                    </span>
+                                </label>
+                                <select
+                                    value={placementInput}
+                                    onChange={(e) => setPlacementInput(e.target.value)}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                >
+                                    <option value="">— Otomatik (OSM) —</option>
+                                    <option value="HIGHWAY_SIDE">Otoyol / çevre yolu kenarı</option>
+                                    <option value="MAIN_JUNCTION">Ana cadde kavşağı</option>
+                                    <option value="URBAN_MAIN">Ana cadde / bulvar üstü</option>
+                                    <option value="SQUARE">Meydan / plaza</option>
+                                    <option value="BUILDING_WRAP">Bina giydirme / cephe</option>
+                                    <option value="MALL_OUTDOOR">AVM önü / otopark</option>
+                                    <option value="PEDESTRIAN">Yaya bölgesi / çarşı</option>
+                                    <option value="RESIDENTIAL_EDGE">Mahalle kenarı / servis yolu</option>
+                                </select>
+                                <p className="text-xs text-slate-500 mt-1">
+                                    Panonun fiziksel konumunu en iyi tanımlayan tipi seçin. OSM yanlış tespit ettiğinde bu ezer.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel Yol Tipi (OSM override)
+                                </label>
+                                <select
+                                    value={manualRoadInput}
+                                    onChange={(e) => setManualRoadInput(e.target.value)}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                    disabled={!!placementInput}
+                                >
+                                    <option value="">— Otomatik (OSM) —</option>
+                                    <option value="HIGHWAY">Otoyol / Ana arter</option>
+                                    <option value="MAIN_ROAD">Ana cadde</option>
+                                    <option value="SECONDARY_ROAD">Tali yol</option>
+                                    <option value="RESIDENTIAL">Ara sokak</option>
+                                    <option value="PEDESTRIAN">Yaya bölgesi</option>
+                                </select>
+                                <p className="text-xs text-slate-500 mt-1">
+                                    {placementInput
+                                        ? 'Yerleşim Bağlamı seçili → manuel yol tipi devre dışı.'
+                                        : 'OSM yanlış bir yol getirdiyse doğru sınıfı seç.'}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel Günlük Ortalama Trafik (opsiyonel)
+                                </label>
                                 <input
                                     type="number"
                                     value={manualTrafficInput}
                                     onChange={(e) => setManualTrafficInput(e.target.value)}
                                     placeholder="Örn: 35000 (araç/yaya)"
-                                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                                <p className="text-xs text-slate-500 mt-1">
+                                    Bölgeyi tanıyorsan günlük trafik tahminini yaz.
+                                </p>
                             </div>
-                            <p className="text-xs text-slate-500 mt-1">
-                                Bölgeyi tanıyorsan buraya günlük trafik tahmininizi yazabilirsin; hesapla butonuna bastığında bu değer kullanılır.
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel 500m POI sayısı (opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    value={manualPoiInput}
+                                    onChange={(e) => setManualPoiInput(e.target.value)}
+                                    placeholder="Örn: 35"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <p className="text-xs text-slate-500 mt-1">
+                                    OSM&apos;in POI sayısına itirazın varsa elle girebilirsin.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-3">
+                            <p className="text-xs text-slate-500">
                                 {trafficInfo.trafficDataUpdatedAt && (
                                     <>
-                                        {' '}Son güncelleme:{' '}
+                                        Son güncelleme:{' '}
                                         <span className="font-medium">
                                             {new Date(trafficInfo.trafficDataUpdatedAt).toLocaleString('tr-TR')}
                                         </span>

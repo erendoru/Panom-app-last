@@ -44,7 +44,11 @@ export default function NewPanelPage() {
         trafficLevel: 'MEDIUM',
         imageUrl: '',
         active: true,
-        nearbyTags: [] as string[]
+        nearbyTags: [] as string[],
+        placementContext: '',
+        manualRoadType: '',
+        manualDailyTraffic: '',
+        manualPoiCount: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -405,6 +409,88 @@ export default function NewPanelPage() {
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
                                 <p className="text-xs text-slate-500 mt-1">1000 gösterim başına tahmini maliyet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Yerleşim Bağlamı & Trafik Override'ları */}
+                    <div className="border border-blue-200 rounded-xl p-5 bg-gradient-to-br from-blue-50/50 to-white">
+                        <h2 className="text-lg font-semibold text-slate-900 mb-1">
+                            Yerleşim Bağlamı & Manuel Override
+                        </h2>
+                        <p className="text-xs text-slate-500 mb-4">
+                            Yerleşim Bağlamı, OSM&apos;in yol tespitini ezer — meydan, AVM önü, bina giydirme gibi durumlar için çok önemli.
+                            Boş bırakılırsa sistem OSM&apos;den otomatik bulur.
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Yerleşim Bağlamı
+                                    <span className="ml-1 text-[10px] text-indigo-600 uppercase tracking-wide">
+                                        en güçlü
+                                    </span>
+                                </label>
+                                <select
+                                    name="placementContext"
+                                    value={formData.placementContext}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                >
+                                    <option value="">— Otomatik (OSM) —</option>
+                                    <option value="HIGHWAY_SIDE">Otoyol / çevre yolu kenarı</option>
+                                    <option value="MAIN_JUNCTION">Ana cadde kavşağı</option>
+                                    <option value="URBAN_MAIN">Ana cadde / bulvar üstü</option>
+                                    <option value="SQUARE">Meydan / plaza</option>
+                                    <option value="BUILDING_WRAP">Bina giydirme / cephe</option>
+                                    <option value="MALL_OUTDOOR">AVM önü / otopark</option>
+                                    <option value="PEDESTRIAN">Yaya bölgesi / çarşı</option>
+                                    <option value="RESIDENTIAL_EDGE">Mahalle kenarı / servis yolu</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel Yol Tipi (OSM override)
+                                </label>
+                                <select
+                                    name="manualRoadType"
+                                    value={formData.manualRoadType}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                                    disabled={!!formData.placementContext}
+                                >
+                                    <option value="">— Otomatik (OSM) —</option>
+                                    <option value="HIGHWAY">Otoyol / Ana arter</option>
+                                    <option value="MAIN_ROAD">Ana cadde</option>
+                                    <option value="SECONDARY_ROAD">Tali yol</option>
+                                    <option value="RESIDENTIAL">Ara sokak</option>
+                                    <option value="PEDESTRIAN">Yaya bölgesi</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel Günlük Trafik (opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    name="manualDailyTraffic"
+                                    value={formData.manualDailyTraffic}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 35000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Manuel 500m POI sayısı (opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    name="manualPoiCount"
+                                    value={formData.manualPoiCount}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 35"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
                             </div>
                         </div>
                     </div>

@@ -5,11 +5,31 @@ import { lookupOsmContext } from "@/lib/traffic/osm";
 import {
     computeFromOsm,
     type PanelTypeKey,
+    type PlacementContextKey,
     type RoadTypeKey,
 } from "@/lib/traffic/score";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
+
+const VALID_ROAD_TYPES: RoadTypeKey[] = [
+    "HIGHWAY",
+    "MAIN_ROAD",
+    "SECONDARY_ROAD",
+    "RESIDENTIAL",
+    "PEDESTRIAN",
+];
+
+const VALID_PLACEMENTS: PlacementContextKey[] = [
+    "HIGHWAY_SIDE",
+    "MAIN_JUNCTION",
+    "URBAN_MAIN",
+    "SQUARE",
+    "BUILDING_WRAP",
+    "MALL_OUTDOOR",
+    "PEDESTRIAN",
+    "RESIDENTIAL_EDGE",
+];
 
 function hasAdminAccess(session: any) {
     return (
@@ -24,9 +44,13 @@ function hasAdminAccess(session: any) {
  * - Admin / Regional Admin: her panoya erişebilir
  * - SCREEN_OWNER: sadece kendi panosuna erişebilir
  *
- * Body (opsiyonel):
- * { manualDailyTraffic?: number, roadType?: RoadType }
- * Bunlar verilirse OSM lookup override edilir.
+ * Body (opsiyonel) — verildiyse DB'ye de yazılır:
+ * {
+ *   placementContext?: PlacementContext,  // yerleşim bağlamı (en güçlü)
+ *   manualRoadType?: RoadType,            // OSM'e itiraz
+ *   manualPoiCount?: number,              // POI override
+ *   manualDailyTraffic?: number           // trafik override
+ * }
  */
 export async function POST(
     req: NextRequest,
@@ -48,6 +72,9 @@ export async function POST(
             ownerId: true,
             manualDailyTraffic: true,
             roadType: true,
+            placementContext: true,
+            manualRoadType: true,
+            manualPoiCount: true,
         },
     });
 
@@ -55,7 +82,6 @@ export async function POST(
         return NextResponse.json({ error: "Pano bulunamadı" }, { status: 404 });
     }
 
-    // Owner ise sadece kendi panosuna erişsin
     if (session.role === "SCREEN_OWNER") {
         const myOwner = await prisma.screenOwner.findUnique({
             where: { userId: session.userId },
@@ -73,50 +99,69 @@ export async function POST(
         body = {};
     }
 
-    const manualOverride =
+    // Body override'lar
+    const manualDailyTrafficOverride =
         typeof body?.manualDailyTraffic === "number" && body.manualDailyTraffic > 0
             ? Math.round(body.manualDailyTraffic)
-            : null;
+            : body?.manualDailyTraffic === null
+              ? null // explicit clear
+              : undefined;
 
-    const roadTypeOverride: RoadTypeKey | null =
-        typeof body?.roadType === "string" &&
-        ["HIGHWAY", "MAIN_ROAD", "SECONDARY_ROAD", "RESIDENTIAL", "PEDESTRIAN"].includes(
-            body.roadType,
-        )
-            ? (body.roadType as RoadTypeKey)
-            : null;
+    const manualRoadTypeOverride: RoadTypeKey | null | undefined =
+        typeof body?.manualRoadType === "string" &&
+        VALID_ROAD_TYPES.includes(body.manualRoadType as RoadTypeKey)
+            ? (body.manualRoadType as RoadTypeKey)
+            : body?.manualRoadType === null
+              ? null
+              : undefined;
 
-    // OSM lookup (roadType override yoksa)
-    const osm = roadTypeOverride
-        ? null
-        : await lookupOsmContext(panel.latitude, panel.longitude).catch(() => null);
+    const placementContextOverride: PlacementContextKey | null | undefined =
+        typeof body?.placementContext === "string" &&
+        VALID_PLACEMENTS.includes(body.placementContext as PlacementContextKey)
+            ? (body.placementContext as PlacementContextKey)
+            : body?.placementContext === null
+              ? null
+              : undefined;
 
-    // effective road type
-    const effectiveRoadType: RoadTypeKey =
-        roadTypeOverride ?? osm?.roadType ?? panel.roadType ?? "SECONDARY_ROAD";
+    const manualPoiCountOverride: number | null | undefined =
+        typeof body?.manualPoiCount === "number" && body.manualPoiCount >= 0
+            ? Math.round(body.manualPoiCount)
+            : body?.manualPoiCount === null
+              ? null
+              : undefined;
 
-    // Manuel trafik: body > DB (manualDailyTraffic) > null
-    const effectiveManual =
-        manualOverride ?? panel.manualDailyTraffic ?? null;
+    // Effective (body > DB)
+    const effectivePlacement =
+        placementContextOverride !== undefined
+            ? placementContextOverride
+            : ((panel.placementContext as PlacementContextKey | null) ?? null);
+    const effectiveManualRoad =
+        manualRoadTypeOverride !== undefined
+            ? manualRoadTypeOverride
+            : ((panel.manualRoadType as RoadTypeKey | null) ?? null);
+    const effectiveManualPoi =
+        manualPoiCountOverride !== undefined
+            ? manualPoiCountOverride
+            : (panel.manualPoiCount ?? null);
+    const effectiveManualDaily =
+        manualDailyTrafficOverride !== undefined
+            ? manualDailyTrafficOverride
+            : (panel.manualDailyTraffic ?? null);
+
+    // OSM lookup
+    const osm = await lookupOsmContext(panel.latitude, panel.longitude).catch(
+        () => null,
+    );
 
     const weeklyPrice = panel.priceWeekly ? Number(panel.priceWeekly) : null;
 
-    const result = computeFromOsm(
-        panel.type as PanelTypeKey,
-        osm
-            ? { ...osm, roadType: effectiveRoadType }
-            : {
-                  roadType: effectiveRoadType,
-                  roadTag: null,
-                  roadName: null,
-                  poiCount: 0,
-                  poiBreakdown: {},
-              },
-        {
-            manualDailyTraffic: effectiveManual,
-            weeklyPrice,
-        },
-    );
+    const result = computeFromOsm(panel.type as PanelTypeKey, osm, {
+        placementContext: effectivePlacement,
+        manualRoadType: effectiveManualRoad,
+        manualPoiCount: effectiveManualPoi,
+        manualDailyTraffic: effectiveManualDaily,
+        weeklyPrice,
+    });
 
     const updated = await prisma.staticPanel.update({
         where: { id: panel.id },
@@ -127,10 +172,23 @@ export async function POST(
             estimatedDailyImpressions: result.dailyImpressions,
             estimatedWeeklyImpressions: result.weeklyImpressions,
             estimatedCpm: result.cpm ?? null,
-            nearbyPoiCount: osm?.poiCount ?? 0,
+            nearbyPoiCount: result.poiCount,
             trafficDataUpdatedAt: new Date(),
-            // Manuel override verildiyse kaydet
-            ...(manualOverride !== null ? { manualDailyTraffic: manualOverride } : {}),
+            osmRoadType: osm ? (osm.roadType as RoadTypeKey) : null,
+            osmRoadName: osm?.roadName ?? osm?.roadRef ?? null,
+            // Body'de override geldiyse DB'ye de yaz
+            ...(placementContextOverride !== undefined
+                ? { placementContext: placementContextOverride }
+                : {}),
+            ...(manualRoadTypeOverride !== undefined
+                ? { manualRoadType: manualRoadTypeOverride }
+                : {}),
+            ...(manualPoiCountOverride !== undefined
+                ? { manualPoiCount: manualPoiCountOverride }
+                : {}),
+            ...(manualDailyTrafficOverride !== undefined
+                ? { manualDailyTraffic: manualDailyTrafficOverride }
+                : {}),
         },
         select: {
             id: true,
@@ -143,6 +201,11 @@ export async function POST(
             nearbyPoiCount: true,
             manualDailyTraffic: true,
             trafficDataUpdatedAt: true,
+            placementContext: true,
+            manualRoadType: true,
+            manualPoiCount: true,
+            osmRoadType: true,
+            osmRoadName: true,
         },
     });
 
@@ -153,7 +216,10 @@ export async function POST(
             ? {
                   roadTag: osm.roadTag,
                   roadName: osm.roadName,
+                  roadRef: osm.roadRef,
                   poiBreakdown: osm.poiBreakdown,
+                  isSquareContext: osm.isSquareContext,
+                  hasNearbyMall: osm.hasNearbyMall,
               }
             : null,
         compute: {

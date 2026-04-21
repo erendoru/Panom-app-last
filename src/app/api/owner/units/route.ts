@@ -78,6 +78,10 @@ export async function POST(req: NextRequest) {
             imageUrls,
             description,
             isStartingPrice,
+            placementContext,
+            manualRoadType,
+            manualDailyTraffic,
+            manualPoiCount,
         } = body;
 
         if (!name || !type || !city || !district || !address) {
@@ -160,6 +164,20 @@ export async function POST(req: NextRequest) {
                 reviewStatus: "PENDING",
                 ownerStatus: "ACTIVE",
                 submittedAt: new Date(),
+                placementContext: placementContext || null,
+                manualRoadType: manualRoadType || null,
+                manualDailyTraffic:
+                    manualDailyTraffic === undefined ||
+                    manualDailyTraffic === null ||
+                    manualDailyTraffic === ""
+                        ? null
+                        : parseInt(String(manualDailyTraffic)) || null,
+                manualPoiCount:
+                    manualPoiCount === undefined ||
+                    manualPoiCount === null ||
+                    manualPoiCount === ""
+                        ? null
+                        : parseInt(String(manualPoiCount)) || null,
             },
         });
 

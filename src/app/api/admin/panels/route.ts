@@ -125,6 +125,10 @@ export async function POST(req: NextRequest) {
             active,
             nearbyTags,
             estimatedCpm,
+            placementContext,
+            manualRoadType,
+            manualPoiCount,
+            manualDailyTraffic,
             isDraft // For quick add feature
         } = body;
 
@@ -192,6 +196,16 @@ export async function POST(req: NextRequest) {
                     estimatedCpm === undefined || estimatedCpm === null || estimatedCpm === ''
                         ? null
                         : parseFloat(String(estimatedCpm)),
+                placementContext: placementContext || null,
+                manualRoadType: manualRoadType || null,
+                manualPoiCount:
+                    manualPoiCount === undefined || manualPoiCount === null || manualPoiCount === ''
+                        ? null
+                        : parseInt(String(manualPoiCount)),
+                manualDailyTraffic:
+                    manualDailyTraffic === undefined || manualDailyTraffic === null || manualDailyTraffic === ''
+                        ? null
+                        : parseInt(String(manualDailyTraffic)),
             }
         });
 

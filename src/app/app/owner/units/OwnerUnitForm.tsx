@@ -46,6 +46,10 @@ type FormState = {
     estimatedCpm: string;
     description: string;
     isStartingPrice: boolean;
+    placementContext: string;
+    manualRoadType: string;
+    manualDailyTraffic: string;
+    manualPoiCount: string;
 };
 
 const INITIAL: FormState = {
@@ -68,6 +72,10 @@ const INITIAL: FormState = {
     estimatedCpm: "",
     description: "",
     isStartingPrice: false,
+    placementContext: "",
+    manualRoadType: "",
+    manualDailyTraffic: "",
+    manualPoiCount: "",
 };
 
 export default function OwnerUnitForm({
@@ -441,6 +449,45 @@ export default function OwnerUnitForm({
                                 value={form.estimatedCpm}
                                 onChange={(e) => change("estimatedCpm", e.target.value)}
                                 placeholder="Örn: 45.00"
+                                className={inputClass}
+                            />
+                        </Field>
+                    </div>
+                </Section>
+
+                <Section title="Yerleşim Bağlamı (opsiyonel)">
+                    <p className="text-xs text-slate-500 mb-3">
+                        Panonun fiziksel konumunu en iyi tanımlayan tipi seçerseniz trafik skoru çok daha doğru hesaplanır.
+                        Boş bırakırsanız sistem harita verisinden otomatik bulur.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Field label="Yerleşim Bağlamı">
+                            <select
+                                value={form.placementContext}
+                                onChange={(e) => change("placementContext", e.target.value)}
+                                className={inputClass}
+                            >
+                                <option value="">— Otomatik (harita verisi) —</option>
+                                <option value="HIGHWAY_SIDE">Otoyol / çevre yolu kenarı</option>
+                                <option value="MAIN_JUNCTION">Ana cadde kavşağı</option>
+                                <option value="URBAN_MAIN">Ana cadde / bulvar üstü</option>
+                                <option value="SQUARE">Meydan / plaza</option>
+                                <option value="BUILDING_WRAP">Bina giydirme / cephe</option>
+                                <option value="MALL_OUTDOOR">AVM önü / otopark</option>
+                                <option value="PEDESTRIAN">Yaya bölgesi / çarşı</option>
+                                <option value="RESIDENTIAL_EDGE">Mahalle kenarı / servis yolu</option>
+                            </select>
+                        </Field>
+                        <Field
+                            label="Manuel Günlük Trafik (opsiyonel)"
+                            hint="Bölgeyi tanıyorsanız günlük trafik tahmininizi yazabilirsiniz."
+                        >
+                            <input
+                                type="number"
+                                min="0"
+                                value={form.manualDailyTraffic}
+                                onChange={(e) => change("manualDailyTraffic", e.target.value)}
+                                placeholder="Örn: 35000"
                                 className={inputClass}
                             />
                         </Field>
