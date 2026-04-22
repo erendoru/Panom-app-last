@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload, Images, Loader2, Activity, RefreshCw } from 'lucide-react';
+import { Plus, Filter, Pencil, Trash2, MapPin, Zap, Save, X, CheckSquare, Upload, Images, Loader2, Activity, RefreshCw, Store, Sparkles, Copy } from 'lucide-react';
 import {
     TURKEY_CITIES,
     TURKEY_DISTRICTS,
@@ -12,6 +12,11 @@ import {
     TRAFFIC_LEVEL_COLORS
 } from '@/lib/turkey-data';
 import PendingPanelsBanner from '@/components/admin/PendingPanelsBanner';
+import { POI_CATEGORY_LABELS } from '@/lib/traffic/poiTaxonomy';
+
+const DIRECTION_LABELS_TR: Record<string, string> = {
+    N: 'K', NE: 'KD', E: 'D', SE: 'GD', S: 'G', SW: 'GB', W: 'B', NW: 'KB',
+};
 
 interface Panel {
     id: string;
@@ -39,6 +44,9 @@ interface Panel {
         slug: string | null;
         user?: { name?: string | null; email?: string | null } | null;
     } | null;
+    nearbyPoiCount?: number | null;
+    poiEnrichedAt?: string | null;
+    trafficScore?: number | null;
 }
 
 interface EditedPanel {
@@ -77,6 +85,39 @@ export default function AdminPanelsPage() {
     const [trafficAllBusy, setTrafficAllBusy] = useState(false);
     const [trafficProgress, setTrafficProgress] = useState<{ done: number; total: number; updated: number; failed: number } | null>(null);
 
+    // V1 POI enrichment
+    const [poiPending, setPoiPending] = useState<number | null>(null);
+    const [poiTotal, setPoiTotal] = useState<number | null>(null);
+    const [poiStats, setPoiStats] = useState<{ uniquePois: number; panelPoiLinks: number } | null>(null);
+    const [poiBusy, setPoiBusy] = useState(false);
+    const [poiAllBusy, setPoiAllBusy] = useState(false);
+    const [poiProgress, setPoiProgress] = useState<{ done: number; total: number; found: number; linked: number; failed: number } | null>(null);
+
+    // POI detay modal
+    const [poiModalPanel, setPoiModalPanel] = useState<Panel | null>(null);
+    const [poiModalLoading, setPoiModalLoading] = useState(false);
+    const [poiModalItems, setPoiModalItems] = useState<Array<{
+        id: string;
+        name: string;
+        brand: string | null;
+        category: string;
+        distance: number;
+        direction: string;
+        manuallyAdded: boolean;
+        source?: string;
+    }>>([]);
+    const [poiCategoryFilter, setPoiCategoryFilter] = useState<string | null>(null);
+    const [poiBrandedOnly, setPoiBrandedOnly] = useState(false);
+    // V4: Manuel POI ekleme formu
+    const [poiAddOpen, setPoiAddOpen] = useState(false);
+    const [poiAddBusy, setPoiAddBusy] = useState(false);
+    const [poiAddName, setPoiAddName] = useState('');
+    const [poiAddBrand, setPoiAddBrand] = useState('');
+    const [poiAddCategory, setPoiAddCategory] = useState('SUPERMARKET');
+    const [poiAddDistance, setPoiAddDistance] = useState(100);
+    const [poiAddDirection, setPoiAddDirection] = useState('N');
+    const [poiDeletingId, setPoiDeletingId] = useState<string | null>(null);
+
     // Filters
     const [selectedCity, setSelectedCity] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState('');
@@ -113,10 +154,27 @@ export default function AdminPanelsPage() {
         }
     }, []);
 
+    const refreshPoiStatus = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/panels/enrich-pois');
+            const data = await res.json();
+            if (res.ok) {
+                if (typeof data.pendingPanels === 'number') setPoiPending(data.pendingPanels);
+                if (typeof data.totalPanels === 'number') setPoiTotal(data.totalPanels);
+                if (typeof data.uniquePois === 'number' && typeof data.panelPoiLinks === 'number') {
+                    setPoiStats({ uniquePois: data.uniquePois, panelPoiLinks: data.panelPoiLinks });
+                }
+            }
+        } catch {
+            /* ignore */
+        }
+    }, []);
+
     useEffect(() => {
         refreshMirrorPending();
         refreshTrafficStatus();
-    }, [refreshMirrorPending, refreshTrafficStatus, panels.length]);
+        refreshPoiStatus();
+    }, [refreshMirrorPending, refreshTrafficStatus, refreshPoiStatus, panels.length]);
 
     const runTrafficBatch = async () => {
         if (trafficBusy) return;
@@ -180,6 +238,138 @@ export default function AdminPanelsPage() {
             alert('Bağlantı hatası');
         } finally {
             setMirrorBusy(false);
+        }
+    };
+
+    const openPoiModal = async (panel: Panel) => {
+        setPoiModalPanel(panel);
+        setPoiModalLoading(true);
+        setPoiModalItems([]);
+        setPoiCategoryFilter(null);
+        setPoiBrandedOnly(false);
+        try {
+            const res = await fetch(`/api/admin/panels/${panel.id}/enrich-pois`);
+            const data = await res.json();
+            if (res.ok && Array.isArray(data.pois)) {
+                setPoiModalItems(data.pois);
+            }
+        } catch {
+            /* ignore */
+        } finally {
+            setPoiModalLoading(false);
+        }
+    };
+
+    const runPoiBatch = async () => {
+        if (poiBusy || poiAllBusy) return;
+        const missing = poiPending ?? 0;
+        if (missing === 0) {
+            alert('Zenginleştirilecek pano yok (hepsi güncel).');
+            return;
+        }
+        const estSec = Math.ceil(missing * 0.9);
+        const confirmed = window.confirm(
+            `POI'si henüz zenginleştirilmemiş ${missing} pano için OSM'den çevre POI verileri çekilecek.\n\nTahmini süre: ~${Math.floor(estSec / 60)} dk ${estSec % 60} sn\n\nDevam edilsin mi?`
+        );
+        if (!confirmed) return;
+        setPoiBusy(true);
+        try {
+            const res = await fetch('/api/admin/panels/enrich-pois', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ limit: 30 }),
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data?.error || 'Zenginleştirme başarısız');
+            const lines = (Array.isArray(data.results) ? data.results : [])
+                .slice(0, 20)
+                .map((r: { name: string; found: number; error?: string }) =>
+                    r.error ? `✗ ${r.name} — hata: ${r.error}` : `✓ ${r.name} — ${r.found} POI`
+                );
+            const extra = Array.isArray(data.results) && data.results.length > 20
+                ? `\n...ve ${data.results.length - 20} pano daha`
+                : '';
+            alert(
+                `Tamamlandı:\n• İşlenen: ${data.processed}\n• Bulunan POI: ${data.totalFound}\n• İlişki kuruldu: ${data.totalLinked}\n\n` +
+                lines.join('\n') + extra
+            );
+            await refreshPoiStatus();
+            await fetchPanels();
+        } catch (err: any) {
+            alert(`Hata: ${err?.message || 'bilinmeyen'}`);
+        } finally {
+            setPoiBusy(false);
+        }
+    };
+
+    const runPoiBatchAll = async () => {
+        if (poiBusy || poiAllBusy) return;
+        const totalPanels = poiTotal ?? panels.length;
+        if (totalPanels === 0) {
+            alert('Zenginleştirilecek pano bulunamadı.');
+            return;
+        }
+        const estSec = Math.ceil(totalPanels * 0.9);
+        const confirmed = window.confirm(
+            `Tüm ${totalPanels} pano için POI verileri YENİDEN zenginleştirilecek.\n` +
+            `(Daha önce zenginleştirilenler de OSM'den güncel verilerle yeniden çekilir; manuel eklenen POI'ler korunur.)\n\n` +
+            `Tahmini süre: ~${Math.floor(estSec / 60)} dk ${estSec % 60} sn\n\n` +
+            `Devam edilsin mi?`
+        );
+        if (!confirmed) return;
+
+        setPoiAllBusy(true);
+        setPoiProgress({ done: 0, total: totalPanels, found: 0, linked: 0, failed: 0 });
+        try {
+            const listRes = await fetch('/api/admin/panels');
+            const list = await listRes.json();
+            if (!Array.isArray(list)) throw new Error('Pano listesi alınamadı');
+
+            const ids: string[] = list.map((p: { id: string }) => p.id);
+            const BATCH = 25;
+            let doneTotal = 0;
+            let foundTotal = 0;
+            let linkedTotal = 0;
+            let failedTotal = 0;
+
+            for (let i = 0; i < ids.length; i += BATCH) {
+                const slice = ids.slice(i, i + BATCH);
+                try {
+                    const res = await fetch('/api/admin/panels/enrich-pois', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ panelIds: slice, limit: BATCH, forceAll: true }),
+                    });
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data?.error || `Batch ${i / BATCH + 1} başarısız`);
+                    doneTotal += data.processed || slice.length;
+                    foundTotal += data.totalFound || 0;
+                    linkedTotal += data.totalLinked || 0;
+                    const failedInBatch = Array.isArray(data.results)
+                        ? data.results.filter((r: any) => r.error).length
+                        : 0;
+                    failedTotal += failedInBatch;
+                } catch (err) {
+                    console.error('POI batch error:', err);
+                    failedTotal += slice.length;
+                    doneTotal += slice.length;
+                }
+                setPoiProgress({ done: doneTotal, total: ids.length, found: foundTotal, linked: linkedTotal, failed: failedTotal });
+            }
+            alert(
+                `POI zenginleştirme tamamlandı:\n` +
+                `• Toplam pano: ${doneTotal}\n` +
+                `• Bulunan POI: ${foundTotal}\n` +
+                `• Kurulan ilişki: ${linkedTotal}\n` +
+                `• Hata: ${failedTotal}`
+            );
+            await refreshPoiStatus();
+            await fetchPanels();
+        } catch (err: any) {
+            alert(`Hata: ${err?.message || 'bilinmeyen'}`);
+        } finally {
+            setPoiAllBusy(false);
+            setPoiProgress(null);
         }
     };
 
@@ -446,6 +636,30 @@ export default function AdminPanelsPage() {
         setBulkPrice('');
     };
 
+    const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+
+    const handleDuplicate = async (id: string, name: string) => {
+        if (duplicatingId) return;
+        if (!confirm(`"${name}" panosunu kopyalamak istiyor musunuz?\n\nTüm alanlar (fiyat, boyut, POI etiketleri, sahip bilgisi vb.) kopyalanır.\nKonumu ~25 m yana kaydırılır; haritadan düzeltebilirsiniz.`)) return;
+        setDuplicatingId(id);
+        try {
+            const res = await fetch(`/api/admin/panels/${id}/duplicate`, {
+                method: 'POST',
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                alert(data?.error || 'Kopyalama başarısız');
+                return;
+            }
+            await fetchPanels();
+        } catch (err) {
+            console.error('Error duplicating panel:', err);
+            alert('Bir hata oluştu');
+        } finally {
+            setDuplicatingId(null);
+        }
+    };
+
     const handleDelete = async (id: string) => {
         if (!confirm('Bu panoyu silmek istediğinizden emin misiniz?')) return;
 
@@ -523,6 +737,40 @@ export default function AdminPanelsPage() {
                             {trafficAllBusy && trafficProgress
                                 ? `Hesaplanıyor ${trafficProgress.done}/${trafficProgress.total}`
                                 : `Tümünü Hesapla${trafficTotal ? ` (${trafficTotal})` : ''}`}
+                        </Button>
+                        {poiPending !== null && poiPending > 0 && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="border-emerald-500 text-emerald-800 hover:bg-emerald-50 flex-1 sm:flex-none"
+                                disabled={poiBusy || poiAllBusy}
+                                onClick={runPoiBatch}
+                                title="Henüz POI zenginleştirilmemiş panolar için OSM'den çevre dükkanları çek"
+                            >
+                                {poiBusy ? (
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                                ) : (
+                                    <Store className="w-4 h-4 mr-2 shrink-0" />
+                                )}
+                                POI Zenginleştir ({poiPending})
+                            </Button>
+                        )}
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="border-teal-500 text-teal-800 hover:bg-teal-50 flex-1 sm:flex-none"
+                            disabled={poiBusy || poiAllBusy}
+                            onClick={runPoiBatchAll}
+                            title="Tüm panolar için OSM'den POI (çevre dükkan/mekân) verisi yeniden çek"
+                        >
+                            {poiAllBusy ? (
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin shrink-0" />
+                            ) : (
+                                <Sparkles className="w-4 h-4 mr-2 shrink-0" />
+                            )}
+                            {poiAllBusy && poiProgress
+                                ? `POI ${poiProgress.done}/${poiProgress.total}`
+                                : `POI Tümünü Zenginleştir${poiTotal ? ` (${poiTotal})` : ''}`}
                         </Button>
                         {mirrorPending !== null && mirrorPending > 0 && (
                             <Button
@@ -890,6 +1138,36 @@ export default function AdminPanelsPage() {
                                                     onChange={(e) => handleEditChange(panel.id, 'name', e.target.value)}
                                                     className="w-full px-2 py-1 border border-transparent hover:border-slate-300 focus:border-blue-500 rounded text-sm bg-transparent focus:bg-white"
                                                 />
+                                                <div className="flex items-center gap-2 mt-1 ml-2">
+                                                    {panel.poiEnrichedAt ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => openPoiModal(panel)}
+                                                            className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                                                            title="Bu panonun çevre POI'lerini gör"
+                                                        >
+                                                            <Store className="w-3 h-3" />
+                                                            {typeof panel.nearbyPoiCount === 'number' ? `${panel.nearbyPoiCount} POI` : 'POI'}
+                                                        </button>
+                                                    ) : (
+                                                        <span
+                                                            className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-slate-50 text-slate-500 border border-slate-200"
+                                                            title="Henüz POI zenginleştirilmemiş"
+                                                        >
+                                                            <Store className="w-3 h-3" />
+                                                            POI: —
+                                                        </span>
+                                                    )}
+                                                    {typeof panel.trafficScore === 'number' && panel.trafficScore > 0 && (
+                                                        <span
+                                                            className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200"
+                                                            title="Trafik skoru"
+                                                        >
+                                                            <Activity className="w-3 h-3" />
+                                                            {panel.trafficScore}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </td>
                                             <td className="px-4 py-3">
                                                 <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
@@ -968,12 +1246,26 @@ export default function AdminPanelsPage() {
                                                     <Link
                                                         href={`/app/admin/panels/${panel.id}/edit`}
                                                         className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-blue-600"
+                                                        title="Düzenle"
                                                     >
                                                         <Pencil className="w-4 h-4" />
                                                     </Link>
                                                     <button
+                                                        onClick={() => handleDuplicate(panel.id, panel.name)}
+                                                        disabled={duplicatingId === panel.id}
+                                                        className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-300 bg-white hover:bg-emerald-50 text-emerald-700 disabled:opacity-50"
+                                                        title="Kopyala — tüm bilgilerle birlikte"
+                                                    >
+                                                        {duplicatingId === panel.id ? (
+                                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                                        ) : (
+                                                            <Copy className="w-4 h-4" />
+                                                        )}
+                                                    </button>
+                                                    <button
                                                         onClick={() => handleDelete(panel.id)}
                                                         className="inline-flex items-center justify-center h-8 w-8 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-red-600"
+                                                        title="Sil"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -987,6 +1279,405 @@ export default function AdminPanelsPage() {
                     )}
                 </div>
             </div>
+
+            {poiModalPanel && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40"
+                    onClick={() => setPoiModalPanel(null)}
+                >
+                    <div
+                        className="relative w-full max-w-2xl max-h-[85vh] overflow-hidden rounded-xl bg-white shadow-2xl flex flex-col"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="px-5 py-4 border-b border-slate-200 bg-slate-50 flex items-start justify-between gap-3">
+                            <div className="min-w-0 flex-1">
+                                <div className="text-xs uppercase tracking-wide text-emerald-700 font-semibold flex items-center gap-1">
+                                    <Store className="w-3.5 h-3.5" /> Çevredeki POI'ler (500m)
+                                </div>
+                                <h3 className="text-lg font-semibold text-slate-900 mt-0.5 truncate">
+                                    {poiModalPanel.name}
+                                </h3>
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                    {poiModalPanel.city} / {poiModalPanel.district} ·{' '}
+                                    {poiModalPanel.poiEnrichedAt
+                                        ? `Son zenginleştirme: ${new Date(poiModalPanel.poiEnrichedAt).toLocaleString('tr-TR')}`
+                                        : 'Henüz zenginleştirilmemiş'}
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setPoiModalPanel(null)}
+                                className="shrink-0 inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-slate-200 text-slate-500"
+                                aria-label="Kapat"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        <div className="p-5 overflow-y-auto">
+                            {poiModalLoading ? (
+                                <div className="py-16 flex items-center justify-center text-slate-500">
+                                    <Loader2 className="w-5 h-5 animate-spin mr-2" /> POI'ler yükleniyor...
+                                </div>
+                            ) : poiModalItems.length === 0 ? (
+                                <div className="py-10 text-center text-slate-500 text-sm">
+                                    Bu pano için POI bulunamadı. "POI Zenginleştir" butonuna bas.
+                                </div>
+                            ) : (
+                                (() => {
+                                    const categoryCounts = poiModalItems.reduce<Record<string, number>>((acc, p) => {
+                                        acc[p.category] = (acc[p.category] || 0) + 1;
+                                        return acc;
+                                    }, {});
+                                    const sortedCategories = Object.entries(categoryCounts).sort(
+                                        (a, b) => b[1] - a[1],
+                                    );
+                                    const filtered = poiModalItems.filter((p) => {
+                                        if (poiCategoryFilter && p.category !== poiCategoryFilter) return false;
+                                        if (poiBrandedOnly && !p.brand) return false;
+                                        return true;
+                                    });
+                                    const brandedCount = poiModalItems.filter((p) => p.brand).length;
+                                    return (
+                                        <div className="space-y-4">
+                                            <div className="text-sm text-slate-600">
+                                                Toplam <strong>{poiModalItems.length}</strong> POI · <strong>{brandedCount}</strong> markalı · gösterilen: <strong>{filtered.length}</strong>
+                                            </div>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPoiCategoryFilter(null)}
+                                                    className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
+                                                        poiCategoryFilter === null
+                                                            ? 'bg-slate-900 text-white border-slate-900'
+                                                            : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                                                    }`}
+                                                >
+                                                    Tümü ({poiModalItems.length})
+                                                </button>
+                                                {sortedCategories.map(([cat, cnt]) => (
+                                                    <button
+                                                        key={cat}
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setPoiCategoryFilter(poiCategoryFilter === cat ? null : cat)
+                                                        }
+                                                        className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
+                                                            poiCategoryFilter === cat
+                                                                ? 'bg-emerald-600 text-white border-emerald-600'
+                                                                : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                                                        }`}
+                                                    >
+                                                        {POI_CATEGORY_LABELS[cat as keyof typeof POI_CATEGORY_LABELS] || cat} ({cnt})
+                                                    </button>
+                                                ))}
+                                                {brandedCount > 0 && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPoiBrandedOnly((v) => !v)}
+                                                        className={`text-[11px] px-2.5 py-1 rounded-full border transition ml-auto ${
+                                                            poiBrandedOnly
+                                                                ? 'bg-amber-500 text-white border-amber-500'
+                                                                : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
+                                                        }`}
+                                                    >
+                                                        🏷️ Sadece markalı
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {/* V4: Manuel POI ekleme paneli */}
+                                            <div className="mb-3 border border-slate-200 rounded-lg bg-slate-50 overflow-hidden">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setPoiAddOpen((v) => !v)}
+                                                    className="w-full flex items-center justify-between px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+                                                >
+                                                    <span className="inline-flex items-center gap-2">
+                                                        <Plus className="w-4 h-4 text-emerald-600" />
+                                                        Manuel POI Ekle
+                                                    </span>
+                                                    <span className="text-xs text-slate-400">
+                                                        {poiAddOpen ? 'Kapat' : 'Aç'}
+                                                    </span>
+                                                </button>
+                                                {poiAddOpen && (
+                                                    <div className="p-4 border-t border-slate-200 bg-white grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                                        <div className="sm:col-span-2">
+                                                            <label className="text-[11px] font-medium text-slate-600 mb-1 block">
+                                                                İsim *
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={poiAddName}
+                                                                onChange={(e) => setPoiAddName(e.target.value)}
+                                                                placeholder="Ör: Migros Kordon Şubesi"
+                                                                className="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[11px] font-medium text-slate-600 mb-1 block">
+                                                                Kategori *
+                                                            </label>
+                                                            <select
+                                                                value={poiAddCategory}
+                                                                onChange={(e) => setPoiAddCategory(e.target.value)}
+                                                                className="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                            >
+                                                                {Object.entries(POI_CATEGORY_LABELS).map(([code, label]) => (
+                                                                    <option key={code} value={code}>
+                                                                        {label}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[11px] font-medium text-slate-600 mb-1 block">
+                                                                Marka (opsiyonel)
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={poiAddBrand}
+                                                                onChange={(e) => setPoiAddBrand(e.target.value)}
+                                                                placeholder="Migros, Starbucks..."
+                                                                className="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[11px] font-medium text-slate-600 mb-1 block">
+                                                                Mesafe (m) *
+                                                            </label>
+                                                            <input
+                                                                type="number"
+                                                                min={5}
+                                                                max={2000}
+                                                                value={poiAddDistance}
+                                                                onChange={(e) => setPoiAddDistance(Number(e.target.value) || 0)}
+                                                                className="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[11px] font-medium text-slate-600 mb-1 block">
+                                                                Yön *
+                                                            </label>
+                                                            <select
+                                                                value={poiAddDirection}
+                                                                onChange={(e) => setPoiAddDirection(e.target.value)}
+                                                                className="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                                            >
+                                                                <option value="N">Kuzey (K)</option>
+                                                                <option value="NE">Kuzeydoğu (KD)</option>
+                                                                <option value="E">Doğu (D)</option>
+                                                                <option value="SE">Güneydoğu (GD)</option>
+                                                                <option value="S">Güney (G)</option>
+                                                                <option value="SW">Güneybatı (GB)</option>
+                                                                <option value="W">Batı (B)</option>
+                                                                <option value="NW">Kuzeybatı (KB)</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="sm:col-span-2 flex justify-end gap-2 pt-1">
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    setPoiAddName('');
+                                                                    setPoiAddBrand('');
+                                                                    setPoiAddCategory('SUPERMARKET');
+                                                                    setPoiAddDistance(100);
+                                                                    setPoiAddDirection('N');
+                                                                    setPoiAddOpen(false);
+                                                                }}
+                                                            >
+                                                                İptal
+                                                            </Button>
+                                                            <Button
+                                                                type="button"
+                                                                size="sm"
+                                                                disabled={poiAddBusy || !poiAddName.trim() || !poiAddDistance}
+                                                                onClick={async () => {
+                                                                    if (!poiModalPanel) return;
+                                                                    setPoiAddBusy(true);
+                                                                    try {
+                                                                        const res = await fetch(
+                                                                            `/api/admin/panels/${poiModalPanel.id}/pois`,
+                                                                            {
+                                                                                method: 'POST',
+                                                                                headers: { 'Content-Type': 'application/json' },
+                                                                                body: JSON.stringify({
+                                                                                    name: poiAddName.trim(),
+                                                                                    brand: poiAddBrand.trim() || undefined,
+                                                                                    category: poiAddCategory,
+                                                                                    distanceM: poiAddDistance,
+                                                                                    direction: poiAddDirection,
+                                                                                }),
+                                                                            },
+                                                                        );
+                                                                        const data = await res.json();
+                                                                        if (!res.ok) {
+                                                                            alert(data?.error || 'POI eklenemedi');
+                                                                            return;
+                                                                        }
+                                                                        setPoiAddName('');
+                                                                        setPoiAddBrand('');
+                                                                        setPoiAddDistance(100);
+                                                                        setPoiAddDirection('N');
+                                                                        await openPoiModal(poiModalPanel);
+                                                                        await refreshPoiStatus();
+                                                                        await fetchPanels();
+                                                                    } catch {
+                                                                        alert('POI eklenemedi');
+                                                                    } finally {
+                                                                        setPoiAddBusy(false);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {poiAddBusy ? (
+                                                                    <>
+                                                                        <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                                                                        Ekleniyor...
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <Plus className="w-3.5 h-3.5 mr-1.5" />
+                                                                        POI Ekle
+                                                                    </>
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <ul className="divide-y divide-slate-100 border border-slate-200 rounded-lg overflow-hidden">
+                                                {filtered.map((p) => (
+                                                    <li
+                                                        key={p.id}
+                                                        className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50"
+                                                    >
+                                                        <div className="shrink-0 w-14 text-right tabular-nums">
+                                                            <div className="text-sm font-semibold text-slate-900">
+                                                                {Math.round(p.distance)}
+                                                                <span className="text-[10px] text-slate-400 ml-0.5">m</span>
+                                                            </div>
+                                                            <div className="text-[10px] text-slate-400 uppercase">
+                                                                {DIRECTION_LABELS_TR[p.direction] || p.direction}
+                                                            </div>
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <div className="text-sm font-medium text-slate-900 truncate">
+                                                                {p.name}
+                                                                {p.brand && (
+                                                                    <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-100 text-emerald-800">
+                                                                        {p.brand}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                                                <span>
+                                                                    {POI_CATEGORY_LABELS[p.category as keyof typeof POI_CATEGORY_LABELS] || p.category}
+                                                                </span>
+                                                                {p.source === 'MANUAL' || p.manuallyAdded ? (
+                                                                    <span className="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-semibold bg-amber-100 text-amber-800">
+                                                                        MANUEL
+                                                                    </span>
+                                                                ) : p.source === 'GOOGLE' ? (
+                                                                    <span className="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-semibold bg-sky-100 text-sky-800">
+                                                                        GOOGLE
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-semibold bg-slate-100 text-slate-600">
+                                                                        OSM
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            type="button"
+                                                            disabled={poiDeletingId === p.id}
+                                                            onClick={async () => {
+                                                                if (!poiModalPanel) return;
+                                                                if (!window.confirm(`"${p.name}" POI kaldırılsın mı?`)) return;
+                                                                setPoiDeletingId(p.id);
+                                                                try {
+                                                                    const res = await fetch(
+                                                                        `/api/admin/panels/${poiModalPanel.id}/pois?linkId=${p.id}`,
+                                                                        { method: 'DELETE' },
+                                                                    );
+                                                                    if (!res.ok) {
+                                                                        const data = await res.json().catch(() => ({}));
+                                                                        alert(data?.error || 'Silinemedi');
+                                                                        return;
+                                                                    }
+                                                                    setPoiModalItems((items) => items.filter((it) => it.id !== p.id));
+                                                                    await refreshPoiStatus();
+                                                                    await fetchPanels();
+                                                                } finally {
+                                                                    setPoiDeletingId(null);
+                                                                }
+                                                            }}
+                                                            className="shrink-0 inline-flex items-center justify-center w-7 h-7 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition disabled:opacity-50"
+                                                            title="Bu POI'yi kaldır"
+                                                        >
+                                                            {poiDeletingId === p.id ? (
+                                                                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                            ) : (
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            )}
+                                                        </button>
+                                                    </li>
+                                                ))}
+                                                {filtered.length === 0 && (
+                                                    <li className="px-4 py-6 text-center text-sm text-slate-500">
+                                                        Bu filtre için sonuç yok.
+                                                    </li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    );
+                                })()
+                            )}
+                        </div>
+
+                        <div className="px-5 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+                            <div className="text-xs text-slate-500">
+                                Kaynak: OpenStreetMap (Overpass)
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={poiModalLoading}
+                                    onClick={async () => {
+                                        if (!poiModalPanel) return;
+                                        setPoiModalLoading(true);
+                                        try {
+                                            const res = await fetch(
+                                                `/api/admin/panels/${poiModalPanel.id}/enrich-pois`,
+                                                { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) },
+                                            );
+                                            if (res.ok) {
+                                                // Reload list
+                                                await openPoiModal(poiModalPanel);
+                                                await refreshPoiStatus();
+                                                await fetchPanels();
+                                            }
+                                        } finally {
+                                            setPoiModalLoading(false);
+                                        }
+                                    }}
+                                >
+                                    <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+                                    Yeniden Zenginleştir
+                                </Button>
+                                <Button type="button" size="sm" onClick={() => setPoiModalPanel(null)}>
+                                    Kapat
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

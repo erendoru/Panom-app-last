@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { CartProvider, useCart } from '@/contexts/CartContext';
-import { ArrowLeft, Trash2, Calendar, ShoppingCart, Zap, MapPin, CreditCard } from 'lucide-react';
+import { ArrowLeft, Trash2, Calendar, ShoppingCart, Zap, MapPin, CreditCard, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
 
@@ -179,6 +179,12 @@ function CartPageContent() {
                                                     </span>
                                                     <h3 className="text-lg font-semibold text-neutral-900 mt-2">{item.panel.name}</h3>
                                                     <p className="text-sm text-neutral-500">{item.panel.city}, {item.panel.district}</p>
+                                                    {item.panel.poiEnrichedAt && (item.panel.nearbyPoiCount ?? 0) > 0 && (
+                                                        <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                            <Store className="w-3 h-3" />
+                                                            Yakında {item.panel.nearbyPoiCount} işletme
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <button
                                                     onClick={() => removeFromCart(item.id)}

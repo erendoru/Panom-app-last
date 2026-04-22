@@ -18,6 +18,12 @@ export interface FilterState {
     panelTypes: string[];
     trafficLevels: string[];
     isAVM: boolean | null;
+    // V2: Çevre filtreleri
+    nearCategories: string[];
+    withinM: number;
+    includeBrands: string[];
+    excludeBrands: string[];
+    nearMode: 'any' | 'all';
 }
 
 interface FilterSidebarProps {
@@ -35,7 +41,7 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
         size: true,
         type: true,
         traffic: true,
-        location: true
+        location: true,
     });
 
     const toggleSection = (section: keyof typeof openSections) => {
@@ -74,19 +80,30 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
             sizeRange: [0, 100],
             panelTypes: [],
             trafficLevels: [],
-            isAVM: null
+            isAVM: null,
+            nearCategories: [],
+            withinM: 300,
+            includeBrands: [],
+            excludeBrands: [],
+            nearMode: 'any',
         });
     };
+
+    const nearbyActive =
+        filters.nearCategories.length > 0 ||
+        filters.includeBrands.length > 0 ||
+        filters.excludeBrands.length > 0;
 
     const activeFilterCount =
         (filters.panelTypes.length > 0 ? 1 : 0) +
         (filters.trafficLevels.length > 0 ? 1 : 0) +
         (filters.isAVM !== null ? 1 : 0) +
         (filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 1 : 0) +
-        (filters.sizeRange[0] > 0 || filters.sizeRange[1] < 100 ? 1 : 0);
+        (filters.sizeRange[0] > 0 || filters.sizeRange[1] < 100 ? 1 : 0) +
+        (nearbyActive ? 1 : 0);
 
     return (
-        <div className={`bg-white ${isMobile ? 'h-full' : 'border-r'} flex flex-col`}>
+        <div className={`bg-white ${isMobile ? 'h-full' : 'border-r h-full'} flex flex-col`}>
             {/* Header */}
             <div className="p-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -219,7 +236,6 @@ export default function FilterSidebar({ filters, onFilterChange, onClose, isMobi
                         </div>
                     )}
                 </div>
-
 
             </div>
 

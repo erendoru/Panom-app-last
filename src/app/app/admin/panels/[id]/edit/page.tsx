@@ -620,6 +620,7 @@ export default function EditPanelPage() {
                                         }));
                                     }}
                                     height="400px"
+                                    panelType={formData.type}
                                 />
                             </div>
                         </div>

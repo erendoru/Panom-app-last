@@ -113,20 +113,20 @@ export const PANEL_TYPE_LABELS: Record<string, string> = {
     YOL_PANOSU: "Yol Panosu"
 };
 
-// Traffic Level Türkçe İsimleri
+// Traffic Level Türkçe İsimleri (reklamveren dostu — pozitif çerçeveli)
 export const TRAFFIC_LEVEL_LABELS: Record<string, string> = {
-    LOW: "Düşük Trafik",
-    MEDIUM: "Orta Trafik",
+    LOW: "Standart Trafik",
+    MEDIUM: "İyi Trafik",
     HIGH: "Yüksek Trafik",
-    VERY_HIGH: "Çok Yüksek Trafik"
+    VERY_HIGH: "Premium Trafik"
 };
 
 // Traffic Level Renkleri (Tailwind)
 export const TRAFFIC_LEVEL_COLORS: Record<string, string> = {
-    LOW: "text-gray-600 bg-gray-100",
-    MEDIUM: "text-blue-600 bg-blue-100",
-    HIGH: "text-orange-600 bg-orange-100",
-    VERY_HIGH: "text-red-600 bg-red-100"
+    LOW: "text-slate-700 bg-slate-100",
+    MEDIUM: "text-emerald-700 bg-emerald-50",
+    HIGH: "text-emerald-700 bg-emerald-100",
+    VERY_HIGH: "text-amber-700 bg-amber-100"
 };
 
 // Panel Type İконları (emoji veya lucide icon name)

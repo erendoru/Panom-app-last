@@ -36,7 +36,9 @@ export async function GET(req: NextRequest) {
                         priceDaily: true,
                         ownerName: true,
                         width: true,
-                        height: true
+                        height: true,
+                        nearbyPoiCount: true,
+                        poiEnrichedAt: true,
                     }
                 }
             },

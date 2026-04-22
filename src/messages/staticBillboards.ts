@@ -20,6 +20,17 @@ export function staticBillboardsCopy(locale: AppLocale) {
             : "Detaylı fiyat ayarı için sağdaki filtre menüsünü kullanın.",
         filtersHide: e ? "Hide filters" : "Filtreleri Gizle",
         filtersShow: e ? "All filters" : "Tüm Filtreler",
+        targeting: e ? "Targeting" : "Hedefli Filtreleme",
+        targetingHint: e
+            ? "Narrow panels by who's around them."
+            : "Çevresine göre panoları filtreleyin.",
+        nearbyCategories: e ? "Near category" : "Çevresinde olsun",
+        maxDistance: e ? "Max distance" : "Maks. mesafe",
+        anyOfThem: e ? "Any" : "Herhangi biri",
+        allOfThem: e ? "All" : "Hepsi birden",
+        includeBrand: e ? "Include brand" : "Şu marka yakında",
+        excludeBrand: e ? "Exclude brand" : "Şu marka olmasın",
+        clearTargeting: e ? "Clear targeting" : "Hedeflemeyi temizle",
         panelCountMobile: (n: number) => (e ? `${n} units` : `${n} pano`),
         panelCountDesktop: (n: number) => (e ? `${n} units found` : `${n} pano bulundu`),
         filtersTitle: e ? "Filters" : "Filtreler",

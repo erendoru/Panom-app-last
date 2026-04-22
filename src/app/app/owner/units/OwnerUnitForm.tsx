@@ -331,6 +331,7 @@ export default function OwnerUnitForm({
                                     }));
                                 }}
                                 height="400px"
+                                panelType={form.type}
                             />
                             <p className="text-xs text-slate-500 mt-1">
                                 Konumu işaretlemek için haritaya tıklayın veya mevcut pini sürükleyin.

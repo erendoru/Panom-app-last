@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2 } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2, Target, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import FilterSidebar, { FilterState } from "@/components/static/FilterSidebar";
@@ -14,6 +15,58 @@ import { CartProvider } from "@/contexts/CartContext";
 import { useAppLocale } from "@/contexts/LocaleContext";
 import { staticBillboardsCopy, staticBillboardsCityLabel } from "@/messages/staticBillboards";
 import { panelTypeLabel } from "@/lib/panel-labels-locale";
+import { POI_CATEGORY_LABELS, type PoiCategory } from "@/lib/traffic/poiTaxonomy";
+
+/** Reklamverene en mantıklı gelecek kategori kısa listesi (çevre filtresi için) */
+const NEARBY_CATEGORY_OPTIONS: PoiCategory[] = [
+    "SUPERMARKET",
+    "MALL",
+    "SCHOOL",
+    "UNIVERSITY",
+    "HOSPITAL",
+    "PHARMACY",
+    "BANK",
+    "FUEL",
+    "CAFE",
+    "RESTAURANT",
+    "HOTEL",
+    "STADIUM",
+    "SPORTS_CENTRE",
+    "BUS_STATION",
+    "TRAIN_STATION",
+];
+
+/** Marka içer/hariç filtresi için popüler zincir listesi */
+const POPULAR_BRANDS: { code: string; label: string }[] = [
+    { code: "MIGROS", label: "Migros" },
+    { code: "BIM", label: "BIM" },
+    { code: "SOK", label: "ŞOK" },
+    { code: "A101", label: "A101" },
+    { code: "CARREFOURSA", label: "CarrefourSA" },
+    { code: "METRO", label: "Metro" },
+    { code: "HAKMAR", label: "Hakmar" },
+    { code: "STARBUCKS", label: "Starbucks" },
+    { code: "KAHVE_DUNYASI", label: "Kahve Dünyası" },
+    { code: "MCDONALDS", label: "McDonald's" },
+    { code: "BURGER_KING", label: "Burger King" },
+    { code: "KFC", label: "KFC" },
+    { code: "SHELL", label: "Shell" },
+    { code: "OPET", label: "Opet" },
+    { code: "BP", label: "BP" },
+    { code: "PETROL_OFISI", label: "Petrol Ofisi" },
+    { code: "TP", label: "Türkiye Petrolleri" },
+    { code: "AKBANK", label: "Akbank" },
+    { code: "ISBANK", label: "İş Bankası" },
+    { code: "GARANTI", label: "Garanti BBVA" },
+    { code: "ZIRAAT", label: "Ziraat Bankası" },
+    { code: "YAPIKREDI", label: "Yapı Kredi" },
+    { code: "TEKNOSA", label: "Teknosa" },
+    { code: "MEDIAMARKT", label: "MediaMarkt" },
+    { code: "LCW", label: "LC Waikiki" },
+    { code: "DEFACTO", label: "DeFacto" },
+    { code: "IKEA", label: "IKEA" },
+    { code: "KOCTAS", label: "Koçtaş" },
+];
 
 function MapLoadingPlaceholder() {
     const { locale } = useAppLocale();
@@ -45,12 +98,25 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
     // Dropdown states
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
-    const [filters, setFilters] = useState<FilterState>({
-        priceRange: [0, 200000],
-        sizeRange: [0, 100],
-        panelTypes: [],
-        trafficLevels: [],
-        isAVM: null
+    const [filters, setFilters] = useState<FilterState>(() => {
+        // URL query'den başlangıç değerlerini oku (paylaşılabilir link)
+        const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+        const readList = (key: string) =>
+            params?.get(key)
+                ? params.get(key)!.split(',').map((s) => s.trim()).filter(Boolean)
+                : [];
+        return {
+            priceRange: [0, 200000],
+            sizeRange: [0, 100],
+            panelTypes: [],
+            trafficLevels: [],
+            isAVM: null,
+            nearCategories: readList('nearCategory'),
+            withinM: Number(params?.get('withinM')) > 0 ? Number(params?.get('withinM')) : 300,
+            includeBrands: readList('includeBrand'),
+            excludeBrands: readList('excludeBrand'),
+            nearMode: (params?.get('nearMode') === 'all' ? 'all' : 'any') as 'any' | 'all',
+        };
     });
 
     // Top cities for quick access
@@ -71,25 +137,76 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         setSelectedCity(city);
     };
 
-    // Fetch panels when city changes
+    // Fetch panels when city or nearby-filters change
     useEffect(() => {
         const fetchPanels = async () => {
             setIsLoadingPanels(true);
             try {
-                const res = await fetch(`/api/panels/by-city?city=${encodeURIComponent(selectedCity)}`);
+                const qs = new URLSearchParams();
+                qs.set('city', selectedCity);
+                if (filters.nearCategories.length > 0) {
+                    qs.set('nearCategory', filters.nearCategories.join(','));
+                    qs.set('nearMode', filters.nearMode);
+                }
+                if (filters.includeBrands.length > 0) {
+                    qs.set('includeBrand', filters.includeBrands.join(','));
+                }
+                if (filters.excludeBrands.length > 0) {
+                    qs.set('excludeBrand', filters.excludeBrands.join(','));
+                }
+                if (
+                    filters.nearCategories.length > 0 ||
+                    filters.includeBrands.length > 0 ||
+                    filters.excludeBrands.length > 0
+                ) {
+                    qs.set('withinM', String(filters.withinM));
+                }
+                const res = await fetch(`/api/panels/by-city?${qs.toString()}`);
                 if (res.ok) {
                     const data = await res.json();
                     setPanels(data.panels);
                 }
             } catch (error) {
-                console.error("Error fetching panels:", error);
+                console.error('Error fetching panels:', error);
             } finally {
                 setIsLoadingPanels(false);
             }
         };
-
         fetchPanels();
-    }, [selectedCity]);
+    }, [
+        selectedCity,
+        filters.nearCategories,
+        filters.includeBrands,
+        filters.excludeBrands,
+        filters.withinM,
+        filters.nearMode,
+    ]);
+
+    // URL query param senkronu — paylaşılabilir link
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const url = new URL(window.location.href);
+        const set = (key: string, value: string | null) => {
+            if (value && value.length > 0) url.searchParams.set(key, value);
+            else url.searchParams.delete(key);
+        };
+        set('nearCategory', filters.nearCategories.join(','));
+        set('includeBrand', filters.includeBrands.join(','));
+        set('excludeBrand', filters.excludeBrands.join(','));
+        const hasEnv =
+            filters.nearCategories.length > 0 ||
+            filters.includeBrands.length > 0 ||
+            filters.excludeBrands.length > 0;
+        set('withinM', hasEnv ? String(filters.withinM) : null);
+        set('nearMode', hasEnv && filters.nearMode === 'all' ? 'all' : null);
+        window.history.replaceState({}, '', url.toString());
+    }, [
+        filters.nearCategories,
+        filters.includeBrands,
+        filters.excludeBrands,
+        filters.withinM,
+        filters.nearMode,
+    ]);
 
     // Türkiye geneli (Tümü) — yaklaşık merkez ve ülke görünümü zoom
     const turkeyOverview: { center: [number, number]; zoom: number } = {
@@ -122,7 +239,12 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
         (filters.panelTypes.length > 0 ? 1 : 0) +
         (filters.trafficLevels.length > 0 ? 1 : 0) +
         (filters.isAVM !== null ? 1 : 0) +
-        (filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 1 : 0);
+        (filters.priceRange[0] > 0 || filters.priceRange[1] < 200000 ? 1 : 0) +
+        (filters.nearCategories.length > 0 ||
+            filters.includeBrands.length > 0 ||
+            filters.excludeBrands.length > 0
+            ? 1
+            : 0);
 
     // Toggle panel type filter
     const togglePanelType = (type: string) => {
@@ -131,6 +253,41 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
             : [...filters.panelTypes, type];
         setFilters({ ...filters, panelTypes: newTypes });
     };
+
+    // V2/V3: Hedefli filtreleme helper'ları
+    const toggleNearCategory = (cat: string) => {
+        const next = filters.nearCategories.includes(cat)
+            ? filters.nearCategories.filter((c) => c !== cat)
+            : [...filters.nearCategories, cat];
+        setFilters({ ...filters, nearCategories: next });
+    };
+    const toggleIncludeBrand = (brand: string) => {
+        const next = filters.includeBrands.includes(brand)
+            ? filters.includeBrands.filter((b) => b !== brand)
+            : [...filters.includeBrands, brand];
+        const nextExclude = filters.excludeBrands.filter((b) => b !== brand);
+        setFilters({ ...filters, includeBrands: next, excludeBrands: nextExclude });
+    };
+    const toggleExcludeBrand = (brand: string) => {
+        const next = filters.excludeBrands.includes(brand)
+            ? filters.excludeBrands.filter((b) => b !== brand)
+            : [...filters.excludeBrands, brand];
+        const nextInclude = filters.includeBrands.filter((b) => b !== brand);
+        setFilters({ ...filters, excludeBrands: next, includeBrands: nextInclude });
+    };
+    const clearTargeting = () => {
+        setFilters({
+            ...filters,
+            nearCategories: [],
+            includeBrands: [],
+            excludeBrands: [],
+            nearMode: "any",
+        });
+    };
+    const targetingCount =
+        filters.nearCategories.length +
+        filters.includeBrands.length +
+        filters.excludeBrands.length;
 
     // Toggle dropdown
     const toggleDropdown = (name: string) => {
@@ -255,7 +412,12 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                             sizeRange: [0, 100],
                                             panelTypes: [],
                                             trafficLevels: [],
-                                            isAVM: null
+                                            isAVM: null,
+                                            nearCategories: [],
+                                            withinM: 300,
+                                            includeBrands: [],
+                                            excludeBrands: [],
+                                            nearMode: 'any',
                                         })}
                                         className="px-3 py-1.5 rounded-lg text-sm text-red-600 border border-red-200 bg-red-50"
                                     >
@@ -395,6 +557,171 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
                                                 <span className="text-slate-700">{s.openArea}</span>
                                                 {filters.isAVM === false && <Check className="w-4 h-4 text-blue-600" />}
                                             </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* V3: Targeting Dropdown — çevre bağlamı */}
+                            <div className="relative custom-dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('targeting')}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium transition-colors ${
+                                        targetingCount > 0
+                                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+                                    }`}
+                                >
+                                    <Target className={`w-3.5 h-3.5 ${targetingCount > 0 ? 'text-emerald-600' : 'text-slate-400'}`} />
+                                    <span>{s.targeting}</span>
+                                    {targetingCount > 0 && (
+                                        <span className="bg-emerald-600 text-white text-[10px] px-1.5 rounded-full min-w-[18px] h-[18px] flex items-center justify-center">
+                                            {targetingCount}
+                                        </span>
+                                    )}
+                                    <ChevronDown className="w-3.5 h-3.5 opacity-50" />
+                                </button>
+
+                                {openDropdown === 'targeting' && (
+                                    <div className="absolute top-full left-0 mt-2 w-[380px] max-w-[calc(100vw-2rem)] bg-white rounded-xl shadow-2xl border border-slate-200 z-50 animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[min(70vh,540px)]">
+                                        {/* Header */}
+                                        <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-7 h-7 rounded-md bg-emerald-100 flex items-center justify-center">
+                                                    <Target className="w-3.5 h-3.5 text-emerald-700" />
+                                                </div>
+                                                <div>
+                                                    <div className="text-sm font-semibold text-slate-900">{s.targeting}</div>
+                                                    <div className="text-[11px] text-slate-500">{s.targetingHint}</div>
+                                                </div>
+                                            </div>
+                                            {targetingCount > 0 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={clearTargeting}
+                                                    className="text-[11px] text-rose-600 hover:text-rose-700 font-medium inline-flex items-center gap-0.5"
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                    {s.clearTargeting}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Scrollable body */}
+                                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                                            {/* Mesafe eşiği */}
+                                            <div>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="text-xs font-semibold text-slate-700">{s.maxDistance}</span>
+                                                    <span className="text-xs font-semibold text-emerald-700 tabular-nums">{filters.withinM} m</span>
+                                                </div>
+                                                <Slider
+                                                    min={50}
+                                                    max={1000}
+                                                    step={50}
+                                                    value={[filters.withinM]}
+                                                    onValueChange={(v) => setFilters({ ...filters, withinM: v[0] })}
+                                                    className="w-full"
+                                                />
+                                            </div>
+
+                                            {/* Kategoriler */}
+                                            <div>
+                                                <div className="text-xs font-semibold text-slate-700 mb-2">{s.nearbyCategories}</div>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {NEARBY_CATEGORY_OPTIONS.map((cat) => {
+                                                        const active = filters.nearCategories.includes(cat);
+                                                        return (
+                                                            <button
+                                                                key={cat}
+                                                                type="button"
+                                                                onClick={() => toggleNearCategory(cat)}
+                                                                className={`text-[11px] px-2.5 py-1 rounded-full border transition ${
+                                                                    active
+                                                                        ? 'bg-emerald-600 text-white border-emerald-600'
+                                                                        : 'bg-white text-slate-700 border-slate-300 hover:bg-emerald-50 hover:border-emerald-300'
+                                                                }`}
+                                                            >
+                                                                {POI_CATEGORY_LABELS[cat]}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                                {filters.nearCategories.length >= 2 && (
+                                                    <div className="mt-2 flex gap-1 bg-slate-100 rounded p-0.5">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setFilters({ ...filters, nearMode: 'any' })}
+                                                            className={`flex-1 text-[10px] px-2 py-1 rounded transition ${
+                                                                filters.nearMode === 'any'
+                                                                    ? 'bg-white text-slate-900 font-semibold shadow-sm'
+                                                                    : 'text-slate-600'
+                                                            }`}
+                                                        >
+                                                            {s.anyOfThem}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setFilters({ ...filters, nearMode: 'all' })}
+                                                            className={`flex-1 text-[10px] px-2 py-1 rounded transition ${
+                                                                filters.nearMode === 'all'
+                                                                    ? 'bg-white text-slate-900 font-semibold shadow-sm'
+                                                                    : 'text-slate-600'
+                                                            }`}
+                                                        >
+                                                            {s.allOfThem}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Markalar — içer */}
+                                            <div>
+                                                <div className="text-xs font-semibold text-slate-700 mb-2">{s.includeBrand}</div>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {POPULAR_BRANDS.map((b) => {
+                                                        const active = filters.includeBrands.includes(b.code);
+                                                        return (
+                                                            <button
+                                                                key={b.code}
+                                                                type="button"
+                                                                onClick={() => toggleIncludeBrand(b.code)}
+                                                                className={`text-[11px] px-2 py-0.5 rounded-full border transition ${
+                                                                    active
+                                                                        ? 'bg-blue-600 text-white border-blue-600'
+                                                                        : 'bg-white text-slate-700 border-slate-300 hover:bg-blue-50 hover:border-blue-300'
+                                                                }`}
+                                                            >
+                                                                {b.label}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+
+                                            {/* Markalar — hariç */}
+                                            <div>
+                                                <div className="text-xs font-semibold text-slate-700 mb-2">{s.excludeBrand}</div>
+                                                <div className="flex flex-wrap gap-1.5">
+                                                    {POPULAR_BRANDS.map((b) => {
+                                                        const active = filters.excludeBrands.includes(b.code);
+                                                        return (
+                                                            <button
+                                                                key={b.code}
+                                                                type="button"
+                                                                onClick={() => toggleExcludeBrand(b.code)}
+                                                                className={`text-[11px] px-2 py-0.5 rounded-full border transition ${
+                                                                    active
+                                                                        ? 'bg-rose-600 text-white border-rose-600'
+                                                                        : 'bg-white text-slate-700 border-slate-300 hover:bg-rose-50 hover:border-rose-300'
+                                                                }`}
+                                                            >
+                                                                {b.label}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 )}

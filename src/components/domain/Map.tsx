@@ -10,7 +10,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Activity } from "lucide-react";
+import { Activity, Store, Loader2 } from "lucide-react";
+import { POI_CATEGORY_LABELS } from "@/lib/traffic/poiTaxonomy";
 
 // Component to handle map view updates
 function MapController({ center, zoom }: { center: [number, number], zoom: number }) {
@@ -71,6 +72,99 @@ function trafficColor(score: number): { stroke: string; fill: string } {
     return { stroke: "#dc2626", fill: "#ef4444" }; // düşük → kırmızı
 }
 
+// V5: Popup açılınca lazy-fetch ile çevre özeti.
+// Popup child'ı Leaflet tarafından sadece open event'inde DOM'a takılır;
+// mount sırasında tek seferlik fetch yapılır, sonraki tekrar açmalar cache olmaz
+// ama hafiftir (top-3 POI + kategori sayımı).
+function MarkerPoiSummary({ panelId }: { panelId: string }) {
+    const [data, setData] = useState<{
+        topPois: Array<{ id: string; name: string; brand: string | null; distance: number; direction: string; category: string }>;
+        categoryCounts: Record<string, number>;
+        total: number;
+    } | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [failed, setFailed] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        setLoading(true);
+        fetch(`/api/panels/${panelId}/nearby-pois?limit=3`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((d) => {
+                if (cancelled) return;
+                if (d && d.total > 0) setData(d);
+                else setFailed(true);
+            })
+            .catch(() => !cancelled && setFailed(true))
+            .finally(() => !cancelled && setLoading(false));
+        return () => {
+            cancelled = true;
+        };
+    }, [panelId]);
+
+    if (loading) {
+        return (
+            <div className="mt-2 flex items-center gap-1.5 text-[11px] text-slate-400">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                Çevre bilgisi yükleniyor...
+            </div>
+        );
+    }
+    if (failed || !data) return null;
+
+    const topCats = Object.entries(data.categoryCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4);
+
+    const DIR_TR: Record<string, string> = {
+        N: "K",
+        NE: "KD",
+        E: "D",
+        SE: "GD",
+        S: "G",
+        SW: "GB",
+        W: "B",
+        NW: "KB",
+    };
+
+    return (
+        <div className="mt-2 rounded-md border border-emerald-100 bg-emerald-50/60 p-2">
+            <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 mb-1.5">
+                <Store className="w-3 h-3" />
+                Çevresinde ({data.total})
+            </div>
+            {data.topPois.length > 0 && (
+                <ul className="text-[11px] text-slate-700 space-y-0.5 mb-1.5">
+                    {data.topPois.map((p) => (
+                        <li key={p.id} className="truncate">
+                            {p.brand ? (
+                                <span className="font-medium">{p.name}</span>
+                            ) : (
+                                p.name
+                            )}
+                            <span className="text-slate-400 ml-1">
+                                · {p.distance}m {DIR_TR[p.direction] || p.direction}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            {topCats.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                    {topCats.map(([cat, cnt]) => (
+                        <span
+                            key={cat}
+                            className="text-[9px] px-1.5 py-0.5 rounded-full bg-white border border-emerald-200 text-emerald-800 font-medium"
+                        >
+                            {POI_CATEGORY_LABELS[cat as keyof typeof POI_CATEGORY_LABELS] || cat} ×{cnt}
+                        </span>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function Map({
     panels,
     selectedPanel,
@@ -85,6 +179,22 @@ export default function Map({
     zoom?: number
 }) {
     const [showTraffic, setShowTraffic] = useState(false);
+
+    // React 18 StrictMode + Next.js HMR ile Leaflet "Map container is already initialized"
+    // hatasını önlemek için: map instance'ını ref'te tutup unmount'ta .remove() çağırırız.
+    const mapInstanceRef = useRef<L.Map | null>(null);
+    useEffect(() => {
+        return () => {
+            if (mapInstanceRef.current) {
+                try {
+                    mapInstanceRef.current.remove();
+                } catch {
+                    /* ignore */
+                }
+                mapInstanceRef.current = null;
+            }
+        };
+    }, []);
 
     const trafficPanels = useMemo(
         () =>
@@ -167,7 +277,14 @@ export default function Map({
                     </div>
                 )}
 
-                <MapContainer center={center} zoom={zoom} style={{ height: "100%", width: "100%" }}>
+                <MapContainer
+                    ref={(instance) => {
+                        mapInstanceRef.current = instance;
+                    }}
+                    center={center}
+                    zoom={zoom}
+                    style={{ height: "100%", width: "100%" }}
+                >
                     <MapController center={center} zoom={zoom} />
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -252,6 +369,11 @@ export default function Map({
                                             <span>🏬</span>
                                             <span className="font-medium">AVM İçi</span>
                                         </div>
+                                    )}
+
+                                    {/* V5: Çevre özeti — sadece POI enrich edilmiş panolarda */}
+                                    {panel.poiEnrichedAt && (panel.nearbyPoiCount ?? 0) > 0 && (
+                                        <MarkerPoiSummary panelId={panel.id} />
                                     )}
 
                                     {/* CLP badges - compact */}

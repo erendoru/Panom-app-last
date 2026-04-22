@@ -72,14 +72,29 @@ export const BASE_TRAFFIC_BY_ROAD_TYPE: Record<RoadTypeKey, number> = {
     PEDESTRIAN: 8_000,
 };
 
-/** Yol tipine göre bazal skor (0-100). */
+/**
+ * Yol tipine göre bazal skor (0-100).
+ *
+ * NOT: Değerler reklamveren psikolojisiyle ayarlanmıştır — "çok düşük" gibi
+ * algılanan skorlar, panonun gerçekte edindiği POI/çevre bağlamıyla birlikte
+ * değerlendirildiğinde mantıksız düzeye inmesin diye taban yükseltilmiştir.
+ * Nihai skor ayrıca end of compute'da `DISPLAY_SCORE_FLOOR`'a clamp edilir.
+ */
 const BASE_SCORE_BY_ROAD_TYPE: Record<RoadTypeKey, number> = {
-    HIGHWAY: 70,
-    MAIN_ROAD: 50,
-    SECONDARY_ROAD: 30,
-    RESIDENTIAL: 15,
-    PEDESTRIAN: 40,
+    HIGHWAY: 75,
+    MAIN_ROAD: 58,
+    SECONDARY_ROAD: 42,
+    RESIDENTIAL: 28,
+    PEDESTRIAN: 52,
 };
+
+/**
+ * Reklamverene sunulan minimum skor.
+ * Gerçek bir pano nadiren 35'in altındadır (POI + yol + görünürlük bir arada).
+ * Bu seviyenin altı reklamveren için "değersiz" gibi algılandığından,
+ * iç hesapta daha düşük çıksa bile dışarıya 35+ olarak sunuyoruz.
+ */
+export const DISPLAY_SCORE_FLOOR = 35;
 
 /**
  * Yerleşim bağlamı skoru — OSM'den bağımsız, en güçlü sinyal.
@@ -126,27 +141,35 @@ export const ROAD_TYPE_FROM_PLACEMENT: Record<PlacementContextKey, RoadTypeKey> 
     RESIDENTIAL_EDGE: "RESIDENTIAL",
 };
 
-/** OSM POI sayısından çıkarılacak "yaya yoğunluğu" çarpanı. */
+/**
+ * OSM POI sayısından çıkarılacak "çevre yoğunluğu" çarpanı.
+ *
+ * Daha cömert eşikler: çevrede birkaç işyeri olan pano da düşüş yaşamasın
+ * (reklamveren 15 POI görmek yerine 50 aradığında, gerçekte bunu ayırt edemez).
+ */
 function poiMultiplierFromCount(count: number): number {
-    if (count >= 40) return 1.5; // çok yoğun
-    if (count >= 20) return 1.3; // yüksek
-    if (count >= 8) return 1.0; // orta
-    return 0.7; // düşük
+    if (count >= 30) return 1.6; // çok yoğun
+    if (count >= 15) return 1.4; // yüksek
+    if (count >= 6) return 1.15; // orta
+    if (count >= 1) return 0.95; // az ama var
+    return 0.85; // bilgi yok — cezalandırmayalım
 }
 
-/** POI sayısından bonus puan (0-15). */
+/** POI sayısından bonus puan (0-22). */
 function poiBonusFromCount(count: number): number {
-    return Math.min(15, Math.round(count / 3));
+    return Math.min(22, Math.round(count / 2));
 }
 
 /**
  * POI yoğunluğuna göre skor tabanı (floor).
  * Meydan/çarşı yoğunluğunda OSM yolu residential dese bile tabanı yükseltir.
+ * Eşikler daha düşürüldü: 5+ POI bile artık pozitif sinyal taşır.
  */
 function poiScoreFloor(count: number): number {
-    if (count >= 40) return 65;
-    if (count >= 20) return 50;
-    if (count >= 10) return 35;
+    if (count >= 40) return 72;
+    if (count >= 20) return 58;
+    if (count >= 10) return 48;
+    if (count >= 5) return 42;
     return 0;
 }
 
@@ -176,6 +199,19 @@ export type ComputeTrafficInput = {
     manualDailyTraffic?: number | null;
     /** Opsiyonel: haftalık fiyat (CPM hesabı için) */
     weeklyPrice?: number | null;
+
+    // --- V5: POI zenginleştirme sinyalleri ------------------------------
+    /** Çevrede markalı (zincir) POI sayısı — reklamvereninin bildiği isimler. */
+    brandedPoiCount?: number;
+    /** Kaç farklı kategoriden POI var (çeşitlilik). */
+    categoryDiversity?: number;
+    /**
+     * Büyük trafik mıknatısı yakında mı (AVM / Stadyum / Üniversite /
+     * Hastane / Tren İstasyonu vb.)
+     */
+    hasMajorAttractor?: boolean;
+    /** Çevrede süpermarket sayısı — alışveriş trafiği göstergesi. */
+    supermarketCount?: number;
 };
 
 export type ComputeTrafficOutput = {
@@ -262,7 +298,49 @@ export function computeTraffic(input: ComputeTrafficInput): ComputeTrafficOutput
         notes.push("Yakında AVM (+5).");
     }
 
-    trafficScore = Math.max(1, Math.min(100, trafficScore));
+    // V5: POI zenginleştirme bonusları — markalı + çeşitlilik + mıknatıs
+    let enrichBonus = 0;
+    if ((input.brandedPoiCount ?? 0) >= 3) {
+        enrichBonus += 3;
+        notes.push(`Markalı POI ≥ 3 (+3).`);
+    } else if ((input.brandedPoiCount ?? 0) >= 1) {
+        enrichBonus += 1;
+        notes.push(`Markalı POI var (+1).`);
+    }
+    if ((input.categoryDiversity ?? 0) >= 6) {
+        enrichBonus += 3;
+        notes.push(`Kategori çeşitliliği yüksek (+3).`);
+    } else if ((input.categoryDiversity ?? 0) >= 3) {
+        enrichBonus += 1;
+        notes.push(`Kategori çeşitliliği iyi (+1).`);
+    }
+    if (input.hasMajorAttractor) {
+        enrichBonus += 5;
+        notes.push("Büyük trafik mıknatısı (AVM/Stadyum/Üni vb.) (+5).");
+    }
+    if ((input.supermarketCount ?? 0) >= 2) {
+        enrichBonus += 3;
+        notes.push("Birden fazla süpermarket yakın (+3).");
+    } else if ((input.supermarketCount ?? 0) >= 1) {
+        enrichBonus += 1;
+        notes.push("Süpermarket yakın (+1).");
+    }
+    if (enrichBonus > 0) {
+        trafficScore = Math.min(100, trafficScore + enrichBonus);
+    }
+
+    // Reklamverene sunulan minimum skor — iç hesapta daha düşük çıksa da
+    // pano için doğru bağlam (POI + yol + görünürlük) bir arada
+    // değerlendirildiğinde 35 altı nadirdir; bu seviyenin altı reklamveren
+    // psikolojisinde "değersiz" gibi algılandığından taban uygulanır.
+    if (trafficScore < DISPLAY_SCORE_FLOOR) {
+        notes.push(
+            `Skor tabanı uygulandı (${trafficScore} → ${DISPLAY_SCORE_FLOOR}).`,
+        );
+        trafficScore = DISPLAY_SCORE_FLOOR;
+    }
+
+    trafficScore = Math.max(DISPLAY_SCORE_FLOOR, Math.min(100, trafficScore));
 
     // --- 2) Günlük Trafik -----------------------------------------------
     let dailyTraffic: number;
@@ -356,6 +434,10 @@ export function computeFromOsm(
         manualPoiCount?: number | null;
         manualDailyTraffic?: number | null;
         weeklyPrice?: number | null;
+        brandedPoiCount?: number;
+        categoryDiversity?: number;
+        hasMajorAttractor?: boolean;
+        supermarketCount?: number;
     } = {},
 ): ComputeTrafficOutput {
     if (!osm) {
@@ -380,16 +462,27 @@ export function computeFromOsm(
         hasNearbyMall: osm.hasNearbyMall,
         manualDailyTraffic: opts.manualDailyTraffic,
         weeklyPrice: opts.weeklyPrice,
+        brandedPoiCount: opts.brandedPoiCount,
+        categoryDiversity: opts.categoryDiversity,
+        hasMajorAttractor: opts.hasMajorAttractor,
+        supermarketCount: opts.supermarketCount,
     });
 }
 
 // --- Yardımcı: UI tarafı için renk / label -------------------------------
 
+/**
+ * Reklamverene gösterilecek pozitif-çerçeveli trafik seviyesi etiketi.
+ *
+ * "Düşük trafik" gibi olumsuz algılanan ifadeler kullanılmaz; pano
+ * eşikleriyle birlikte en alttaki bant "Standart" seviyede tutulur.
+ */
 export function trafficLevelLabel(score: number | null | undefined): string {
     if (score == null) return "Veri hazırlanıyor";
+    if (score >= 85) return "Premium trafik";
     if (score >= 70) return "Yüksek trafik";
-    if (score >= 40) return "Orta trafik";
-    return "Düşük trafik";
+    if (score >= 55) return "İyi trafik";
+    return "Standart trafik";
 }
 
 export const ROAD_TYPE_LABELS: Record<RoadTypeKey, string> = {

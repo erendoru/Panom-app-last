@@ -267,6 +267,7 @@ export default function NewPanelPage() {
                                         }));
                                     }}
                                     height="400px"
+                                    panelType={formData.type}
                                 />
                             </div>
                         </div>

@@ -456,16 +456,84 @@ model StaticPanel {
   // Fiyat sunum stili ("...'den başlayan" gibi)
   isStartingPrice            Boolean        @default(false)
 
+  // V1: POI zenginleştirme zaman damgası (enrichment cron/batch için)
+  poiEnrichedAt              DateTime?
+
   createdAt                  DateTime       @default(now())
   updatedAt                  DateTime       @updatedAt
   rentals                    StaticRental[]
   cartItems                  CartItem[]
   orderItems                 OrderItem[]
   pricings                   PanelPricing[]
+  panelPois                  PanelPoi[]
 
   @@index([ownerId])
   @@index([reviewStatus])
   @@map("static_panels")
+}
+
+// ============================================================
+// V1: POI zenginleştirme — Point of Interest veritabanı
+// ============================================================
+
+enum PoiSource {
+  OSM
+  GOOGLE
+  MANUAL
+}
+
+// Pano çevresindeki noktasal işletme/nokta (market, kafe, okul...)
+model Poi {
+  id          String   @id @default(uuid())
+  // OSM'den gelen veya manuel girilen gerçek isim: "Migros Kordon Şubesi"
+  name        String
+  // Normalize marka kodu: MIGROS, BIM, SOK, STARBUCKS, MCDONALDS ...
+  brand       String?
+  // Taksonomimize mapping (ör. SUPERMARKET, RESTAURANT, SCHOOL)
+  category    String
+  // OSM ham tag'i (shop=supermarket, amenity=school...) — hata ayıklama için
+  rawTag      String?
+  latitude    Float
+  longitude   Float
+  source      PoiSource @default(OSM)
+  // Kaynak ID: OSM için "w123"/"n456"/"r789"; Google için place_id
+  sourceId    String
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  panelPois   PanelPoi[]
+
+  @@unique([source, sourceId])
+  @@index([latitude, longitude])
+  @@index([brand])
+  @@index([category])
+  @@map("pois")
+}
+
+// Pano ↔ POI ilişkisi — her eşleşme için mesafe + yön saklanır
+model PanelPoi {
+  id            String   @id @default(uuid())
+  panelId       String
+  poiId         String
+  // Metre cinsinden mesafe (haversine)
+  distance      Float
+  // 0-360 derece (0=Kuzey, 90=Doğu, 180=Güney, 270=Batı)
+  bearing       Float
+  // İnsan okunabilir yön: N, NE, E, SE, S, SW, W, NW
+  direction     String
+  // Öne çıkarılmış "karşımda" gibi landmark — admin elle işaretler
+  isLandmark    Boolean  @default(false)
+  // Admin manuel ekledi mi (OSM'den değil)
+  manuallyAdded Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  panel         StaticPanel @relation(fields: [panelId], references: [id], onDelete: Cascade)
+  poi           Poi         @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@unique([panelId, poiId])
+  @@index([panelId, distance])
+  @@index([poiId])
+  @@map("panel_pois")
 }
 
 enum PanelPricingType {

@@ -8,10 +8,10 @@ const PANEL_TYPE_EN: Record<string, string> = {
 };
 
 const TRAFFIC_EN: Record<string, string> = {
-    LOW: "Low traffic",
-    MEDIUM: "Medium traffic",
+    LOW: "Standard traffic",
+    MEDIUM: "Good traffic",
     HIGH: "High traffic",
-    VERY_HIGH: "Very high traffic",
+    VERY_HIGH: "Premium traffic",
 };
 
 export function panelTypeLabel(type: string, locale: AppLocale): string {

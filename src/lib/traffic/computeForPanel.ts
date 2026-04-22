@@ -46,12 +46,16 @@ export async function computeAndSaveTrafficForPanel(
         );
         const weeklyPrice = panel.priceWeekly ? Number(panel.priceWeekly) : null;
 
+        // V5: Zenginleştirilmiş POI sinyalleri (varsa)
+        const enrichSignals = await derivePoiSignals(panelId);
+
         const result = computeFromOsm(panel.type as PanelTypeKey, osm, {
             placementContext: (panel.placementContext as PlacementContextKey | null) ?? null,
             manualRoadType: (panel.manualRoadType as RoadTypeKey | null) ?? null,
             manualPoiCount: panel.manualPoiCount ?? null,
             manualDailyTraffic: panel.manualDailyTraffic ?? null,
             weeklyPrice,
+            ...enrichSignals,
         });
 
         await prisma.staticPanel.update({
@@ -85,4 +89,59 @@ export async function computeAndSaveTrafficForPanel(
  */
 export function triggerTrafficComputeInBackground(panelId: string): void {
     void computeAndSaveTrafficForPanel(panelId);
+}
+
+/**
+ * V5 — PanelPoi/Poi kayıtlarından "zenginleştirme sinyalleri"ni türet.
+ * Yoksa boş döner (skor hesaplama default'lara düşer).
+ */
+async function derivePoiSignals(panelId: string): Promise<{
+    brandedPoiCount?: number;
+    categoryDiversity?: number;
+    hasMajorAttractor?: boolean;
+    supermarketCount?: number;
+}> {
+    try {
+        const links = await prisma.panelPoi.findMany({
+            where: { panelId, distance: { lte: 600 } },
+            select: {
+                distance: true,
+                poi: { select: { brand: true, category: true } },
+            },
+            take: 300,
+        });
+        if (links.length === 0) return {};
+
+        const categories = new Set<string>();
+        let branded = 0;
+        let supermarkets = 0;
+        let majorAttractor = false;
+
+        for (const l of links) {
+            categories.add(l.poi.category);
+            if (l.poi.brand) branded++;
+            if (l.poi.category === "SUPERMARKET") supermarkets++;
+            if (
+                l.poi.category === "MALL" ||
+                l.poi.category === "STADIUM" ||
+                l.poi.category === "UNIVERSITY" ||
+                l.poi.category === "HOSPITAL" ||
+                l.poi.category === "TRAIN_STATION" ||
+                l.poi.category === "BUS_STATION" ||
+                l.poi.category === "DEPARTMENT_STORE"
+            ) {
+                // Major attractor: 400m içinde olmalı
+                if (l.distance <= 400) majorAttractor = true;
+            }
+        }
+
+        return {
+            brandedPoiCount: branded,
+            categoryDiversity: categories.size,
+            hasMajorAttractor: majorAttractor,
+            supermarketCount: supermarkets,
+        };
+    } catch {
+        return {};
+    }
 }

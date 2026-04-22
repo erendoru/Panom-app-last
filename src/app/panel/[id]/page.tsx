@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import PublicLayout from "@/components/PublicLayout";
 import TrafficAnalysis from "@/components/static/TrafficAnalysis";
 import PanelDetailAddToCart from "@/components/static/PanelDetailAddToCart";
+import NearbyPoiWidget from "@/components/panels/NearbyPoiWidget";
 import { ROAD_TYPE_LABELS, trafficLevelLabel, type RoadTypeKey } from "@/lib/traffic/score";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import { ArrowLeft, ExternalLink, MapPin, Navigation } from "lucide-react";
@@ -53,6 +54,7 @@ async function getPanel(id: string) {
                 roadType: true,
                 nearbyPoiCount: true,
                 nearbyTags: true,
+                poiEnrichedAt: true,
                 estimatedDailyImpressions: true,
                 estimatedWeeklyImpressions: true,
                 estimatedCpm: true,
@@ -78,6 +80,56 @@ async function getPanel(id: string) {
         };
     } catch (err) {
         console.error("[panel/[id]] getPanel error:", err);
+        return null;
+    }
+}
+
+/**
+ * SSR için panonun "Çevre POI" verisini hazırlar.
+ * NearbyPoiWidget.tsx'deki ApiResponse tipine uyumludur — initialData olarak geçilir.
+ */
+async function getNearbyPois(panelId: string, withinM = 500) {
+    try {
+        const links = await prisma.panelPoi.findMany({
+            where: { panelId, distance: { lte: withinM } },
+            orderBy: { distance: "asc" },
+            take: 200,
+            include: { poi: { select: { id: true, name: true, brand: true, category: true } } },
+        });
+        if (links.length === 0) return null;
+
+        const categoryCounts: Record<string, number> = {};
+        const brandCounts: Record<string, number> = {};
+        for (const l of links) {
+            categoryCounts[l.poi.category] = (categoryCounts[l.poi.category] || 0) + 1;
+            if (l.poi.brand) brandCounts[l.poi.brand] = (brandCounts[l.poi.brand] || 0) + 1;
+        }
+
+        const branded = links.filter((l) => l.poi.brand);
+        const topBranded = branded.slice(0, Math.min(6, branded.length));
+        const topBrandedIds = new Set(topBranded.map((l) => l.id));
+        const rest = links.filter((l) => !topBrandedIds.has(l.id));
+        const topMixed = [...topBranded, ...rest].slice(0, 15);
+
+        return {
+            panel: { id: panelId, poiEnrichedAt: null, nearbyPoiCount: links.length },
+            withinM,
+            total: links.length,
+            topPois: topMixed.map((l) => ({
+                id: l.id,
+                name: l.poi.name,
+                brand: l.poi.brand,
+                category: l.poi.category,
+                distance: Math.round(l.distance),
+                bearing: l.bearing,
+                direction: l.direction,
+                isLandmark: l.isLandmark,
+            })),
+            categoryCounts,
+            brandCounts,
+        };
+    } catch (err) {
+        console.error("[panel/[id]] getNearbyPois error:", err);
         return null;
     }
 }
@@ -146,6 +198,8 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
 export default async function PanelDetailPage({ params }: RouteParams) {
     const panel = await getPanel(params.id);
     if (!panel) notFound();
+
+    const nearbyPois = await getNearbyPois(panel.id);
 
     const typeLabel = PANEL_TYPE_LABELS[panel.type as string] ?? (panel.type as string);
     const level = trafficLevelLabel(panel.trafficScore);
@@ -343,6 +397,24 @@ export default async function PanelDetailPage({ params }: RouteParams) {
                                 trafficDataUpdatedAt: panel.trafficDataUpdatedAt,
                             }}
                         />
+
+                        {/* V3: Pano Çevresi — POI zenginleştirme */}
+                        {nearbyPois && (
+                            <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                                <div className="mb-3 flex items-start justify-between gap-4">
+                                    <div>
+                                        <h2 className="text-lg font-bold tracking-tight text-slate-900">
+                                            Pano Çevresi
+                                        </h2>
+                                        <p className="mt-1 text-xs text-slate-500">
+                                            {nearbyPois.withinM}m yarıçapta {nearbyPois.total}{" "}
+                                            nokta — reklamınızın kitlesiyle buluşacağı bağlam.
+                                        </p>
+                                    </div>
+                                </div>
+                                <NearbyPoiWidget panelId={panel.id} initialData={nearbyPois} />
+                            </section>
+                        )}
 
                         {/* Konum */}
                         <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

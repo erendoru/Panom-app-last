@@ -14,6 +14,8 @@ interface Panel {
     ownerName?: string;
     width: number;
     height: number;
+    nearbyPoiCount?: number;
+    poiEnrichedAt?: string | null;
 }
 
 interface CartItem {

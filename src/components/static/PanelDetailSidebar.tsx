@@ -11,6 +11,7 @@ import { staticBillboardsCopy } from "@/messages/staticBillboards";
 import { locationTypeLabel, panelTypeLabel } from "@/lib/panel-labels-locale";
 import TrafficAnalysis from "@/components/static/TrafficAnalysis";
 import { trafficCopy } from "@/messages/trafficAnalysis";
+import NearbyPoiWidget from "@/components/panels/NearbyPoiWidget";
 
 interface PanelDetailSidebarProps {
     panel: any;
@@ -233,6 +234,13 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                                 trafficDataUpdatedAt: panel.trafficDataUpdatedAt,
                             }}
                         />
+                    </div>
+                )}
+
+                {/* V3: Çevredeki POI'ler — reklamverene konum bağlamı */}
+                {panel.id && panel.poiEnrichedAt && (panel.nearbyPoiCount ?? 0) > 0 && (
+                    <div className="mt-3">
+                        <NearbyPoiWidget panelId={panel.id} compact />
                     </div>
                 )}
 
