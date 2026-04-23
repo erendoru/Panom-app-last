@@ -42,6 +42,10 @@ type FormState = {
     priceWeekly: string;
     priceDaily: string;
     priceMonthly: string;
+    price3Month: string;
+    price6Month: string;
+    priceYearly: string;
+    printingFee: string;
     estimatedDailyImpressions: string;
     estimatedCpm: string;
     description: string;
@@ -68,6 +72,10 @@ const INITIAL: FormState = {
     priceWeekly: "",
     priceDaily: "",
     priceMonthly: "",
+    price3Month: "",
+    price6Month: "",
+    priceYearly: "",
+    printingFee: "",
     estimatedDailyImpressions: "",
     estimatedCpm: "",
     description: "",
@@ -125,6 +133,26 @@ export default function OwnerUnitForm({
         }
         if (!form.latitude || !form.longitude) {
             setError("Haritadan konum seçmelisiniz.");
+            return;
+        }
+
+        // En az bir fiyat (günlük, haftalık, aylık, 3/6/12 aylık) girilmeli
+        const priceFields = [
+            form.priceDaily,
+            form.priceWeekly,
+            form.priceMonthly,
+            form.price3Month,
+            form.price6Month,
+            form.priceYearly,
+        ];
+        const hasAnyPrice = priceFields.some((v) => {
+            const n = parseFloat(String(v || ""));
+            return Number.isFinite(n) && n > 0;
+        });
+        if (!hasAnyPrice) {
+            setError(
+                "En az bir fiyat (günlük, haftalık, aylık, 3 aylık, 6 aylık veya yıllık) girmelisiniz.",
+            );
             return;
         }
 
@@ -362,13 +390,19 @@ export default function OwnerUnitForm({
                                 className={inputClass}
                             />
                         </Field>
-                        <Field label="Haftalık Fiyat (₺)" required>
+                        <div className="md:col-span-2">
+                            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                                <strong>En az bir fiyat girmeniz yeterli.</strong>{" "}
+                                Haftalık fiyat zorunlu değildir — 3, 6 veya 12 aylık fiyat vererek
+                                de satışa açabilirsiniz.
+                            </div>
+                        </div>
+                        <Field label="Haftalık Fiyat (₺) — opsiyonel">
                             <input
                                 type="number"
                                 step="0.01"
                                 value={form.priceWeekly}
                                 onChange={(e) => change("priceWeekly", e.target.value)}
-                                required
                                 placeholder="15000"
                                 className={inputClass}
                             />
@@ -390,6 +424,49 @@ export default function OwnerUnitForm({
                                 value={form.priceMonthly}
                                 onChange={(e) => change("priceMonthly", e.target.value)}
                                 placeholder="50000"
+                                className={inputClass}
+                            />
+                        </Field>
+                        <Field label="3 Aylık Fiyat (₺) — opsiyonel">
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.price3Month}
+                                onChange={(e) => change("price3Month", e.target.value)}
+                                placeholder="140000"
+                                className={inputClass}
+                            />
+                        </Field>
+                        <Field label="6 Aylık Fiyat (₺) — opsiyonel">
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.price6Month}
+                                onChange={(e) => change("price6Month", e.target.value)}
+                                placeholder="260000"
+                                className={inputClass}
+                            />
+                        </Field>
+                        <Field label="Yıllık Fiyat (₺) — opsiyonel">
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.priceYearly}
+                                onChange={(e) => change("priceYearly", e.target.value)}
+                                placeholder="480000"
+                                className={inputClass}
+                            />
+                        </Field>
+                        <Field
+                            label="Baskı & Montaj Ücreti (₺) — opsiyonel"
+                            hint="Reklamverenin ödeyeceği tek seferlik baskı + montaj bedeli"
+                        >
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.printingFee}
+                                onChange={(e) => change("printingFee", e.target.value)}
+                                placeholder="35000"
                                 className={inputClass}
                             />
                         </Field>

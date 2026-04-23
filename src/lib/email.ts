@@ -877,7 +877,7 @@ export async function sendStoreInquiryToOwner(params: {
         type: string;
         city: string;
         district: string;
-        priceWeekly: number;
+        priceWeekly: number | null;
     }>;
 }): Promise<boolean> {
     const storeUrl = `${APP_URL}/medya/${params.slug}`;
@@ -896,7 +896,7 @@ export async function sendStoreInquiryToOwner(params: {
                         <span style="color:#6b7280;font-size:12px;">${escapeHtml(p.type)} — ${escapeHtml(p.district)}, ${escapeHtml(p.city)}</span>
                     </td>
                     <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap;font-weight:600;">
-                        ${fmtPriceTR(p.priceWeekly)} <span style="color:#9ca3af;font-weight:400;font-size:12px;">/ hafta</span>
+                        ${p.priceWeekly != null ? `${fmtPriceTR(p.priceWeekly)} <span style="color:#9ca3af;font-weight:400;font-size:12px;">/ hafta</span>` : '<span style="color:#9ca3af;font-weight:400;font-size:12px;">Fiyat için iletişime geçin</span>'}
                     </td>
                 </tr>`
                 )

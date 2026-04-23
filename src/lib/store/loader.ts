@@ -70,8 +70,13 @@ export type StorePanel = {
     longitude: number;
     width: number;
     height: number;
-    priceWeekly: number;
+    priceWeekly: number | null;
     priceDaily: number | null;
+    priceMonthly: number | null;
+    price3Month: number | null;
+    price6Month: number | null;
+    priceYearly: number | null;
+    printingFee: number | null;
     isStartingPrice: boolean;
     trafficLevel: string;
     lighting: string | null;
@@ -107,8 +112,13 @@ export async function loadStorePanels(ownerId: string): Promise<StorePanel[]> {
             longitude: p.longitude,
             width: Number(p.width),
             height: Number(p.height),
-            priceWeekly: Number(p.priceWeekly),
+            priceWeekly: p.priceWeekly != null ? Number(p.priceWeekly) : null,
             priceDaily: p.priceDaily != null ? Number(p.priceDaily) : null,
+            priceMonthly: p.priceMonthly != null ? Number(p.priceMonthly) : null,
+            price3Month: p.price3Month != null ? Number(p.price3Month) : null,
+            price6Month: p.price6Month != null ? Number(p.price6Month) : null,
+            priceYearly: p.priceYearly != null ? Number(p.priceYearly) : null,
+            printingFee: p.printingFee != null ? Number(p.printingFee) : null,
             isStartingPrice: p.isStartingPrice,
             trafficLevel: p.trafficLevel,
             lighting: p.lighting,

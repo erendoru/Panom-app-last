@@ -144,6 +144,11 @@ export async function PUT(
             height,
             priceWeekly,
             priceDaily,
+            priceMonthly,
+            price3Month,
+            price6Month,
+            priceYearly,
+            printingFee,
             minRentalDays,
             isAVM,
             avmName,
@@ -192,8 +197,51 @@ export async function PUT(
                 longitude: safeParseFloat(longitude),
                 width: width ? parseDimension(width) : 0,
                 height: height ? parseDimension(height) : 0,
-                priceWeekly: safeParseFloat(priceWeekly),
+                priceWeekly:
+                    priceWeekly === null || priceWeekly === undefined || priceWeekly === ''
+                        ? null
+                        : safeParseFloat(priceWeekly),
                 priceDaily: safeParseFloat(priceDaily),
+                ...(priceMonthly !== undefined
+                    ? {
+                          priceMonthly:
+                              priceMonthly === '' || priceMonthly === null
+                                  ? null
+                                  : safeParseFloat(priceMonthly),
+                      }
+                    : {}),
+                ...(price3Month !== undefined
+                    ? {
+                          price3Month:
+                              price3Month === '' || price3Month === null
+                                  ? null
+                                  : safeParseFloat(price3Month),
+                      }
+                    : {}),
+                ...(price6Month !== undefined
+                    ? {
+                          price6Month:
+                              price6Month === '' || price6Month === null
+                                  ? null
+                                  : safeParseFloat(price6Month),
+                      }
+                    : {}),
+                ...(priceYearly !== undefined
+                    ? {
+                          priceYearly:
+                              priceYearly === '' || priceYearly === null
+                                  ? null
+                                  : safeParseFloat(priceYearly),
+                      }
+                    : {}),
+                ...(printingFee !== undefined
+                    ? {
+                          printingFee:
+                              printingFee === '' || printingFee === null
+                                  ? null
+                                  : safeParseFloat(printingFee),
+                      }
+                    : {}),
                 minRentalDays: safeParseInt(minRentalDays, 7),
                 isAVM: Boolean(isAVM),
                 avmName: avmName || '',

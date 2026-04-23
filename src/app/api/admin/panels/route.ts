@@ -117,6 +117,7 @@ export async function POST(req: NextRequest) {
             price3Month,
             price6Month,
             priceYearly,
+            printingFee,
             isAVM,
             avmName,
             estimatedDailyImpressions,
@@ -142,11 +143,31 @@ export async function POST(req: NextRequest) {
 
         // Skip validation for draft panels (quick add)
         if (!isDraft) {
-            // Validation
-            if (!name || !type || !city || !district || !address || !latitude || !longitude || !width || !height || !priceWeekly) {
+            // Zorunlu alanlar (priceWeekly artık zorunlu değil)
+            if (!name || !type || !city || !district || !address || !latitude || !longitude || !width || !height) {
                 return NextResponse.json(
-                    { error: 'Missing required fields' },
+                    { error: 'Zorunlu alanlar eksik (ad, tip, il, ilçe, adres, konum, ölçüler).' },
                     { status: 400 }
+                );
+            }
+
+            // En az bir fiyat girilmiş olmalı
+            const anyPrice = [
+                priceWeekly,
+                priceDaily,
+                priceMonthly,
+                price3Month,
+                price6Month,
+                priceYearly,
+            ].some((v) => {
+                if (v === null || v === undefined || v === '') return false;
+                const n = parseFloat(String(v));
+                return Number.isFinite(n) && n > 0;
+            });
+            if (!anyPrice) {
+                return NextResponse.json(
+                    { error: 'En az bir fiyat (günlük, haftalık, aylık, 3 / 6 / 12 aylık) girmelisiniz.' },
+                    { status: 400 },
                 );
             }
 
@@ -173,12 +194,16 @@ export async function POST(req: NextRequest) {
                 longitude: longitude ? parseFloat(String(longitude)) : 0,
                 width: width ? parseDimension(width) : 0,
                 height: height ? parseDimension(height) : 0,
-                priceWeekly: priceWeekly ? parseFloat(String(priceWeekly)) : 0,
+                priceWeekly: priceWeekly ? parseFloat(String(priceWeekly)) : null,
                 priceDaily: priceDaily ? parseFloat(String(priceDaily)) : 0,
                 priceMonthly: priceMonthly ? parseFloat(String(priceMonthly)) : null,
                 price3Month: price3Month ? parseFloat(String(price3Month)) : null,
                 price6Month: price6Month ? parseFloat(String(price6Month)) : null,
                 priceYearly: priceYearly ? parseFloat(String(priceYearly)) : null,
+                printingFee:
+                    printingFee === undefined || printingFee === null || printingFee === ''
+                        ? null
+                        : parseFloat(String(printingFee)),
                 isAVM: Boolean(isAVM),
                 avmName: avmName || '',
                 estimatedDailyImpressions: estimatedDailyImpressions ? parseInt(String(estimatedDailyImpressions)) : 0,

@@ -50,15 +50,12 @@ export async function PATCH(
                 ? body.priceType
                 : "SEASONAL";
     }
-    if (body.priceWeekly !== undefined) {
-        const w = num(body.priceWeekly);
-        if (w === null || w <= 0)
-            return NextResponse.json({ error: "Geçersiz priceWeekly" }, { status: 400 });
-        data.priceWeekly = w;
-    }
-    if (body.priceDaily !== undefined) {
-        data.priceDaily = num(body.priceDaily);
-    }
+    if (body.priceWeekly !== undefined) data.priceWeekly = num(body.priceWeekly);
+    if (body.priceDaily !== undefined) data.priceDaily = num(body.priceDaily);
+    if (body.priceMonthly !== undefined) data.priceMonthly = num(body.priceMonthly);
+    if (body.price3Month !== undefined) data.price3Month = num(body.price3Month);
+    if (body.price6Month !== undefined) data.price6Month = num(body.price6Month);
+    if (body.priceYearly !== undefined) data.priceYearly = num(body.priceYearly);
     if (body.startDate !== undefined) {
         const s = new Date(body.startDate);
         if (!Number.isFinite(s.getTime()))

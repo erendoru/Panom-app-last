@@ -72,6 +72,10 @@ export async function POST(req: NextRequest) {
             priceWeekly,
             priceDaily,
             priceMonthly,
+            price3Month,
+            price6Month,
+            priceYearly,
+            printingFee,
             estimatedDailyImpressions,
             estimatedCpm,
             nearbyTags,
@@ -114,10 +118,26 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             );
         }
-        if (!priceWeekly) {
+        // En az bir fiyat girilmiş olmalı
+        const priceCandidates = [
+            priceWeekly,
+            priceDaily,
+            priceMonthly,
+            price3Month,
+            price6Month,
+            priceYearly,
+        ];
+        const anyPrice = priceCandidates.some((v) => {
+            const n = num(v);
+            return n !== null && n > 0;
+        });
+        if (!anyPrice) {
             return NextResponse.json(
-                { error: "Haftalık fiyat zorunlu" },
-                { status: 400 }
+                {
+                    error:
+                        "En az bir fiyat (günlük, haftalık, aylık, 3 / 6 / 12 aylık) girmelisiniz.",
+                },
+                { status: 400 },
             );
         }
 
@@ -137,9 +157,13 @@ export async function POST(req: NextRequest) {
                 height: parseDimension(height),
                 faceCount: faceCount ? parseInt(String(faceCount)) : 1,
                 lighting: lighting || null,
-                priceWeekly: num(priceWeekly) ?? 0,
+                priceWeekly: num(priceWeekly),
                 priceDaily: num(priceDaily) ?? 0,
                 priceMonthly: num(priceMonthly),
+                price3Month: num(price3Month),
+                price6Month: num(price6Month),
+                priceYearly: num(priceYearly),
+                printingFee: num(printingFee),
                 estimatedDailyImpressions: estimatedDailyImpressions
                     ? parseInt(String(estimatedDailyImpressions)) || 0
                     : 0,

@@ -15,10 +15,18 @@ export async function POST(req: NextRequest) {
 
     try {
         const body = await req.json();
-        const { action, panelIds, value } = body as {
+        const { action, panelIds, value, field } = body as {
             action: 'delete' | 'updateStatus' | 'updatePrice' | 'rename';
             panelIds: string[];
             value?: any;
+            field?:
+                | 'priceDaily'
+                | 'priceWeekly'
+                | 'priceMonthly'
+                | 'price3Month'
+                | 'price6Month'
+                | 'priceYearly'
+                | 'printingFee';
         };
 
         if (!panelIds || panelIds.length === 0) {
@@ -80,13 +88,39 @@ export async function POST(req: NextRequest) {
                 if (isNaN(price) || price < 0) {
                     return NextResponse.json({ error: 'Geçersiz fiyat' }, { status: 400 });
                 }
+
+                const allowedFields = [
+                    'priceDaily',
+                    'priceWeekly',
+                    'priceMonthly',
+                    'price3Month',
+                    'price6Month',
+                    'priceYearly',
+                    'printingFee',
+                ] as const;
+                const targetField = (
+                    field && (allowedFields as readonly string[]).includes(field)
+                        ? field
+                        : 'priceWeekly'
+                ) as (typeof allowedFields)[number];
+
+                const fieldLabel: Record<typeof targetField, string> = {
+                    priceDaily: 'Günlük',
+                    priceWeekly: 'Haftalık',
+                    priceMonthly: 'Aylık',
+                    price3Month: '3 Aylık',
+                    price6Month: '6 Aylık',
+                    priceYearly: 'Yıllık',
+                    printingFee: 'Baskı & Montaj',
+                };
+
                 await prisma.staticPanel.updateMany({
                     where: { id: { in: panelIds }, ...cityFilter },
-                    data: { priceWeekly: price }
+                    data: { [targetField]: price } as any,
                 });
                 return NextResponse.json({
                     success: true,
-                    message: `${panelIds.length} panonun fiyatı ₺${price.toLocaleString('tr-TR')} olarak güncellendi.`
+                    message: `${panelIds.length} pano için ${fieldLabel[targetField]} fiyatı ₺${price.toLocaleString('tr-TR')} olarak güncellendi.`,
                 });
             }
 

@@ -8,6 +8,7 @@ import { CartProvider, useCart } from '@/contexts/CartContext';
 import { ArrowLeft, Trash2, Calendar, ShoppingCart, Zap, MapPin, CreditCard, Store } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
+import { weeklyEquivalent } from '@/lib/utils';
 
 function CartPageContent() {
     const { items, count, totals, removeFromCart, updateItemDates, clearCart, loading, calculateTotals } = useCart();
@@ -75,7 +76,7 @@ function CartPageContent() {
     // Calculate CLP double-sided extra amount
     const clpDoubleSidedExtra = items.reduce((sum, item) => {
         if (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id]) {
-            return sum + item.panel.priceWeekly; // Add another week's price for double-sided
+            return sum + (weeklyEquivalent(item.panel) ?? 0); // Add another week's price for double-sided
         }
         return sum;
     }, 0);
@@ -253,7 +254,7 @@ function CartPageContent() {
                                             {/* Price */}
                                             <div className="mt-4 text-right">
                                                 <p className="text-lg font-bold text-neutral-900">
-                                                    {formatPrice(item.panel.priceWeekly * (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? 2 : 1))}
+                                                    {formatPrice((weeklyEquivalent(item.panel) ?? 0) * (item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? 2 : 1))}
                                                     <span className="text-sm font-normal text-neutral-500">/hafta{item.panel.type === 'CLP' && clpDoubleSided[item.panel.id] ? ' (çift yüz)' : ''}</span>
                                                 </p>
                                             </div>

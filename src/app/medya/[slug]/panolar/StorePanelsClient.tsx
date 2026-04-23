@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import { useStore } from "../StoreContext";
 import type { StorePanel } from "@/lib/store/loader";
@@ -183,6 +183,12 @@ export default function StorePanelsClient({ panels }: { panels: StorePanel[] }) 
                                                     district: p.district,
                                                     type: p.type,
                                                     priceWeekly: p.priceWeekly,
+                                                    priceDaily: p.priceDaily,
+                                                    priceMonthly: p.priceMonthly,
+                                                    price3Month: p.price3Month,
+                                                    price6Month: p.price6Month,
+                                                    priceYearly: p.priceYearly,
+                                                    printingFee: p.printingFee,
                                                 })
                                             }
                                         />
@@ -226,12 +232,21 @@ export default function StorePanelsClient({ panels }: { panels: StorePanel[] }) 
                                             <MapPin className="w-3 h-3" />
                                             {s.district}, {s.city}
                                         </div>
-                                        <div className="text-xs mt-1">
-                                            <span className="text-slate-400">haftalık</span>{" "}
-                                            <span className="font-semibold text-slate-900">
-                                                {formatCurrency(s.priceWeekly)}
-                                            </span>
-                                        </div>
+                                        {(() => {
+                                            const w = weeklyEquivalent(s);
+                                            return w ? (
+                                                <div className="text-xs mt-1">
+                                                    <span className="text-slate-400">haftalık</span>{" "}
+                                                    <span className="font-semibold text-slate-900">
+                                                        {formatCurrency(w)}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div className="text-xs mt-1 text-slate-500">
+                                                    Fiyat için iletişime geçin
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                     <button
                                         onClick={() => remove(s.id)}
@@ -283,6 +298,12 @@ export default function StorePanelsClient({ panels }: { panels: StorePanel[] }) 
                             district: detail.district,
                             type: detail.type,
                             priceWeekly: detail.priceWeekly,
+                            priceDaily: detail.priceDaily,
+                            priceMonthly: detail.priceMonthly,
+                            price3Month: detail.price3Month,
+                            price6Month: detail.price6Month,
+                            priceYearly: detail.priceYearly,
+                            printingFee: detail.printingFee,
                         });
                         setDetail(null);
                     }}
@@ -336,10 +357,19 @@ function PanelCard({
                         <MapPin className="w-3.5 h-3.5" />
                         {panel.district}, {panel.city}
                     </div>
-                    <div className="text-sm font-bold text-slate-900 mt-1">
-                        {formatCurrency(panel.priceWeekly)}
-                        <span className="text-xs text-slate-500 font-normal ml-1">/hafta</span>
-                    </div>
+                    {(() => {
+                        const w = weeklyEquivalent(panel);
+                        return w ? (
+                            <div className="text-sm font-bold text-slate-900 mt-1">
+                                {formatCurrency(w)}
+                                <span className="text-xs text-slate-500 font-normal ml-1">/hafta</span>
+                            </div>
+                        ) : (
+                            <div className="text-xs font-semibold text-slate-700 mt-1">
+                                Fiyat için iletişime geçin
+                            </div>
+                        );
+                    })()}
                 </div>
             </button>
             <button
@@ -464,18 +494,49 @@ function PanelDetailModal({
 
                     <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
                         <div>
-                            <div className="text-xs text-slate-500">
-                                {panel.isStartingPrice ? "Başlayan fiyat" : "Haftalık fiyat"}
-                            </div>
-                            <div className="text-2xl font-bold text-slate-900">
-                                {formatCurrency(panel.priceWeekly)}
-                                <span className="text-sm text-slate-500 font-normal ml-1">/hafta</span>
-                            </div>
+                            {(() => {
+                                const w = weeklyEquivalent(panel);
+                                return w ? (
+                                    <>
+                                        <div className="text-xs text-slate-500">
+                                            {panel.isStartingPrice ? "Başlayan fiyat" : "Haftalık fiyat"}
+                                        </div>
+                                        <div className="text-2xl font-bold text-slate-900">
+                                            {formatCurrency(w)}
+                                            <span className="text-sm text-slate-500 font-normal ml-1">/hafta</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="text-sm font-semibold text-slate-700">
+                                        Fiyat için iletişime geçin
+                                    </div>
+                                );
+                            })()}
                             {panel.priceDaily && (
                                 <div className="text-xs text-slate-500 mt-0.5">
                                     Günlük {formatCurrency(panel.priceDaily)}
                                 </div>
                             )}
+                            {panel.price3Month ? (
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                    3 Aylık {formatCurrency(panel.price3Month)}
+                                </div>
+                            ) : null}
+                            {panel.price6Month ? (
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                    6 Aylık {formatCurrency(panel.price6Month)}
+                                </div>
+                            ) : null}
+                            {panel.priceYearly ? (
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                    12 Aylık {formatCurrency(panel.priceYearly)}
+                                </div>
+                            ) : null}
+                            {panel.printingFee ? (
+                                <div className="text-xs text-slate-500 mt-0.5">
+                                    Baskı &amp; Montaj {formatCurrency(panel.printingFee)}
+                                </div>
+                            ) : null}
                         </div>
 
                         <Button

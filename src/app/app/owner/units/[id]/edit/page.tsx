@@ -38,6 +38,10 @@ export default async function OwnerUnitEditPage({
                 priceWeekly: panel.priceWeekly ? String(panel.priceWeekly) : "",
                 priceDaily: panel.priceDaily ? String(panel.priceDaily) : "",
                 priceMonthly: panel.priceMonthly ? String(panel.priceMonthly) : "",
+                price3Month: panel.price3Month ? String(panel.price3Month) : "",
+                price6Month: panel.price6Month ? String(panel.price6Month) : "",
+                priceYearly: panel.priceYearly ? String(panel.priceYearly) : "",
+                printingFee: panel.printingFee ? String(panel.printingFee) : "",
                 estimatedDailyImpressions: panel.estimatedDailyImpressions
                     ? String(panel.estimatedDailyImpressions)
                     : "",

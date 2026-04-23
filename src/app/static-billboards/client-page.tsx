@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { MapPin, SlidersHorizontal, ChevronDown, Check, Loader2, Target, X } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import FilterSidebar, { FilterState } from "@/components/static/FilterSidebar";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
@@ -226,8 +226,15 @@ function StaticBillboardsContent({ panels: initialPanels }: { panels: any[] }) {
 
     // Apply filters (now using panels state instead of initialPanels)
     const filteredPanels = panels.filter(panel => {
-        const price = Number(panel.priceWeekly);
-        if (price < filters.priceRange[0] || price > filters.priceRange[1]) return false;
+        const w = weeklyEquivalent(panel as any);
+        // Fiyat yoksa, fiyat aralığı varsayılan değilse panel elensin;
+        // varsayılan aralıkta (0 - max) ise gösterelim ki "iletişime geçin" panolar kaybolmasın.
+        if (w == null) {
+            const defaultMin = filters.priceRange[0] <= 0;
+            if (!defaultMin) return false;
+        } else {
+            if (w < filters.priceRange[0] || w > filters.priceRange[1]) return false;
+        }
         // Size filter removed - all sizes allowed
         if (filters.panelTypes.length > 0 && !filters.panelTypes.includes(panel.type)) return false;
         if (filters.trafficLevels.length > 0 && !filters.trafficLevels.includes(panel.trafficLevel)) return false;

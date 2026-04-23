@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
+import { weeklyEquivalent } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,10 +15,18 @@ interface CartItemWithPanel {
         name: string;
         type: string;
         city: string;
-        priceWeekly: number;
+        priceWeekly: number | null;
         priceDaily: number | null;
+        priceMonthly: number | null;
+        price3Month: number | null;
+        price6Month: number | null;
+        priceYearly: number | null;
         ownerName: string | null;
     };
+}
+
+function getWeeklyPrice(p: CartItemWithPanel['panel']): number {
+    return weeklyEquivalent(p) ?? 0;
 }
 
 interface DiscountSuggestion {
@@ -60,7 +69,11 @@ export async function POST(req: NextRequest) {
                         city: true,
                         priceWeekly: true,
                         priceDaily: true,
-                        ownerName: true
+                        priceMonthly: true,
+                        price3Month: true,
+                        price6Month: true,
+                        priceYearly: true,
+                        ownerName: true,
                     }
                 }
             }
@@ -128,7 +141,7 @@ export async function POST(req: NextRequest) {
                     weeks = Math.max(1, Math.ceil(diffDays / 7));
                 }
 
-                const originalPrice = item.panel.priceWeekly * weeks;
+                const originalPrice = getWeeklyPrice(item.panel) * weeks;
                 let discountedPrice = originalPrice;
 
                 if (activeRule) {
@@ -153,7 +166,7 @@ export async function POST(req: NextRequest) {
             // Add suggestion if there's a next threshold
             if (nextRule) {
                 const neededCount = nextRule.minQuantity - groupItems.length;
-                const avgPrice = groupItems.reduce((sum, i) => sum + i.panel.priceWeekly, 0) / groupItems.length;
+                const avgPrice = groupItems.reduce((sum, i) => sum + getWeeklyPrice(i.panel), 0) / groupItems.length;
 
                 let potentialSavings = 0;
                 if (nextRule.fixedUnitPrice) {

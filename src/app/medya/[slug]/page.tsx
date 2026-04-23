@@ -13,7 +13,7 @@ import {
 import { loadStoreOwner, loadStorePanels } from "@/lib/store/loader";
 import { notFound } from "next/navigation";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +28,10 @@ export default async function StoreHomePage(
 
     const cityCount = new Set(panels.map((p) => p.city)).size;
     const typeCount = new Set(panels.map((p) => p.type)).size;
-    const minPrice = panels.length
-        ? Math.min(...panels.map((p) => p.priceWeekly))
-        : 0;
+    const weeklyPrices = panels
+        .map((p) => weeklyEquivalent(p))
+        .filter((v): v is number => typeof v === "number" && v > 0);
+    const minPrice = weeklyPrices.length ? Math.min(...weeklyPrices) : 0;
 
     // Tür bazlı dağılım (ilk 4)
     const typeBreakdown = Object.entries(
@@ -258,10 +259,19 @@ export default async function StoreHomePage(
                                             <div className="text-[11px] text-slate-400">
                                                 {p.isStartingPrice ? "başlayan fiyat" : "haftalık"}
                                             </div>
-                                            <div className="text-base font-bold text-slate-900">
-                                                {formatCurrency(p.priceWeekly)}
-                                                <span className="text-xs text-slate-500 font-normal ml-1">/hf</span>
-                                            </div>
+                                            {(() => {
+                                                const w = weeklyEquivalent(p);
+                                                return w ? (
+                                                    <div className="text-base font-bold text-slate-900">
+                                                        {formatCurrency(w)}
+                                                        <span className="text-xs text-slate-500 font-normal ml-1">/hf</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-xs font-semibold text-slate-700">
+                                                        Fiyat için iletişime geçin
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
                                         <span className="text-slate-700 text-xs font-medium inline-flex items-center gap-1 opacity-80 group-hover:opacity-100">
                                             Detay <ArrowRight className="w-3.5 h-3.5" />

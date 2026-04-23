@@ -27,7 +27,13 @@ interface Panel {
     address: string;
     width: number;
     height: number;
-    priceWeekly: number;
+    priceWeekly?: number | null;
+    priceDaily?: number | null;
+    priceMonthly?: number | null;
+    price3Month?: number | null;
+    price6Month?: number | null;
+    priceYearly?: number | null;
+    printingFee?: number | string | null;
     isAVM: boolean;
     avmName?: string;
     trafficLevel: string;
@@ -51,7 +57,12 @@ interface Panel {
 
 interface EditedPanel {
     name?: string;
-    priceWeekly?: number;
+    priceWeekly?: number | null;
+    priceMonthly?: number | null;
+    price3Month?: number | null;
+    price6Month?: number | null;
+    priceYearly?: number | null;
+    printingFee?: number | null;
     width?: number;
     height?: number;
     ownerName?: string;
@@ -70,6 +81,9 @@ export default function AdminPanelsPage() {
     // Bulk update state
     const [showBulkUpdate, setShowBulkUpdate] = useState(false);
     const [bulkPrice, setBulkPrice] = useState('');
+    const [bulkPriceField, setBulkPriceField] = useState<
+        'priceDaily' | 'priceWeekly' | 'priceMonthly' | 'price3Month' | 'price6Month' | 'priceYearly' | 'printingFee'
+    >('priceWeekly');
     const [showBulkRename, setShowBulkRename] = useState(false);
     const [bulkName, setBulkName] = useState('');
     const [bulkActionLoading, setBulkActionLoading] = useState(false);
@@ -469,13 +483,18 @@ export default function AdminPanelsPage() {
         }
     };
 
-    // Handle inline edit change
+    // Handle inline edit change (boş string → null, sayısal alanlar için)
+    const NULLABLE_PRICE_FIELDS: (keyof EditedPanel)[] = [
+        'priceWeekly', 'priceMonthly', 'price3Month', 'price6Month', 'priceYearly', 'printingFee',
+    ];
     const handleEditChange = (panelId: string, field: keyof EditedPanel, value: string | number) => {
+        const normalized =
+            value === '' && NULLABLE_PRICE_FIELDS.includes(field) ? null : value;
         setEditedPanels(prev => ({
             ...prev,
             [panelId]: {
                 ...prev[panelId],
-                [field]: value
+                [field]: normalized as any,
             }
         }));
     };
@@ -567,8 +586,8 @@ export default function AdminPanelsPage() {
         selectedPanels.forEach(panelId => {
             updates[panelId] = {
                 ...editedPanels[panelId],
-                priceWeekly: price
-            };
+                [bulkPriceField]: price,
+            } as EditedPanel;
         });
 
         setEditedPanels(prev => ({ ...prev, ...updates }));
@@ -576,7 +595,7 @@ export default function AdminPanelsPage() {
         setBulkPrice('');
     };
 
-    const executeBulkAction = async (action: string, value?: any) => {
+    const executeBulkAction = async (action: string, value?: any, extra?: Record<string, any>) => {
         setBulkActionLoading(true);
         try {
             const res = await fetch('/api/admin/panels/bulk', {
@@ -585,7 +604,8 @@ export default function AdminPanelsPage() {
                 body: JSON.stringify({
                     action,
                     panelIds: Array.from(selectedPanels),
-                    value
+                    value,
+                    ...(extra || {}),
                 })
             });
             const data = await res.json();
@@ -631,7 +651,7 @@ export default function AdminPanelsPage() {
             alert('Geçerli bir fiyat girin');
             return;
         }
-        await executeBulkAction('updatePrice', price);
+        await executeBulkAction('updatePrice', price, { field: bulkPriceField });
         setShowBulkUpdate(false);
         setBulkPrice('');
     };
@@ -916,8 +936,27 @@ export default function AdminPanelsPage() {
                         <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
                             <h3 className="text-lg font-semibold mb-4">Toplu Fiyat Güncelle</h3>
                             <p className="text-slate-600 mb-4">
-                                {selectedPanels.size} pano için yeni haftalık fiyat:
+                                {selectedPanels.size} pano için yeni fiyat:
                             </p>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Fiyat Türü
+                            </label>
+                            <select
+                                value={bulkPriceField}
+                                onChange={(e) => setBulkPriceField(e.target.value as any)}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3"
+                            >
+                                <option value="priceWeekly">Haftalık Fiyat</option>
+                                <option value="priceDaily">Günlük Fiyat</option>
+                                <option value="priceMonthly">Aylık Fiyat</option>
+                                <option value="price3Month">3 Aylık Fiyat</option>
+                                <option value="price6Month">6 Aylık Fiyat</option>
+                                <option value="priceYearly">Yıllık Fiyat</option>
+                                <option value="printingFee">Baskı &amp; Montaj Ücreti</option>
+                            </select>
+                            <label className="block text-sm font-medium text-slate-700 mb-2">
+                                Tutar (₺)
+                            </label>
                             <input
                                 type="number"
                                 value={bulkPrice}
@@ -1109,6 +1148,9 @@ export default function AdminPanelsPage() {
                                         <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">
                                             Fiyat/Hafta
                                         </th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase" title="Baskı & Montaj Ücreti">
+                                            Baskı ₺
+                                        </th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-slate-700 uppercase">
                                             Sahip
                                         </th>
@@ -1203,8 +1245,28 @@ export default function AdminPanelsPage() {
                                                     <span className="text-slate-500 mr-1">₺</span>
                                                     <input
                                                         type="number"
-                                                        value={getValue(panel, 'priceWeekly') as number}
-                                                        onChange={(e) => handleEditChange(panel.id, 'priceWeekly', parseFloat(e.target.value) || 0)}
+                                                        value={(() => {
+                                                            const v = getValue(panel, 'priceWeekly');
+                                                            return v === null || v === undefined ? '' : (v as number);
+                                                        })()}
+                                                        onChange={(e) => handleEditChange(panel.id, 'priceWeekly', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
+                                                        placeholder="—"
+                                                        className="w-20 px-2 py-1 border border-transparent hover:border-slate-300 focus:border-blue-500 rounded text-sm bg-transparent focus:bg-white"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center">
+                                                    <span className="text-slate-500 mr-1">₺</span>
+                                                    <input
+                                                        type="number"
+                                                        value={(() => {
+                                                            const v = getValue(panel, 'printingFee');
+                                                            return v === null || v === undefined ? '' : (v as number);
+                                                        })()}
+                                                        onChange={(e) => handleEditChange(panel.id, 'printingFee', e.target.value === '' ? '' : parseFloat(e.target.value) || 0)}
+                                                        placeholder="—"
+                                                        title="Baskı & Montaj Ücreti"
                                                         className="w-20 px-2 py-1 border border-transparent hover:border-slate-300 focus:border-blue-500 rounded text-sm bg-transparent focus:bg-white"
                                                     />
                                                 </div>

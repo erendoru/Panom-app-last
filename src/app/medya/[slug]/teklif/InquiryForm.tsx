@@ -13,7 +13,7 @@ import {
     ArrowRight,
 } from "lucide-react";
 import { useStore } from "../StoreContext";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 
 export default function InquiryForm() {
@@ -267,10 +267,18 @@ export default function InquiryForm() {
                                         {s.district}, {s.city}
                                     </div>
                                     <div className="text-xs text-slate-500 mt-0.5">
-                                        {PANEL_TYPE_LABELS[s.type] ?? s.type} ·{" "}
-                                        <span className="text-slate-900 font-semibold">
-                                            {formatCurrency(s.priceWeekly)}/hf
-                                        </span>
+                                        {PANEL_TYPE_LABELS[s.type] ?? s.type}
+                                        {(() => {
+                                            const w = weeklyEquivalent(s);
+                                            return w ? (
+                                                <>
+                                                    {" "}·{" "}
+                                                    <span className="text-slate-900 font-semibold">
+                                                        {formatCurrency(w)}/hf
+                                                    </span>
+                                                </>
+                                            ) : null;
+                                        })()}
                                     </div>
                                 </div>
                                 <button

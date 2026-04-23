@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import { Loader2, Upload, CheckCircle2, LogIn, UserPlus, Mail } from "lucide-react";
 import Image from "next/image";
 import Calendar from "react-calendar";
@@ -133,7 +133,8 @@ export default function RentalWizard({ isOpen, onClose, panel }: RentalWizardPro
         const totalDays = calculateTotalDays();
         if (totalDays === 0) return 0;
         // Use daily price if available, otherwise weekly/7
-        const dailyPrice = panel.priceDaily ? Number(panel.priceDaily) : (Number(panel.priceWeekly) / 7);
+        const weekly = weeklyEquivalent(panel) ?? 0;
+        const dailyPrice = panel.priceDaily ? Number(panel.priceDaily) : weekly / 7;
         let total = dailyPrice * totalDays;
         if (designRequested) {
             total += 2500;

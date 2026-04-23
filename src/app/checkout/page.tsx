@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { ArrowLeft, ArrowRight, Check, Upload, MapPin, Calendar, User, Phone, Mail, Building2, FileText, HelpCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PANEL_TYPE_LABELS } from '@/lib/turkey-data';
+import { weeklyEquivalent } from '@/lib/utils';
 
 interface CartItem {
     id: string;
@@ -22,7 +23,13 @@ interface CartItem {
         city: string;
         district: string;
         imageUrl?: string;
-        priceWeekly: number;
+        priceWeekly: number | null;
+        priceDaily?: number | null;
+        priceMonthly?: number | null;
+        price3Month?: number | null;
+        price6Month?: number | null;
+        priceYearly?: number | null;
+        printingFee?: number | null;
         width: number;
         height: number;
     };
@@ -183,7 +190,7 @@ export default function CheckoutPage() {
                 ? Math.ceil((new Date(item.endDate).getTime() - new Date(item.startDate).getTime()) / (7 * 24 * 60 * 60 * 1000))
                 : 1;
 
-            let itemPrice = item.panel.priceWeekly;
+            let itemPrice = weeklyEquivalent(item.panel) ?? 0;
 
             // CLP bulk discount for Kocaeli (20+ CLP = 1500 TL)
             if (item.panel.type === 'CLP' && item.panel.city === 'Kocaeli' && clpBulkDiscount) {
@@ -243,7 +250,7 @@ export default function CheckoutPage() {
                         panelId: item.panel.id,
                         startDate: item.startDate || startDate,
                         endDate: item.endDate || endDate,
-                        weeklyPrice: item.panel.priceWeekly,
+                        weeklyPrice: weeklyEquivalent(item.panel) ?? 0,
                         creativeUrl: creativeUrls[item.panel.id] || null
                     }))
                 })
@@ -633,7 +640,7 @@ export default function CheckoutPage() {
                                         {cartItems.map(item => {
                                             const isCLP = item.panel.type === 'CLP';
                                             const isDoubleSided = clpDoubleSided[item.panel.id];
-                                            let displayPrice = item.panel.priceWeekly;
+                                            let displayPrice = weeklyEquivalent(item.panel) ?? 0;
 
                                             // Apply bulk discount
                                             if (isCLP && item.panel.city === 'Kocaeli' && clpBulkDiscount) {

@@ -24,7 +24,7 @@ type PanelSnap = {
     type: string;
     city: string;
     district: string;
-    priceWeekly: number;
+    priceWeekly: number | null;
 };
 
 type Inquiry = {
@@ -447,8 +447,14 @@ function InquiryDetail({
                                     </div>
                                 </div>
                                 <div className="text-xs font-semibold text-slate-800 whitespace-nowrap">
-                                    {formatCurrency(Number(p.priceWeekly))}
-                                    <span className="text-slate-400 font-normal"> /hf</span>
+                                    {p.priceWeekly != null ? (
+                                        <>
+                                            {formatCurrency(Number(p.priceWeekly))}
+                                            <span className="text-slate-400 font-normal"> /hf</span>
+                                        </>
+                                    ) : (
+                                        <span className="text-slate-400 font-normal">Fiyat yok</span>
+                                    )}
                                 </div>
                             </li>
                         ))}

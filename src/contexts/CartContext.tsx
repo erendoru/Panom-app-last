@@ -9,8 +9,13 @@ interface Panel {
     city: string;
     district: string;
     imageUrl?: string;
-    priceWeekly: number;
-    priceDaily?: number;
+    priceWeekly: number | null;
+    priceDaily?: number | null;
+    priceMonthly?: number | null;
+    price3Month?: number | null;
+    price6Month?: number | null;
+    priceYearly?: number | null;
+    printingFee?: number | string | null;
     ownerName?: string;
     width: number;
     height: number;

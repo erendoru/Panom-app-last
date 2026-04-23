@@ -86,9 +86,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (body.longitude !== undefined) data.longitude = parseFloat(String(body.longitude));
         if (body.width !== undefined) data.width = parseDimension(body.width);
         if (body.height !== undefined) data.height = parseDimension(body.height);
-        if (body.priceWeekly !== undefined) data.priceWeekly = num(body.priceWeekly) ?? 0;
+        if (body.priceWeekly !== undefined) data.priceWeekly = num(body.priceWeekly);
         if (body.priceDaily !== undefined) data.priceDaily = num(body.priceDaily) ?? 0;
         if (body.priceMonthly !== undefined) data.priceMonthly = num(body.priceMonthly);
+        if (body.price3Month !== undefined) data.price3Month = num(body.price3Month);
+        if (body.price6Month !== undefined) data.price6Month = num(body.price6Month);
+        if (body.priceYearly !== undefined) data.priceYearly = num(body.priceYearly);
+        if (body.printingFee !== undefined) data.printingFee = num(body.printingFee);
         if (body.estimatedDailyImpressions !== undefined) {
             data.estimatedDailyImpressions = body.estimatedDailyImpressions
                 ? parseInt(String(body.estimatedDailyImpressions)) || 0

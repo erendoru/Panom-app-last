@@ -9,6 +9,7 @@ import {
     useState,
     type ReactNode,
 } from "react";
+import { weeklyEquivalent } from "@/lib/utils";
 
 export type StoreOwnerContext = {
     id: string;
@@ -28,7 +29,13 @@ export type SelectedPanel = {
     city: string;
     district: string;
     type: string;
-    priceWeekly: number;
+    priceWeekly: number | null;
+    priceMonthly?: number | null;
+    price3Month?: number | null;
+    price6Month?: number | null;
+    priceYearly?: number | null;
+    priceDaily?: number | null;
+    printingFee?: number | string | null;
 };
 
 type Ctx = {
@@ -100,7 +107,11 @@ export function StoreProvider({
     const clear = useCallback(() => setSelected([]), []);
 
     const totalWeekly = useMemo(
-        () => selected.reduce((sum, p) => sum + (Number(p.priceWeekly) || 0), 0),
+        () =>
+            selected.reduce((sum, p) => {
+                const w = weeklyEquivalent(p) ?? 0;
+                return sum + w;
+            }, 0),
         [selected]
     );
 

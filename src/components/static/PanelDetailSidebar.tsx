@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { X, MapPin, CheckCircle2, Navigation, ShoppingCart, Loader2, ExternalLink } from "lucide-react";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import { useAppLocale } from "@/contexts/LocaleContext";
 import { staticBillboardsCopy } from "@/messages/staticBillboards";
 import { locationTypeLabel, panelTypeLabel } from "@/lib/panel-labels-locale";
@@ -274,15 +274,28 @@ export default function PanelDetailSidebar({ panel, isOpen, onClose }: PanelDeta
                     </div>
                 )}
 
-                <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
-                    <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{s.weeklyRental}</div>
-                    <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">
-                        {panel.isStartingPrice && locale === "en" ? `${s.startingFrom} ` : ""}
-                        {formatCurrency(Number(panel.priceWeekly))}
-                        {panel.isStartingPrice && locale !== "en" ? `${s.startingFrom}` : ""}
-                    </div>
-                    <div className="text-[10px] text-slate-400">{s.plusVat}</div>
-                </div>
+                {(() => {
+                    const w = weeklyEquivalent(panel as any);
+                    if (!w) {
+                        return (
+                            <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
+                                <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{s.weeklyRental}</div>
+                                <div className="text-sm font-semibold text-slate-700">Fiyat için iletişime geçin</div>
+                            </div>
+                        );
+                    }
+                    return (
+                        <div className={`rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 to-white p-3 ${panel.type === "CLP" ? "mt-2" : "mt-3"}`}>
+                            <div className="text-[10px] font-medium uppercase tracking-wider text-slate-500">{s.weeklyRental}</div>
+                            <div className="text-xl font-bold tabular-nums tracking-tight text-slate-900">
+                                {panel.isStartingPrice && locale === "en" ? `${s.startingFrom} ` : ""}
+                                {formatCurrency(w)}
+                                {panel.isStartingPrice && locale !== "en" ? `${s.startingFrom}` : ""}
+                            </div>
+                            <div className="text-[10px] text-slate-400">{s.plusVat}</div>
+                        </div>
+                    );
+                })()}
             </div>
 
             <div className="shrink-0 border-t border-slate-100 bg-white/95 px-3 py-2.5 backdrop-blur-sm safe-padding-bottom">

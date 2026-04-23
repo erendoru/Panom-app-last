@@ -9,7 +9,7 @@ import NearbyPoiWidget from "@/components/panels/NearbyPoiWidget";
 import { ROAD_TYPE_LABELS, trafficLevelLabel, type RoadTypeKey } from "@/lib/traffic/score";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
 import { ArrowLeft, ExternalLink, MapPin, Navigation } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +41,11 @@ async function getPanel(id: string) {
                 height: true,
                 priceWeekly: true,
                 priceDaily: true,
+                priceMonthly: true,
+                price3Month: true,
+                price6Month: true,
+                priceYearly: true,
+                printingFee: true,
                 imageUrl: true,
                 imageUrls: true,
                 description: true,
@@ -67,8 +72,13 @@ async function getPanel(id: string) {
 
         return {
             ...panel,
-            priceWeekly: Number(panel.priceWeekly),
+            priceWeekly: panel.priceWeekly != null ? Number(panel.priceWeekly) : null,
             priceDaily: panel.priceDaily != null ? Number(panel.priceDaily) : null,
+            priceMonthly: panel.priceMonthly != null ? Number(panel.priceMonthly) : null,
+            price3Month: panel.price3Month != null ? Number(panel.price3Month) : null,
+            price6Month: panel.price6Month != null ? Number(panel.price6Month) : null,
+            priceYearly: panel.priceYearly != null ? Number(panel.priceYearly) : null,
+            printingFee: panel.printingFee != null ? Number(panel.printingFee) : null,
             width: Number(panel.width),
             height: Number(panel.height),
             estimatedCpm: panel.estimatedCpm != null ? Number(panel.estimatedCpm) : null,
@@ -161,11 +171,14 @@ export async function generateMetadata({ params }: RouteParams): Promise<Metadat
             ? `, günlük ~${panel.estimatedDailyImpressions.toLocaleString("tr-TR")} tahmini gösterim.`
             : ".";
 
+    const weeklyForSeo = weeklyEquivalent(panel as any);
     const description =
         panel.description?.slice(0, 160) ||
-        `${location} konumunda ${typeLabel} pano. Boyut ${size}. Haftalık ${formatCurrency(
-            panel.priceWeekly,
-        )} fiyatla online kiralama.${trafficNote}${impressionNote}`;
+        `${location} konumunda ${typeLabel} pano. Boyut ${size}.${
+            weeklyForSeo
+                ? ` Haftalık ${formatCurrency(weeklyForSeo)} fiyatla online kiralama.`
+                : " Fiyat için iletişime geçin."
+        }${trafficNote}${impressionNote}`;
 
     const ogImage = panel.imageUrl || panel.imageUrls?.[0];
     const url = `https://panobu.com/panel/${panel.id}`;
@@ -207,6 +220,7 @@ export default async function PanelDetailPage({ params }: RouteParams) {
         ? ROAD_TYPE_LABELS[panel.roadType as RoadTypeKey] ?? panel.roadType
         : null;
     const gmapsUrl = `https://www.google.com/maps?q=${panel.latitude},${panel.longitude}`;
+    const weeklyForSeo = weeklyEquivalent(panel as any);
 
     // schema.org JSON-LD — hem Place hem de Service/Product
     const jsonLd = {
@@ -240,12 +254,12 @@ export default async function PanelDetailPage({ params }: RouteParams) {
                 offers: {
                     "@type": "Offer",
                     priceCurrency: "TRY",
-                    price: panel.priceWeekly,
+                    price: weeklyForSeo ?? 0,
                     availability: "https://schema.org/InStock",
                     url: `https://panobu.com/panel/${panel.id}`,
                     priceSpecification: {
                         "@type": "UnitPriceSpecification",
-                        price: panel.priceWeekly,
+                        price: weeklyForSeo ?? 0,
                         priceCurrency: "TRY",
                         unitText: "WEEK",
                     },
@@ -459,16 +473,63 @@ export default async function PanelDetailPage({ params }: RouteParams) {
                             <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                                 Haftalık kiralama
                             </div>
-                            <div className="mt-1 text-3xl font-bold tabular-nums tracking-tight text-slate-900">
-                                {panel.isStartingPrice ? "" : ""}
-                                {formatCurrency(panel.priceWeekly)}
-                                {panel.isStartingPrice ? (
-                                    <span className="ml-1 text-xs font-medium text-slate-500">
-                                        'den başlayan
-                                    </span>
-                                ) : null}
-                            </div>
-                            <div className="mt-0.5 text-[11px] text-slate-400">+ KDV</div>
+                            {weeklyForSeo ? (
+                                <>
+                                    <div className="mt-1 text-3xl font-bold tabular-nums tracking-tight text-slate-900">
+                                        {formatCurrency(weeklyForSeo)}
+                                        {panel.isStartingPrice ? (
+                                            <span className="ml-1 text-xs font-medium text-slate-500">
+                                                'den başlayan
+                                            </span>
+                                        ) : null}
+                                    </div>
+                                    <div className="mt-0.5 text-[11px] text-slate-400">+ KDV</div>
+                                </>
+                            ) : (
+                                <div className="mt-1 text-lg font-semibold text-slate-700">
+                                    Fiyat için iletişime geçin
+                                </div>
+                            )}
+
+                            {/* Dönemsel fiyatlar (varsa) */}
+                            {(panel.priceMonthly ||
+                                panel.price3Month ||
+                                panel.price6Month ||
+                                panel.priceYearly ||
+                                panel.printingFee) && (
+                                <div className="mt-4 rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs text-slate-700 space-y-1">
+                                    {panel.priceMonthly ? (
+                                        <div className="flex justify-between">
+                                            <span>Aylık</span>
+                                            <span className="font-semibold">{formatCurrency(Number(panel.priceMonthly))}</span>
+                                        </div>
+                                    ) : null}
+                                    {panel.price3Month ? (
+                                        <div className="flex justify-between">
+                                            <span>3 Aylık</span>
+                                            <span className="font-semibold">{formatCurrency(Number(panel.price3Month))}</span>
+                                        </div>
+                                    ) : null}
+                                    {panel.price6Month ? (
+                                        <div className="flex justify-between">
+                                            <span>6 Aylık</span>
+                                            <span className="font-semibold">{formatCurrency(Number(panel.price6Month))}</span>
+                                        </div>
+                                    ) : null}
+                                    {panel.priceYearly ? (
+                                        <div className="flex justify-between">
+                                            <span>12 Aylık</span>
+                                            <span className="font-semibold">{formatCurrency(Number(panel.priceYearly))}</span>
+                                        </div>
+                                    ) : null}
+                                    {panel.printingFee ? (
+                                        <div className="flex justify-between border-t border-slate-200 pt-1 mt-1">
+                                            <span>Baskı &amp; Montaj</span>
+                                            <span className="font-semibold">{formatCurrency(Number(panel.printingFee))}</span>
+                                        </div>
+                                    ) : null}
+                                </div>
+                            )}
 
                             <div className="mt-5">
                                 <PanelDetailAddToCart panelId={panel.id} />

@@ -5,7 +5,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { Button } from "@/components/ui/button";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, weeklyEquivalent } from "@/lib/utils";
 import { renderToStaticMarkup } from "react-dom/server";
 import PanelTypeIcon from "@/components/icons/PanelTypeIcon";
 import { PANEL_TYPE_LABELS } from "@/lib/turkey-data";
@@ -348,10 +348,22 @@ export default function Map({
                                     <p className="text-sm text-slate-500 mb-2">{panel.district}, {panel.city}</p>
 
                                     {/* Price highlight */}
-                                    <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3 text-center">
-                                        <span className="text-lg font-bold text-green-700">{formatCurrency(Number(panel.priceWeekly))}</span>
-                                        <span className="text-xs text-green-600 ml-1">/hafta</span>
-                                    </div>
+                                    {(() => {
+                                        const w = weeklyEquivalent(panel as any);
+                                        if (!w) {
+                                            return (
+                                                <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-3 text-center">
+                                                    <span className="text-sm font-semibold text-slate-700">Fiyat için iletişime geçin</span>
+                                                </div>
+                                            );
+                                        }
+                                        return (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg p-2 mb-3 text-center">
+                                                <span className="text-lg font-bold text-green-700">{formatCurrency(w)}</span>
+                                                <span className="text-xs text-green-600 ml-1">/hafta</span>
+                                            </div>
+                                        );
+                                    })()}
 
                                     <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 mb-3 bg-slate-50 p-2 rounded">
                                         <div>

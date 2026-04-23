@@ -36,6 +36,11 @@ export default function NewPanelPage() {
         height: '',
         priceWeekly: '',
         priceDaily: '',
+        priceMonthly: '',
+        price3Month: '',
+        price6Month: '',
+        priceYearly: '',
+        printingFee: '',
         minRentalDays: 7,
         isAVM: false,
         avmName: '',
@@ -69,6 +74,24 @@ export default function NewPanelPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // En az bir fiyat girilmiş olmalı
+        const anyPrice = [
+            formData.priceDaily,
+            formData.priceWeekly,
+            formData.priceMonthly,
+            formData.price3Month,
+            formData.price6Month,
+            formData.priceYearly,
+        ].some((v) => {
+            const n = parseFloat(String(v || ''));
+            return Number.isFinite(n) && n > 0;
+        });
+        if (!anyPrice) {
+            alert('En az bir fiyat (günlük, haftalık, aylık, 3 / 6 / 12 aylık) girmelisiniz.');
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -309,6 +332,12 @@ export default function NewPanelPage() {
                                 <p className="text-xs text-slate-500 mt-1">metre (m) veya santimetre (cm) olarak girebilirsiniz</p>
                             </div>
 
+                            <div className="md:col-span-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
+                                <strong>En az bir fiyat girmeniz yeterli.</strong>{' '}
+                                Haftalık fiyat zorunlu değildir — 3, 6 veya 12 aylık fiyat vererek
+                                de satışa açabilirsiniz.
+                            </div>
+
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-2">
                                     Haftalık Fiyat (₺) (Opsiyonel)
@@ -337,6 +366,84 @@ export default function NewPanelPage() {
                                     placeholder="Örn: 2500"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                 />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Aylık Fiyat (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="priceMonthly"
+                                    value={formData.priceMonthly}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 50000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    3 Aylık Fiyat (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="price3Month"
+                                    value={formData.price3Month}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 140000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    6 Aylık Fiyat (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="price6Month"
+                                    value={formData.price6Month}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 260000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Yıllık Fiyat (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="priceYearly"
+                                    value={formData.priceYearly}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 480000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">
+                                    Baskı &amp; Montaj Ücreti (₺) (Opsiyonel)
+                                </label>
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="printingFee"
+                                    value={formData.printingFee}
+                                    onChange={handleChange}
+                                    placeholder="Örn: 35000"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                />
+                                <p className="text-xs text-slate-500 mt-1">
+                                    Reklamverenden talep edilen tek seferlik baskı + montaj bedeli.
+                                </p>
                             </div>
 
                             <div className="md:col-span-2">

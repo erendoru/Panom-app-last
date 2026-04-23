@@ -11,7 +11,7 @@ type InquiryPanel = {
     type: string;
     city: string;
     district: string;
-    priceWeekly: number;
+    priceWeekly: number | null;
 };
 
 type Body = {
@@ -107,7 +107,7 @@ export async function POST(
                 type: p.type,
                 city: p.city,
                 district: p.district,
-                priceWeekly: Number(p.priceWeekly),
+                priceWeekly: p.priceWeekly != null ? Number(p.priceWeekly) : null,
             }));
         } catch (err) {
             console.error("[store/inquiry] fetch panels failed:", err);

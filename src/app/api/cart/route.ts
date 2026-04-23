@@ -34,6 +34,11 @@ export async function GET(req: NextRequest) {
                         imageUrl: true,
                         priceWeekly: true,
                         priceDaily: true,
+                        priceMonthly: true,
+                        price3Month: true,
+                        price6Month: true,
+                        priceYearly: true,
+                        printingFee: true,
                         ownerName: true,
                         width: true,
                         height: true,
@@ -128,6 +133,11 @@ export async function POST(req: NextRequest) {
                         imageUrl: true,
                         priceWeekly: true,
                         priceDaily: true,
+                        priceMonthly: true,
+                        price3Month: true,
+                        price6Month: true,
+                        priceYearly: true,
+                        printingFee: true,
                         ownerName: true
                     }
                 }

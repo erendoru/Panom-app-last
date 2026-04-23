@@ -396,12 +396,14 @@ model StaticPanel {
   longitude                  Float
   width                      Float
   height                     Float
-  priceWeekly                Float
+  priceWeekly                Float?
   priceDaily                 Float?
   priceMonthly               Float?
   price3Month                Float?
   price6Month                Float?
   priceYearly                Float?
+  // Baskı & Montaj ücreti (tek seferlik) — billboarda özel
+  printingFee                Float?
   minRentalDays              Int            @default(7)  // Minimum rental period in days
   
   // Location & Analytics
@@ -548,8 +550,12 @@ model PanelPricing {
   panel        StaticPanel      @relation(fields: [panelId], references: [id], onDelete: Cascade)
   name         String
   priceType    PanelPricingType @default(SEASONAL)
-  priceWeekly  Float
+  priceWeekly  Float?
   priceDaily   Float?
+  priceMonthly Float?
+  price3Month  Float?
+  price6Month  Float?
+  priceYearly  Float?
   startDate    DateTime
   endDate      DateTime
   priority     Int              @default(0)

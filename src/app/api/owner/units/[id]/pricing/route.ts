@@ -53,12 +53,37 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     if (!panelId) return NextResponse.json({ error: "Pano bulunamadı" }, { status: 404 });
 
     const body = await req.json().catch(() => ({}));
-    const { name, priceWeekly, priceDaily, startDate, endDate, priceType, priority } = body || {};
+    const {
+        name,
+        priceWeekly,
+        priceDaily,
+        priceMonthly,
+        price3Month,
+        price6Month,
+        priceYearly,
+        startDate,
+        endDate,
+        priceType,
+        priority,
+    } = body || {};
 
     const weekly = num(priceWeekly);
-    if (!name || weekly === null || weekly <= 0) {
+    const daily = num(priceDaily);
+    const monthly = num(priceMonthly);
+    const q3 = num(price3Month);
+    const q6 = num(price6Month);
+    const yearly = num(priceYearly);
+
+    const hasAny = [weekly, daily, monthly, q3, q6, yearly].some(
+        (v) => v !== null && v > 0
+    );
+
+    if (!name) {
+        return NextResponse.json({ error: "İsim zorunludur" }, { status: 400 });
+    }
+    if (!hasAny) {
         return NextResponse.json(
-            { error: "name ve geçerli priceWeekly zorunludur" },
+            { error: "En az bir fiyat alanı girilmelidir" },
             { status: 400 }
         );
     }
@@ -81,8 +106,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
                 priceType === "PROMOTIONAL" || priceType === "STANDARD"
                     ? priceType
                     : "SEASONAL",
-            priceWeekly: weekly,
-            priceDaily: num(priceDaily) ?? undefined,
+            priceWeekly: weekly ?? undefined,
+            priceDaily: daily ?? undefined,
+            priceMonthly: monthly ?? undefined,
+            price3Month: q3 ?? undefined,
+            price6Month: q6 ?? undefined,
+            priceYearly: yearly ?? undefined,
             startDate: start,
             endDate: end,
             priority: Number.isFinite(parseInt(priority, 10)) ? parseInt(priority, 10) : 0,

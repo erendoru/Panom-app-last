@@ -8,8 +8,12 @@ type Pricing = {
     id: string;
     name: string;
     priceType: "STANDARD" | "SEASONAL" | "PROMOTIONAL";
-    priceWeekly: number;
+    priceWeekly: number | null;
     priceDaily: number | null;
+    priceMonthly: number | null;
+    price3Month: number | null;
+    price6Month: number | null;
+    priceYearly: number | null;
     startDate: string;
     endDate: string;
     priority: number;
@@ -56,6 +60,10 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
         priceType: "SEASONAL" as Pricing["priceType"],
         priceWeekly: "",
         priceDaily: "",
+        priceMonthly: "",
+        price3Month: "",
+        price6Month: "",
+        priceYearly: "",
         startDate: today(),
         endDate: today(),
         priority: 0,
@@ -85,14 +93,29 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
         setSaving(true);
         setError(null);
         try {
+            const hasAnyPrice = [
+                form.priceWeekly,
+                form.priceDaily,
+                form.priceMonthly,
+                form.price3Month,
+                form.price6Month,
+                form.priceYearly,
+            ].some((v) => v !== "" && Number(v) > 0);
+            if (!form.name.trim()) throw new Error("Ad zorunludur");
+            if (!hasAnyPrice) throw new Error("En az bir fiyat alanı girilmelidir");
+
             const res = await fetch(`/api/owner/units/${panelId}/pricing`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     name: form.name,
                     priceType: form.priceType,
-                    priceWeekly: form.priceWeekly,
+                    priceWeekly: form.priceWeekly || null,
                     priceDaily: form.priceDaily || null,
+                    priceMonthly: form.priceMonthly || null,
+                    price3Month: form.price3Month || null,
+                    price6Month: form.price6Month || null,
+                    priceYearly: form.priceYearly || null,
                     startDate: new Date(form.startDate).toISOString(),
                     endDate: new Date(form.endDate).toISOString(),
                     priority: Number(form.priority) || 0,
@@ -106,6 +129,10 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
                 priceType: "SEASONAL",
                 priceWeekly: "",
                 priceDaily: "",
+                priceMonthly: "",
+                price3Month: "",
+                price6Month: "",
+                priceYearly: "",
                 startDate: today(),
                 endDate: today(),
                 priority: 0,
@@ -195,14 +222,29 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
                                     )}
                                 </div>
                                 <div className="text-xs text-slate-500 mt-0.5">
-                                    {fmtDate(p.startDate)} → {fmtDate(p.endDate)} ·{" "}
-                                    <span className="text-slate-700 font-medium">
-                                        {Number(p.priceWeekly).toLocaleString("tr-TR")} ₺/hafta
-                                    </span>
+                                    {fmtDate(p.startDate)} → {fmtDate(p.endDate)}
+                                    {p.priceWeekly ? (
+                                        <>
+                                            {" "}·{" "}
+                                            <span className="text-slate-700 font-medium">
+                                                {Number(p.priceWeekly).toLocaleString("tr-TR")} ₺/hafta
+                                            </span>
+                                        </>
+                                    ) : null}
                                     {p.priceDaily ? (
-                                        <span>
-                                            {" "}· {Number(p.priceDaily).toLocaleString("tr-TR")} ₺/gün
-                                        </span>
+                                        <span> · {Number(p.priceDaily).toLocaleString("tr-TR")} ₺/gün</span>
+                                    ) : null}
+                                    {p.priceMonthly ? (
+                                        <span> · {Number(p.priceMonthly).toLocaleString("tr-TR")} ₺/ay</span>
+                                    ) : null}
+                                    {p.price3Month ? (
+                                        <span> · {Number(p.price3Month).toLocaleString("tr-TR")} ₺/3 ay</span>
+                                    ) : null}
+                                    {p.price6Month ? (
+                                        <span> · {Number(p.price6Month).toLocaleString("tr-TR")} ₺/6 ay</span>
+                                    ) : null}
+                                    {p.priceYearly ? (
+                                        <span> · {Number(p.priceYearly).toLocaleString("tr-TR")} ₺/yıl</span>
                                     ) : null}
                                 </div>
                             </div>
@@ -305,6 +347,9 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
                                 className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
                             />
                         </div>
+                        <div className="md:col-span-2 text-[11px] text-slate-500 -mt-1">
+                            Aşağıdaki fiyatlardan en az birini giriniz. Hepsi opsiyoneldir.
+                        </div>
                         <div>
                             <label className="text-xs font-medium text-slate-600 block mb-1">
                                 Haftalık Fiyat (₺)
@@ -316,14 +361,13 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
                                 onChange={(e) =>
                                     setForm((f) => ({ ...f, priceWeekly: e.target.value }))
                                 }
-                                required
                                 placeholder="18000"
                                 className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
                             />
                         </div>
                         <div>
                             <label className="text-xs font-medium text-slate-600 block mb-1">
-                                Günlük Fiyat (₺) — opsiyonel
+                                Günlük Fiyat (₺)
                             </label>
                             <input
                                 type="number"
@@ -333,6 +377,66 @@ export default function SeasonalPricingManager({ panelId }: { panelId: string })
                                     setForm((f) => ({ ...f, priceDaily: e.target.value }))
                                 }
                                 placeholder="3000"
+                                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-medium text-slate-600 block mb-1">
+                                Aylık Fiyat (₺)
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.priceMonthly}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, priceMonthly: e.target.value }))
+                                }
+                                placeholder="60000"
+                                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-medium text-slate-600 block mb-1">
+                                3 Aylık Fiyat (₺)
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.price3Month}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, price3Month: e.target.value }))
+                                }
+                                placeholder="170000"
+                                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-medium text-slate-600 block mb-1">
+                                6 Aylık Fiyat (₺)
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.price6Month}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, price6Month: e.target.value }))
+                                }
+                                placeholder="320000"
+                                className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-medium text-slate-600 block mb-1">
+                                12 Aylık Fiyat (₺)
+                            </label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={form.priceYearly}
+                                onChange={(e) =>
+                                    setForm((f) => ({ ...f, priceYearly: e.target.value }))
+                                }
+                                placeholder="600000"
                                 className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md"
                             />
                         </div>
