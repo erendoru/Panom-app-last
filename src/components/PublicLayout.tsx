@@ -14,13 +14,23 @@ import { footerCopy } from "@/messages/footer";
 
 interface PublicLayoutProps {
     children: React.ReactNode;
-    activeLink?: "anasayfa" | "klasik" | "dijital" | "nasil" | "blog" | "yenilikler";
+    activeLink?:
+        | "anasayfa"
+        | "klasik"
+        | "dijital"
+        | "nasil"
+        | "blog"
+        | "yenilikler"
+        | "markalar"
+        | "medya-sahipleri";
 }
 
 const NAV_DEF: { href: string; key: PublicLayoutProps["activeLink"]; msg: PublicNavKey }[] = [
     { href: "/", key: "anasayfa", msg: "home" },
     { href: "/static-billboards", key: "klasik", msg: "classic" },
     { href: "/screens", key: "dijital", msg: "digital" },
+    { href: "/markalar-icin", key: "markalar", msg: "forBrands" },
+    { href: "/medya-sahipleri-icin", key: "medya-sahipleri", msg: "forOwners" },
     { href: "/how-it-works", key: "nasil", msg: "howItWorks" },
     { href: "/blog", key: "blog", msg: "blog" },
     { href: "/updates", key: "yenilikler", msg: "updates" },
@@ -45,12 +55,12 @@ export default function PublicLayout({ children, activeLink }: PublicLayoutProps
                         Panobu
                     </Link>
 
-                    <nav className="hidden lg:flex items-center gap-6">
+                    <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.key}
                                 href={link.href}
-                                className={`text-sm font-medium transition-colors ${
+                                className={`text-sm font-medium whitespace-nowrap transition-colors ${
                                     activeLink === link.key
                                         ? "text-neutral-900"
                                         : "text-neutral-600 hover:text-neutral-900"

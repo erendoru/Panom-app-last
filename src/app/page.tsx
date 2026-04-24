@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
-import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Instagram, Linkedin, Youtube, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck, Calculator } from "lucide-react";
+import { ArrowRight, Monitor, BarChart3, ShieldCheck, Zap, Globe, TrendingUp, Instagram, Linkedin, Youtube, Menu, X, MapPin, Calendar, Layers, Clock, CheckCircle2, Building2, LayoutDashboard, Target, CalendarCheck, Calculator, Store, Rocket } from "lucide-react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ContainerScroll } from "@/components/ui/container-scroll-animation";
@@ -203,13 +203,15 @@ export default function LandingPage() {
                         Panobu
                     </Link>
 
-                    <nav className="hidden lg:flex items-center gap-6">
-                        <Link href="/" className="text-sm font-medium text-neutral-900 transition-colors">{navLabel(locale, "home")}</Link>
-                        <Link href="/static-billboards" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "classic")}</Link>
-                        <Link href="/screens" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "digital")}</Link>
-                        <Link href="/how-it-works" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "howItWorks")}</Link>
-                        <Link href="/blog" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "blog")}</Link>
-                        <Link href="/updates" className="text-sm font-medium text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "updates")}</Link>
+                    <nav className="hidden lg:flex items-center gap-4 xl:gap-5">
+                        <Link href="/" className="text-sm font-medium whitespace-nowrap text-neutral-900 transition-colors">{navLabel(locale, "home")}</Link>
+                        <Link href="/static-billboards" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "classic")}</Link>
+                        <Link href="/screens" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "digital")}</Link>
+                        <Link href="/markalar-icin" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "forBrands")}</Link>
+                        <Link href="/medya-sahipleri-icin" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "forOwners")}</Link>
+                        <Link href="/how-it-works" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "howItWorks")}</Link>
+                        <Link href="/blog" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "blog")}</Link>
+                        <Link href="/updates" className="text-sm font-medium whitespace-nowrap text-neutral-600 hover:text-neutral-900 transition-colors">{navLabel(locale, "updates")}</Link>
                     </nav>
 
                     <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
@@ -243,6 +245,8 @@ export default function LandingPage() {
                                     { href: "/", label: navLabel(locale, "home"), active: true },
                                     { href: "/static-billboards", label: navLabel(locale, "classic") },
                                     { href: "/screens", label: navLabel(locale, "digital") },
+                                    { href: "/markalar-icin", label: navLabel(locale, "forBrands") },
+                                    { href: "/medya-sahipleri-icin", label: navLabel(locale, "forOwners") },
                                     { href: "/how-it-works", label: navLabel(locale, "howItWorks") },
                                     { href: "/blog", label: navLabel(locale, "blog") },
                                     { href: "/updates", label: navLabel(locale, "updates") },
@@ -335,6 +339,98 @@ export default function LandingPage() {
                 {/* Data-driven advertising banner */}
                 <section className="py-12 md:py-16 bg-white">
                     <DataDrivenBanner />
+                </section>
+
+                {/* Kimler için? — Gizli Wow B + Gizli Wow C */}
+                <section className="py-12 md:py-16 bg-neutral-50 border-y border-neutral-200">
+                    <div className="container mx-auto px-4">
+                        <motion.div
+                            initial={{ opacity: 0, y: 16 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            className="mx-auto max-w-3xl text-center mb-10"
+                        >
+                            <span className="inline-block px-3 py-1 rounded-full bg-[#11b981]/10 text-[#0d9669] text-xs font-semibold tracking-wide uppercase">
+                                Kimler için?
+                            </span>
+                            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-neutral-900">
+                                Panobu, iki tarafı da <span className="text-[#11b981]">aynı platformda</span> buluşturur.
+                            </h2>
+                            <p className="mt-3 text-slate-500 text-base">
+                                Markalar için self-serve outdoor, medya sahipleri için kendi vitrin + CRM.
+                            </p>
+                        </motion.div>
+
+                        <div className="grid md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+                            {/* Gizli Wow B — Markalar İçin */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.05 }}
+                            >
+                                <Link
+                                    href="/markalar-icin"
+                                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-emerald-100 bg-white p-7 shadow-sm transition-all hover:border-emerald-300 hover:shadow-md"
+                                >
+                                    <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-emerald-100/50 blur-2xl transition-all group-hover:bg-emerald-200/60" />
+                                    <div className="relative flex items-center gap-3">
+                                        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-sm">
+                                            <Rocket className="h-5 w-5" />
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800">
+                                            Markalar için
+                                        </span>
+                                    </div>
+                                    <h3 className="relative mt-5 text-xl font-bold text-neutral-900">
+                                        30 dakikada outdoor kampanya.
+                                    </h3>
+                                    <p className="relative mt-2 text-sm leading-relaxed text-slate-600">
+                                        Ajans telefonu, gizli komisyon, günlerce kontrat trafiği yok.
+                                        Haritadan seç, skorunu gör, sepete at, öde. Self-serve OOH — Türkiye'de ilk.
+                                    </p>
+                                    <span className="relative mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[#0d9669] transition-colors group-hover:text-[#0a7a57]">
+                                        Markalar için Panobu
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </span>
+                                </Link>
+                            </motion.div>
+
+                            {/* Gizli Wow C — Medya Sahipleri İçin */}
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: 0.12 }}
+                            >
+                                <Link
+                                    href="/medya-sahipleri-icin"
+                                    className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-indigo-100 bg-white p-7 shadow-sm transition-all hover:border-indigo-300 hover:shadow-md"
+                                >
+                                    <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-indigo-100/50 blur-2xl transition-all group-hover:bg-indigo-200/60" />
+                                    <div className="relative flex items-center gap-3">
+                                        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 text-white shadow-sm">
+                                            <Store className="h-5 w-5" />
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-800">
+                                            Medya sahipleri için
+                                        </span>
+                                    </div>
+                                    <h3 className="relative mt-5 text-xl font-bold text-neutral-900">
+                                        Kendi vitrininiz, kendi müşteriniz.
+                                    </h3>
+                                    <p className="relative mt-2 text-sm leading-relaxed text-slate-600">
+                                        Ajans komisyonu yerine platform hizmeti. Storefront, inquiry yönetimi,
+                                        sipariş paneli, fatura, haftalık rapor — yakında mail/SMS kampanya.
+                                    </p>
+                                    <span className="relative mt-6 inline-flex items-center gap-1 text-sm font-semibold text-indigo-600 transition-colors group-hover:text-indigo-700">
+                                        Medya sahipleri için Panobu
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </span>
+                                </Link>
+                            </motion.div>
+                        </div>
+                    </div>
                 </section>
 
                 {/* Product Cards */}

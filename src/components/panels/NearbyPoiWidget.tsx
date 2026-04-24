@@ -318,7 +318,7 @@ export default function NearbyPoiWidget({
 
             {!compact && (
                 <div className="px-4 py-2 bg-slate-50/70 border-t border-slate-100 text-[10px] text-slate-400">
-                    Kaynak: OpenStreetMap · Panobu çevre analizi
+                    Panobu İçgörü Motoru · Çevre Analizi
                 </div>
             )}
         </div>
